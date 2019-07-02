@@ -1,31 +1,31 @@
 package main
 
 import (
-	"net/http"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"hydro_monitor/web_api/auth"
 )
 
 func main() {
-	// Echo instance
 	e := echo.New()
 
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// Routes
-	e.GET("/", hello)
+	// Login route
+	e.POST("/login", auth.Login)
 
-	// Start server
+	// Unauthenticated route
+	e.GET("/", auth.Accessible)
+
+	// Restricted group
+	r := e.Group("/restricted")
+	r.Use(middleware.JWT([]byte("secret")))
+	r.GET("", auth.Restricted)
+
 	e.Logger.Fatal(e.Start(":1323"))
 }
-
-// Handler
-func hello(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
-}
-
 
 func Hello() string {
 	return "Hello, world."
