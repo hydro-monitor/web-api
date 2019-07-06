@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"hydro_monitor/web_api/auth"
+	"hydro_monitor/web_api/users"
 )
 
 func main() {
@@ -12,6 +13,12 @@ func main() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+
+	// Users
+	e.GET("/usuarios", users.GetUsers)
+	e.GET("/usuarios/:mail", users.GetUser)
+	e.POST("/usuarios", users.CreateUser)
+	e.DELETE("/usuarios/:mail", users.DeleteUser)
 
 	// Login route
 	e.POST("/login", auth.Login)
