@@ -4,6 +4,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"hydro_monitor/web_api/auth"
+	"hydro_monitor/web_api/nodes"
+	"hydro_monitor/web_api/readings"
 	"hydro_monitor/web_api/users"
 )
 
@@ -19,6 +21,14 @@ func main() {
 	e.GET("/usuarios/:mail", users.GetUser)
 	e.POST("/usuarios", users.CreateUser)
 	e.DELETE("/usuarios/:mail", users.DeleteUser)
+
+	// Nodes
+	e.GET("/nodos", nodes.GetNodes)
+	e.GET("/nodos/:id", nodes.GetNode)
+
+	// Readings
+	e.GET("/nodos/:id/mediciones", readings.GetAllNodeReadings)
+	e.DELETE("/nodos/:id/mediciones/:timestamp", readings.DeleteReading)
 
 	// Login route
 	e.POST("/login", auth.Login)
