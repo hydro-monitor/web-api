@@ -3,15 +3,7 @@ package readings
 import (
 	"github.com/labstack/echo/v4"
 	"net/http"
-	"time"
 )
-
-type Reading struct {
-	timestamp time.Time
-	nodeId    string
-	waterLevel float64
-	photo []byte
-}
 
 func GetAllNodeReadings(c echo.Context) error {
 	nodeId := c.QueryParam("id")

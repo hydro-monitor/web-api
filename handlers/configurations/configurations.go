@@ -5,17 +5,6 @@ import (
 	"net/http"
 )
 
-type Configuration struct {
-	nodeId string
-	name string
-	photosPerReading int
-	msBetweenReadings int
-	waterLevelLimitForGoingToPreviousState int
-	waterLevelLimitForGoingToNextState int
-	previousState string
-	nextState string
-}
-
 func GetNodeConfiguration(c echo.Context) error {
 	nodeId := c.QueryParam("id")
 	// TODO Select configuration from node
