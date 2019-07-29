@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"hydro_monitor/web_api/db_driver"
 	"hydro_monitor/web_api/handlers/auth"
 	"hydro_monitor/web_api/handlers/configurations"
 	"hydro_monitor/web_api/handlers/nodes"
@@ -11,6 +12,7 @@ import (
 )
 
 func main() {
+	defer db_driver.GetDriver().EndSession()
 	e := echo.New()
 
 	// Middleware
