@@ -19,7 +19,7 @@ func init() {
 func newDriver() *Driver {
 	// TODO get this info from an env file or similar
 	cluster := gocql.NewCluster("192.168.50.41", "192.168.50.42", "192.168.50.43")
-	cluster.Keyspace = "usertest"
+	cluster.Keyspace = "hydromonitor"
 	cluster.PoolConfig.HostSelectionPolicy = gocql.RoundRobinHostPolicy()
 	session, err := cluster.CreateSession()
 	if err != nil {
@@ -30,6 +30,10 @@ func newDriver() *Driver {
 
 func GetDriver() *Driver {
 	return driver
+}
+
+func (d *Driver) GetSession() *gocql.Session {
+	return d.session
 }
 
 func (d *Driver) EndSession() {
