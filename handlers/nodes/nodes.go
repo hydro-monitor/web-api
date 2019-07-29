@@ -15,10 +15,10 @@ func GetNodes(c echo.Context) error {
 }
 
 func GetNode(c echo.Context) error {
-	id := c.QueryParam("id")
+	id := c.Param("id")
 	node, err := controllers.GetNodeByID(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, "Error when getting node with id:"+id+"with error: "+err.Error())
 	}
 	return c.JSON(http.StatusOK, node)
 }

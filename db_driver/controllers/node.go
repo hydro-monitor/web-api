@@ -9,7 +9,7 @@ import (
 func GetAllNodes() ([]models.Node, error) {
 	var node models.Node
 	var nodes []models.Node
-	iter := db_driver.GetDriver().GetSession().Query("SELECT * FROM nodes").Consistency(gocql.One).Iter()
+	iter := db_driver.GetDriver().GetSession().Query(`SELECT * FROM nodes`).Consistency(gocql.One).Iter()
 	for iter.Scan(&node.Id, &node.Description) {
 		nodes = append(nodes, node)
 	}
@@ -19,6 +19,6 @@ func GetAllNodes() ([]models.Node, error) {
 
 func GetNodeByID(id string) (models.Node, error) {
 	var node models.Node
-	err := db_driver.GetDriver().GetSession().Query("SELECT * FROM nodes WHERE ID = ?", id).Consistency(gocql.One).Scan(&node.Id, &node.Description)
+	err := db_driver.GetDriver().GetSession().Query(`SELECT * FROM nodes WHERE node_id = ?`, id).Consistency(gocql.One).Scan(&node.Id, &node.Description)
 	return node, err
 }
