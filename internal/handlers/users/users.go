@@ -2,7 +2,7 @@ package users
 
 import (
 	"github.com/labstack/echo/v4"
-	"hydro_monitor/web_api/models"
+	"hydro_monitor/web_api/pkg/models"
 	"net/http"
 )
 

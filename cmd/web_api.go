@@ -3,12 +3,12 @@ package main
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"hydro_monitor/web_api/db_driver"
-	"hydro_monitor/web_api/handlers/auth"
-	"hydro_monitor/web_api/handlers/configurations"
-	"hydro_monitor/web_api/handlers/nodes"
-	"hydro_monitor/web_api/handlers/readings"
-	"hydro_monitor/web_api/handlers/users"
+	"hydro_monitor/web_api/internal/handlers/auth"
+	"hydro_monitor/web_api/internal/handlers/configurations"
+	"hydro_monitor/web_api/internal/handlers/nodes"
+	"hydro_monitor/web_api/internal/handlers/readings"
+	"hydro_monitor/web_api/internal/handlers/users"
+	"hydro_monitor/web_api/pkg/db_driver"
 )
 
 func main() {

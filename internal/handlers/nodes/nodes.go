@@ -2,8 +2,8 @@ package nodes
 
 import (
 	"github.com/labstack/echo/v4"
-	"hydro_monitor/web_api/db_driver/controllers"
-	"hydro_monitor/web_api/models"
+	"hydro_monitor/web_api/pkg/db_driver/controllers"
+	"hydro_monitor/web_api/pkg/models"
 	"net/http"
 )
 

@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github.com/gocql/gocql"
-	"hydro_monitor/web_api/db_driver"
-	"hydro_monitor/web_api/models"
+	"hydro_monitor/web_api/pkg/db_driver"
+	"hydro_monitor/web_api/pkg/models"
 )
 
 func GetAllNodes() ([]models.Node, error) {
@@ -24,6 +24,7 @@ func GetNodeByID(id string) (models.Node, error) {
 }
 
 func InsertNode(node models.Node) error {
+	// FIXME doesnt return error when registry already exists
 	return db_driver.GetDriver().GetSession().Query(`INSERT INTO nodes (node_id, description) VALUES (?, ?)`, node.Id, node.Description).Exec()
 }
 
