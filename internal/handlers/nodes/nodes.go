@@ -30,7 +30,7 @@ func PostNode(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	if err := controllers.InsertNode(models.Node{Id: m["id"].(string), Description: m["description"].(string)}); err != nil {
+	if applied, err := controllers.InsertNode(models.Node{Id: m["id"].(string), Description: m["description"].(string)}); err != nil || applied == false {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 	return c.NoContent(http.StatusCreated)
@@ -38,7 +38,7 @@ func PostNode(c echo.Context) error {
 
 func DeleteNode(c echo.Context) error {
 	id := c.Param("id")
-	if err := controllers.DeleteNode(id); err != nil {
+	if applied, err := controllers.DeleteNode(id); err != nil || applied == false {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 	return c.NoContent(http.StatusOK)

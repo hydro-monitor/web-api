@@ -23,11 +23,10 @@ func GetNodeByID(id string) (models.Node, error) {
 	return node, err
 }
 
-func InsertNode(node models.Node) error {
-	// FIXME doesnt return error when registry already exists
-	return db_driver.GetDriver().GetSession().Query(`INSERT INTO nodes (node_id, description) VALUES (?, ?)`, node.Id, node.Description).Exec()
+func InsertNode(node models.Node) (bool, error) {
+	return db_driver.GetDriver().GetSession().Query(`INSERT INTO nodes (node_id, description) VALUES (?, ?) IF NOT EXISTS`, node.Id, node.Description).ScanCAS()
 }
 
-func DeleteNode(id string) error {
-	return db_driver.GetDriver().GetSession().Query(`DELETE FROM nodes WHERE node_id = ?`, id).Exec()
+func DeleteNode(id string) (bool, error) {
+	return db_driver.GetDriver().GetSession().Query(`DELETE FROM nodes WHERE node_id = ? IF EXISTS`, id).ScanCAS()
 }
