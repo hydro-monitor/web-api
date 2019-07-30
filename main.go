@@ -28,6 +28,8 @@ func main() {
 	// Nodes
 	e.GET("/nodos", nodes.GetNodes)
 	e.GET("/nodos/:id", nodes.GetNode)
+	e.POST("/nodos", nodes.PostNode)
+	e.DELETE("/nodos/:id", nodes.DeleteNode)
 
 	// Readings
 	e.GET("/nodos/:id/mediciones", readings.GetAllNodeReadings)

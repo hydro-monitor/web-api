@@ -22,3 +22,11 @@ func GetNodeByID(id string) (models.Node, error) {
 	err := db_driver.GetDriver().GetSession().Query(`SELECT * FROM nodes WHERE node_id = ?`, id).Consistency(gocql.One).Scan(&node.Id, &node.Description)
 	return node, err
 }
+
+func InsertNode(node models.Node) error {
+	return db_driver.GetDriver().GetSession().Query(`INSERT INTO nodes (node_id, description) VALUES (?, ?)`, node.Id, node.Description).Exec()
+}
+
+func DeleteNode(id string) error {
+	return db_driver.GetDriver().GetSession().Query(`DELETE FROM nodes WHERE node_id = ?`, id).Exec()
+}
