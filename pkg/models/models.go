@@ -14,10 +14,10 @@ type Configuration struct {
 }
 
 type Reading struct {
-	timestamp  time.Time
-	nodeId     string
-	waterLevel float64
-	photo      []byte
+	Timestamp  time.Time
+	NodeId     string
+	WaterLevel float64
+	Photo      []byte
 }
 
 type Node struct {
