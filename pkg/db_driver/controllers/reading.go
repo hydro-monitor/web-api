@@ -20,7 +20,7 @@ func GetAllReadingsFromNode(nodeId string) ([]models.Reading, error) {
 
 func InsertReading(reading models.Reading) (bool, error) {
 	return db_driver.GetDriver().GetSession().
-		Query(`INSERT INTO readings (timestamp, node_id, height, photo) VALUES (?, ?, ?, ?) IF NOT EXISTS`).
+		Query(`INSERT INTO readings (timestamp, node_id, water_level, photo) VALUES (?, ?, ?, ?) IF NOT EXISTS`).
 		ScanCAS()
 }
 func DeleteReading(timestamp time.Time, nodeId string) (bool, error) {

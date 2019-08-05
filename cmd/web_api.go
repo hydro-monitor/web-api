@@ -33,6 +33,7 @@ func main() {
 
 	// Readings
 	e.GET("/nodos/:id/mediciones", readings.GetAllNodeReadings)
+	e.POST("/nodos/:id/mediciones", readings.PostReading)
 	e.DELETE("/nodos/:id/mediciones/:timestamp", readings.DeleteReading)
 
 	// Configurations
