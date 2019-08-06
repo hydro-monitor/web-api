@@ -5,7 +5,7 @@ IMAGE_VERSION=$(if $(ENV_IMAGE_VERSION),$(ENV_IMAGE_VERSION),v0.0.0)
 
 $(info web-api image settings: $(IMAGE_NAME) version $(IMAGE_VERSION))
 
-all: web-api
+all: web-api test
 
 test:
 	go test ./pkg/... -cover
