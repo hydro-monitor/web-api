@@ -53,7 +53,3 @@ func main() {
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
-
-func Hello() string {
-	return "Hello, world."
-}
