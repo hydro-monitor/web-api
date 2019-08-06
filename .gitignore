@@ -13,3 +13,6 @@
 
 # Goland IDE
 .idea
+
+# Build directory
+_output
