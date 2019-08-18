@@ -30,3 +30,8 @@ type User struct {
 	Password string `json:"password" form:"password" query:"password"`
 	Admin    bool   `json:"admin" form:"admin" query:"admin"`
 }
+
+type ManualReading struct {
+	NodeId          string
+	ReadingRequired bool
+}

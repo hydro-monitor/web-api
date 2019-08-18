@@ -6,6 +6,7 @@ import (
 	"hydro_monitor/web_api/pkg/db_driver"
 	"hydro_monitor/web_api/pkg/handlers/auth"
 	"hydro_monitor/web_api/pkg/handlers/configurations"
+	"hydro_monitor/web_api/pkg/handlers/manual_readings"
 	"hydro_monitor/web_api/pkg/handlers/nodes"
 	"hydro_monitor/web_api/pkg/handlers/readings"
 	"hydro_monitor/web_api/pkg/handlers/users"
@@ -35,6 +36,10 @@ func main() {
 	e.GET("/nodos/:id/mediciones", readings.GetAllNodeReadings)
 	e.POST("/nodos/:id/mediciones", readings.PostReading)
 	e.DELETE("/nodos/:id/mediciones/:timestamp", readings.DeleteReading)
+
+	// Manual Readings
+	e.GET("/nodos/:id/medicion_manual", manual_readings.GetManualReadingFromNode)
+	e.PUT("/nodos/:id/medicion_manual", manual_readings.UpdateManualReading)
 
 	// Configurations
 	e.GET("/nodos/:id/configuracion/", configurations.GetNodeConfiguration)
