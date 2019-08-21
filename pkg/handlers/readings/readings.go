@@ -1,6 +1,7 @@
 package readings
 
 import (
+	"encoding/json"
 	"github.com/labstack/echo/v4"
 	"hydro_monitor/web_api/pkg/db_driver/controllers"
 	"hydro_monitor/web_api/pkg/models"
@@ -9,7 +10,7 @@ import (
 )
 
 func GetAllNodeReadings(c echo.Context) error {
-	nodeId := c.QueryParam("id")
+	nodeId := c.Param("id")
 	readings, err := controllers.GetAllReadingsFromNode(nodeId)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
@@ -18,28 +19,22 @@ func GetAllNodeReadings(c echo.Context) error {
 }
 
 func PostReading(c echo.Context) error {
-	m := echo.Map{}
-	if err := c.Bind(&m); err != nil {
-		return c.NoContent(http.StatusInternalServerError)
-	}
-	timestamp, err := time.Parse(time.RFC3339, m["timestamp"].(string))
-	if err != nil {
-		return c.NoContent(http.StatusBadRequest)
-	}
-	if applied, err := controllers.InsertReading(
-		models.Reading{
-			Timestamp:  timestamp,
-			NodeId:     m["id"].(string),
-			WaterLevel: m["waterlevel"].(float64),
-			Photo:      m["photo"].([]byte)}); err != nil || applied == false {
-		return c.NoContent(http.StatusInternalServerError)
+	photo, _ := c.FormFile("photo")
+	photo2, _ := photo.Open()
+	raw_reading := c.FormValue("reading")
+	reading := models.Reading{}
+	_ = json.Unmarshal([]byte(raw_reading), &reading)
+	reading.Photo = make([]byte, photo.Size)
+	_, _ = photo2.Read(reading.Photo)
+	if applied, err := controllers.InsertReading(reading); err != nil || applied == false {
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 	return c.NoContent(http.StatusCreated)
 }
 
 func DeleteReading(c echo.Context) error {
-	nodeId := c.QueryParam("id")
-	timestamp, timeErr := time.Parse(time.RFC3339, c.QueryParam("timestamp"))
+	nodeId := c.Param("id")
+	timestamp, timeErr := time.Parse(time.RFC3339, c.Param("timestamp"))
 	if timeErr != nil {
 		return c.NoContent(http.StatusBadRequest)
 	}
