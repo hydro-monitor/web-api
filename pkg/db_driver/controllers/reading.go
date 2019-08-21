@@ -12,7 +12,7 @@ func GetAllReadingsFromNode(nodeId string) ([]models.Reading, error) {
 	var readings []models.Reading
 	iter := db_driver.GetDriver().GetSession().Query(`SELECT * FROM readings WHERE node_id = ?`, nodeId).
 		Consistency(gocql.One).Iter()
-	for iter.Scan(&reading.Timestamp, &reading.NodeId, &reading.WaterLevel, &reading.Photo) {
+	for iter.Scan(&reading.NodeId, &reading.Timestamp, &reading.Photo, &reading.WaterLevel) {
 		readings = append(readings, reading)
 	}
 	return readings, iter.Close()
@@ -20,10 +20,11 @@ func GetAllReadingsFromNode(nodeId string) ([]models.Reading, error) {
 
 func InsertReading(reading models.Reading) (bool, error) {
 	return db_driver.GetDriver().GetSession().
-		Query(`INSERT INTO readings (timestamp, node_id, water_level, photo) VALUES (?, ?, ?, ?) IF NOT EXISTS`).
+		Query(`INSERT INTO readings (node_id, reading_time, photo, water_level) VALUES (?, ?, ?, ?) IF NOT EXISTS`,
+			reading.NodeId, reading.Timestamp, reading.Photo, reading.WaterLevel).
 		ScanCAS()
 }
 func DeleteReading(timestamp time.Time, nodeId string) (bool, error) {
 	return db_driver.GetDriver().GetSession().
-		Query(`DELETE FROM readings WHERE timestamp = ? and node_id = ? IF EXISTS`, timestamp, nodeId).ScanCAS()
+		Query(`DELETE FROM readings WHERE node_id = ? and reading_time = ? IF EXISTS`, nodeId, timestamp).ScanCAS()
 }
