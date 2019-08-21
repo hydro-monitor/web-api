@@ -8,11 +8,11 @@ import (
 )
 
 func GetManualReadingFromNode(c echo.Context) error {
-	nodeId := c.QueryParam("id")
+	nodeId := c.Param("id")
 	reading, err := controllers.GetManualReading(nodeId)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
-			"Error when getting manual reading with id:"+nodeId+"with error: "+err.Error())
+			"Error when getting manual reading with id: "+nodeId+" with error: "+err.Error())
 	}
 	return c.JSON(http.StatusOK, reading)
 }
