@@ -24,7 +24,7 @@ CREATE TABLE hydromonitor.readings (
 ```
 CREATE TABLE hydromonitor.manual_readings (
     node_id text,
-    reading_required bool,
+    reading_required boolean,
     PRIMARY KEY (node_id)
 )
 ```
