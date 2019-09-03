@@ -38,8 +38,8 @@ func main() {
 	e.DELETE("/nodos/:id/mediciones/:timestamp", readings.DeleteReading)
 
 	// Manual Readings
-	e.GET("/nodos/:id/medicion_manual", manual_readings.GetManualReadingFromNode)
-	e.PUT("/nodos/:id/medicion_manual", manual_readings.UpdateManualReading)
+	e.GET("/nodos/:id/medicion-manual", manual_readings.GetManualReadingFromNode)
+	e.PUT("/nodos/:id/medicion-manual", manual_readings.UpdateManualReading)
 
 	// Configurations
 	e.GET("/nodos/:id/configuracion", configurations.GetNodeConfiguration)
