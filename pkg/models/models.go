@@ -3,9 +3,9 @@ package models
 import "time"
 
 type Configuration struct {
-	NodeId                                 string
-	Name                                   string
-	PhotosPerReading                       int
+	NodeId                                 string `json:"id"`
+	Name                                   string `json:"name"`
+	PhotosPerReading                       int    ``
 	MsBetweenReadings                      int
 	WaterLevelLimitForGoingToPreviousState float32
 	WaterLevelLimitForGoingToNextState     float32
@@ -16,8 +16,8 @@ type Configuration struct {
 type Reading struct {
 	NodeId     string    `json:"id"`
 	Timestamp  time.Time `json:"timestamp"`
-	Photo      []byte
-	WaterLevel float32 `json:"water_level"`
+	Photo      []byte    `json:"photo"`
+	WaterLevel float32   `json:"water_level"`
 }
 
 type Node struct {
@@ -27,12 +27,12 @@ type Node struct {
 }
 
 type User struct {
-	Email    string `json:"email" form:"email" query:"email"`
-	Password string `json:"password" form:"password" query:"password"`
-	Admin    bool   `json:"admin" form:"admin" query:"admin"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Admin    bool   `json:"admin"`
 }
 
 type ManualReading struct {
-	NodeId          string
-	ReadingRequired bool
+	NodeId          string `json:"id"`
+	ReadingRequired bool   `json:"reading_required"`
 }

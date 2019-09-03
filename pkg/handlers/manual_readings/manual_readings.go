@@ -18,12 +18,11 @@ func GetManualReadingFromNode(c echo.Context) error {
 }
 
 func UpdateManualReading(c echo.Context) error {
-	m := echo.Map{}
-	if err := c.Bind(&m); err != nil {
-		return c.NoContent(http.StatusInternalServerError)
+	var reading models.ManualReading
+	if err := c.Bind(&reading); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
-	if applied, err := controllers.UpdateManualReading(
-		models.ManualReading{NodeId: m["id"].(string), ReadingRequired: m["required"].(bool)}); err != nil || !applied {
+	if applied, err := controllers.UpdateManualReading(reading); err != nil || !applied {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 	return c.NoContent(http.StatusOK)
