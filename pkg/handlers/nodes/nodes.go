@@ -19,19 +19,18 @@ func GetNode(c echo.Context) error {
 	id := c.Param("id")
 	node, err := controllers.GetNodeByID(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "Error when getting node with id:"+id+"with error: "+err.Error())
+		return c.JSON(http.StatusInternalServerError, "Error when getting node with id: "+id+" with error: "+err.Error())
 	}
 	return c.JSON(http.StatusOK, node)
 }
 
 func PostNode(c echo.Context) error {
-	m := echo.Map{}
-	if err := c.Bind(&m); err != nil {
-		return c.NoContent(http.StatusInternalServerError)
+	var node models.Node
+	if err := c.Bind(&node); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
-
-	if applied, err := controllers.InsertNode(models.Node{Id: m["id"].(string), Description: m["description"].(string)}); err != nil || applied == false {
-		return c.NoContent(http.StatusInternalServerError)
+	if applied, err := controllers.InsertNode(node); err != nil || !applied {
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.NoContent(http.StatusCreated)
 }

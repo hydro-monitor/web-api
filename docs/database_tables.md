@@ -5,6 +5,7 @@
 CREATE TABLE hydromonitor.nodes (
     node_id text,
     description text,
+    state text,
     PRIMARY KEY (node_id)
 )
 ```
@@ -40,16 +41,6 @@ CREATE TABLE hydromonitor.states (
     water_level_limit_for_next_state float,
     previous_state text,
     next_state text,
-    PRIMARY KEY (node_id, name)
-)
-```
-
-### Estados configuraciones
-```
-CREATE TABLE hydromonitor.configurations_status (
-    node_id text,
-    name text,
-    active bool,
     PRIMARY KEY (node_id, name)
 )
 ```

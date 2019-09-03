@@ -3,14 +3,14 @@ package models
 import "time"
 
 type Configuration struct {
-	nodeId                                 string
-	name                                   string
-	photosPerReading                       int
-	msBetweenReadings                      int
-	waterLevelLimitForGoingToPreviousState int
-	waterLevelLimitForGoingToNextState     int
-	previousState                          string
-	nextState                              string
+	NodeId                                 string
+	Name                                   string
+	PhotosPerReading                       int
+	MsBetweenReadings                      int
+	WaterLevelLimitForGoingToPreviousState float32
+	WaterLevelLimitForGoingToNextState     float32
+	PreviousState                          string
+	NextState                              string
 }
 
 type Reading struct {
@@ -21,8 +21,9 @@ type Reading struct {
 }
 
 type Node struct {
-	Id          string `json:"id" form:"id" query:"id"`
-	Description string `json:"description" form:"description" query:"description"`
+	Id          string `json:"id"`
+	Description string `json:"description"`
+	State       string `json:"state"`
 }
 
 type User struct {
