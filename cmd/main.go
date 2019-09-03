@@ -42,8 +42,8 @@ func main() {
 	e.PUT("/nodos/:id/medicion_manual", manual_readings.UpdateManualReading)
 
 	// Configurations
-	e.GET("/nodos/:id/configuracion/", configurations.GetNodeConfiguration)
-	e.POST("nodos/:id/configuracion/", configurations.PostNodeConfiguration)
+	e.GET("/nodos/:id/configuracion", configurations.GetNodeConfiguration)
+	e.PUT("/nodos/:id/configuracion", configurations.PutNodeConfiguration)
 
 	// Login route
 	e.POST("/login", auth.Login)
