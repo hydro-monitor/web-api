@@ -3,7 +3,7 @@
 ### Nodos
 ```
 CREATE TABLE hydromonitor.nodes (
-    node_id text,
+    id text,
     description text,
     state text,
     PRIMARY KEY (node_id)

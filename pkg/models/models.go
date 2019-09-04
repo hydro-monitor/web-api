@@ -21,7 +21,7 @@ type Reading struct {
 }
 
 type Node struct {
-	Id          string `json:"nodeId"`
+	Id          string `json:"id"`
 	Description string `json:"description"`
 	State       string `json:"state"`
 }
