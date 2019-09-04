@@ -19,9 +19,7 @@ func GetAllNodes() ([]models.Node, error) {
 func GetNodeByID(id string) (models.Node, error) {
 	var node models.Node
 	stmt, names := qb.Select("hydromonitor.nodes").Where(qb.Eq("id")).ToCql()
-	q := gocqlx.Query(db_driver.GetDriver().GetSession().Query(stmt), names).BindMap(qb.M{
-		"id": id,
-	})
+	q := gocqlx.Query(db_driver.GetDriver().GetSession().Query(stmt), names).Bind(id)
 	err := q.GetRelease(&node)
 	return node, err
 }
