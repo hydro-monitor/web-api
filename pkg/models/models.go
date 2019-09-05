@@ -14,10 +14,10 @@ type Configuration struct {
 }
 
 type Reading struct {
-	NodeId     string    `json:"nodeId"`
-	Timestamp  time.Time `json:"timestamp"`
-	Photo      []byte    `json:"photo"`
-	WaterLevel float32   `json:"waterLevel"`
+	NodeId      string    `json:"nodeId"`
+	ReadingTime time.Time `json:"readingTime"`
+	Photo       []byte    `json:"photo"`
+	WaterLevel  float32   `json:"waterLevel"`
 }
 
 type Node struct {
