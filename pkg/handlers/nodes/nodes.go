@@ -29,16 +29,16 @@ func PostNode(c echo.Context) error {
 	if err := c.Bind(&node); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	if applied, err := controllers.InsertNode(node); err != nil || !applied {
-		return c.JSON(http.StatusInternalServerError, err)
+	if err := controllers.InsertNode(node); err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.NoContent(http.StatusCreated)
 }
 
 func DeleteNode(c echo.Context) error {
 	id := c.Param("id")
-	if applied, err := controllers.DeleteNode(id); err != nil || applied == false {
-		return c.NoContent(http.StatusInternalServerError)
+	if err := controllers.DeleteNode(id); err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.NoContent(http.StatusOK)
 }

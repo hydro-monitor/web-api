@@ -13,7 +13,7 @@ func GetAllNodeReadings(c echo.Context) error {
 	nodeId := c.Param("id")
 	readings, err := controllers.GetAllReadingsFromNode(nodeId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, readings)
 }
@@ -26,8 +26,8 @@ func PostReading(c echo.Context) error {
 	_ = json.Unmarshal([]byte(raw_reading), &reading)
 	reading.Photo = make([]byte, photo.Size)
 	_, _ = photo2.Read(reading.Photo)
-	if applied, err := controllers.InsertReading(reading); err != nil || applied == false {
-		return c.String(http.StatusInternalServerError, err.Error())
+	if err := controllers.InsertReading(reading); err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.NoContent(http.StatusCreated)
 }
@@ -38,8 +38,8 @@ func DeleteReading(c echo.Context) error {
 	if timeErr != nil {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	if applied, err := controllers.DeleteReading(timestamp, nodeId); err != nil || applied == false {
-		return c.NoContent(http.StatusInternalServerError)
+	if err := controllers.DeleteReading(timestamp, nodeId); err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.NoContent(http.StatusOK)
 }

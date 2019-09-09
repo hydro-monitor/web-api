@@ -20,10 +20,10 @@ func GetManualReadingFromNode(c echo.Context) error {
 func UpdateManualReading(c echo.Context) error {
 	var reading models.ManualReading
 	if err := c.Bind(&reading); err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	if applied, err := controllers.UpdateManualReading(reading); err != nil || !applied {
-		return c.NoContent(http.StatusInternalServerError)
+	if err := controllers.UpdateManualReading(reading); err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.NoContent(http.StatusOK)
 }

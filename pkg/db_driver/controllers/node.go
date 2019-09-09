@@ -1,34 +1,45 @@
 package controllers
 
 import (
-	"github.com/gocql/gocql"
+	"errors"
+	"github.com/scylladb/gocqlx"
+	"github.com/scylladb/gocqlx/qb"
 	"hydro_monitor/web_api/pkg/db_driver"
 	"hydro_monitor/web_api/pkg/models"
 )
 
 func GetAllNodes() ([]models.Node, error) {
-	var node models.Node
 	var nodes []models.Node
-	iter := db_driver.GetDriver().GetSession().Query(`SELECT * FROM nodes`).Consistency(gocql.One).Iter()
-	for iter.Scan(&node.Id, &node.Description, &node.State) {
-		nodes = append(nodes, node)
-	}
-	err := iter.Close()
+	stmt, names := qb.Select("hydromonitor.nodes").ToCql()
+	q := gocqlx.Query(db_driver.GetDriver().GetSession().Query(stmt), names)
+	err := q.SelectRelease(&nodes)
 	return nodes, err
 }
 
 func GetNodeByID(id string) (models.Node, error) {
 	var node models.Node
-	err := db_driver.GetDriver().GetSession().Query(`SELECT * FROM nodes WHERE node_id = ?`, id).Consistency(gocql.One).Scan(&node.Id, &node.Description, &node.State)
+	stmt, names := qb.Select("hydromonitor.nodes").Where(qb.Eq("id")).ToCql()
+	q := gocqlx.Query(db_driver.GetDriver().GetSession().Query(stmt), names).Bind(id)
+	err := q.GetRelease(&node)
 	return node, err
 }
 
-func InsertNode(node models.Node) (bool, error) {
-	return db_driver.GetDriver().GetSession().
-		Query(`INSERT INTO nodes (node_id, description, state) VALUES (?, ?, ?) IF NOT EXISTS`,
-			node.Id, node.Description, node.State).ScanCAS()
+func InsertNode(node models.Node) error {
+	stmt, names := qb.Insert("hydromonitor.nodes").Columns("id", "description", "state").Unique().ToCql()
+	q := gocqlx.Query(db_driver.GetDriver().GetSession().Query(stmt), names).BindStruct(node)
+	applied, err := q.ScanCAS()
+	if !applied {
+		return errors.New("Specified node id already exists")
+	}
+	return err
 }
 
-func DeleteNode(id string) (bool, error) {
-	return db_driver.GetDriver().GetSession().Query(`DELETE FROM nodes WHERE node_id = ? IF EXISTS`, id).ScanCAS()
+func DeleteNode(id string) error {
+	stmt, names := qb.Delete("hydromonitor.nodes").Where(qb.Eq("id")).Existing().ToCql()
+	q := gocqlx.Query(db_driver.GetDriver().GetSession().Query(stmt), names).Bind(id)
+	applied, err := q.ScanCAS()
+	if !applied {
+		return errors.New("Specified node does not exist")
+	}
+	return err
 }
