@@ -16,3 +16,6 @@
 
 # Build directory
 _output
+
+# Enviroment variables files
+.env
