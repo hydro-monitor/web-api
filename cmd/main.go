@@ -3,6 +3,13 @@ package main
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"hydro_monitor/web_api/pkg/controllers"
+	"hydro_monitor/web_api/pkg/services"
+)
+
+/*import (
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"hydro_monitor/web_api/pkg/db_driver"
 	"hydro_monitor/web_api/pkg/handlers/auth"
 	"hydro_monitor/web_api/pkg/handlers/configurations"
@@ -57,4 +64,24 @@ func main() {
 	r.GET("", auth.Restricted)
 
 	e.Logger.Fatal(e.Start(":1323"))
+}*/
+
+func main() {
+	// Services
+	nodeService := services.NewNodeService()
+
+	// Controllers
+	nodeController := controllers.NewNodeController(nodeService)
+
+	e := echo.New()
+
+	// Middleware
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
+	// Routes
+	// Nodes
+	e.GET("/api/nodes/:node_id/configuration", nodeController.GetNodeConfiguration).Name = "get-node-configuration"
+
+	e.Logger.Fatal(e.Start(":8080"))
 }
