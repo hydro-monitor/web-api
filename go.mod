@@ -1,5 +1,7 @@
 module hydro_monitor/web_api
 
+go 1.13
+
 require (
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -9,5 +11,3 @@ require (
 	github.com/scylladb/gocqlx v1.3.1
 	github.com/stretchr/testify v1.4.0
 )
-
-go 1.13

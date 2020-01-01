@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"hydro_monitor/web_api/pkg/controllers"
 	"hydro_monitor/web_api/pkg/services"
+	"os"
 )
 
 /*import (
@@ -67,13 +69,18 @@ func main() {
 }*/
 
 func main() {
+	e := echo.New()
+	port := os.Getenv("PORT")
+	if port == "" {
+		e.Logger.Fatal("$PORT not set")
+		return
+	}
+
 	// Services
 	nodeService := services.NewNodeService()
 
 	// Controllers
 	nodeController := controllers.NewNodeController(nodeService)
-
-	e := echo.New()
 
 	// Middleware
 	e.Use(middleware.Logger())
@@ -83,5 +90,5 @@ func main() {
 	// Nodes
 	e.GET("/api/nodes/:node_id/configuration", nodeController.GetNodeConfiguration).Name = "get-node-configuration"
 
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }
