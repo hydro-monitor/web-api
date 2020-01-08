@@ -20,7 +20,9 @@ func NewNodeController(nodeService services.NodeService) NodeController {
 }
 
 func (n *nodeControllerImpl) GetNodeByID(c echo.Context) error {
-	panic("implement me")
+	nodeId := c.Param("node_id")
+	node, _ := n.nodeService.GetNode(nodeId)
+	return c.JSON(http.StatusOK, node)
 }
 
 func (n *nodeControllerImpl) GetNodeConfiguration(c echo.Context) error {

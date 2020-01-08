@@ -35,7 +35,7 @@ func (suite *NodeServiceTestSuite) TestGetNodeConfiguration() {
 
 	nodeConfiguration, _ := suite.nodeService.GetNodeConfiguration("1")
 
-	assert.Equal(suite.T(), expectedNodeConfiguration, nodeConfiguration)
+	assert.Equal(suite.T(), expectedNodeConfiguration, *nodeConfiguration)
 }
 
 func TestNodeServiceTestSuite(t *testing.T) {

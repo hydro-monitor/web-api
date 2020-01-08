@@ -19,6 +19,11 @@ type NodeServiceMock struct {
 	mock.Mock
 }
 
+func (n *NodeServiceMock) GetNode(nodeId string) (*models.Node, error) {
+	args := n.Called(nodeId)
+	return args.Get(0).(*models.Node), args.Error(1)
+}
+
 func (n *NodeServiceMock) GetNodeConfiguration(nodeId string) (*models.NodeConfiguration, error) {
 	args := n.Called(nodeId)
 	return args.Get(0).(*models.NodeConfiguration), args.Error(1)
@@ -40,6 +45,30 @@ func (suite *NodeControllerTestSuite) SetupTest() {
 	suite.nodeController = NewNodeController(suite.nodeServiceMock)
 	suite.e = echo.New()
 	suite.rec = httptest.NewRecorder()
+}
+
+func (suite *NodeControllerTestSuite) TestGetNode() {
+	node := models.Node{
+		Id:            "1",
+		Description:   "A node",
+		Configuration: "1",
+		State:         "Normal",
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	c := suite.e.NewContext(req, suite.rec)
+	c.SetPath("/nodes/:node_id")
+	c.SetParamNames("node_id")
+	c.SetParamValues("1")
+
+	suite.nodeServiceMock.On("GetNode", "1").Return(&node, nil)
+
+	_ = suite.nodeController.GetNodeByID(c)
+	var response models.Node
+	_ = json.Unmarshal(suite.rec.Body.Bytes(), &response)
+
+	assert.Equal(suite.T(), http.StatusOK, suite.rec.Code)
+	assert.Equal(suite.T(), node, response)
 }
 
 func (suite *NodeControllerTestSuite) TestGetNodeConfiguration() {

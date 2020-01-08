@@ -19,12 +19,6 @@ type Reading struct {
 	WaterLevel  float32   `json:"waterLevel"`
 }
 
-type Node struct {
-	Id          string `json:"id"`
-	Description string `json:"description"`
-	State       string `json:"state"`
-}
-
 type User struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
