@@ -1,0 +1,14 @@
+basePath: /api
+host: localhost
+info:
+  contact:
+    email: manu.porto94@gmail.com
+    name: Manuel Porto
+  description: This is the Hydro Monitor Web API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Hydro Monitor Web API
+  version: "1.0"
+paths: {}
+swagger: "2.0"
