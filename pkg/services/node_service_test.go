@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/bmizerany/assert"
 	"github.com/stretchr/testify/suite"
+	"hydro_monitor/web_api/mocks"
 	"hydro_monitor/web_api/pkg/models"
 	"testing"
 )
@@ -13,7 +14,8 @@ type NodeServiceTestSuite struct {
 }
 
 func (suite *NodeServiceTestSuite) SetupTest() {
-	suite.nodeService = NewNodeService()
+	dbClient := new(mocks.DbClient)
+	suite.nodeService = NewNodeService(dbClient)
 }
 
 func (suite *NodeServiceTestSuite) TestGetNodeConfiguration() {
