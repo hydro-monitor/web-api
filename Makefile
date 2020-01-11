@@ -14,6 +14,9 @@ test:
 web-api:
 	go build -o _output/web-api ./cmd
 
+web-api-linux:
+	env GOOS=linux GOARCH=amd64 go build -o _output/web-api ./cmd
+
 image-web-api:
 	go mod vendor
 	docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) -f deploy/docker/Dockerfile .
