@@ -1,5 +1,3 @@
-CREATE KEYSPACE hydromon WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };
-
 CREATE TABLE IF NOT EXISTS hydromon.nodes (
     id text,
     description text,
@@ -33,17 +31,10 @@ CREATE TABLE IF NOT EXISTS hydromon.configurations (
 CREATE TABLE IF NOT EXISTS hydromon.states (
     id text,
     photos_per_reading int,
-    ms_between_readings int,
-    water_level_limit_for_previous_state float,
-    water_level_limit_for_next_state float,
+    seconds_between_readings int,
+    water_level_limit_for_previous_state float, -- meters
+    water_level_limit_for_next_state float, --meters
     previous_state text,
     next_state text,
     PRIMARY KEY (id)
 );
-
-insert into hydromon.nodes (id, description, configuration, state, manual_reading) values
-    ('lujan-1',
-     'Nodo instalado debajo de un puente',
-     'configuracion-1',
-     'normal',
-     false);
