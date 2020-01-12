@@ -1,7 +1,11 @@
 FROM alpine
 
 ENV PORT 8080
-ENV DB_HOSTS localhost
+ENV DB_HOSTS hydromon-cassandra
 ENV DB_KEYSPACE hydromon
-COPY _output/web-api /
+
+WORKDIR /hydromon-server
+COPY _output/web-api /hydromon-server
+COPY scripts/ /hydromon-server/scripts
+
 ENTRYPOINT ./web-api
