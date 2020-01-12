@@ -21,7 +21,10 @@ func NewNodeController(nodeService services.NodeService) NodeController {
 
 func (n *nodeControllerImpl) GetNodeByID(c echo.Context) error {
 	nodeId := c.Param("node_id")
-	node, _ := n.nodeService.GetNode(nodeId)
+	node, err := n.nodeService.GetNode(nodeId)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
 	return c.JSON(http.StatusOK, node)
 }
 

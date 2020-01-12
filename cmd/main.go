@@ -87,6 +87,7 @@ func main() {
 func main() {
 	// Database
 	db := dbClient.NewDB(strings.Split(os.Getenv("DB_HOSTS"), ","), os.Getenv("DB_KEYSPACE"))
+	db.Migrate("./scripts")
 	defer db.Close()
 
 	// Router
@@ -108,11 +109,18 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routes
+	apiGroup := e.Group("/api")
+
 	// Documentation
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// Nodes
-	e.GET("/api/nodes/:node_id/configuration", nodeController.GetNodeConfiguration).Name = "get-node-configuration"
+	nodeGroup := apiGroup.Group("/nodes")
+	nodeGroup.GET("/:node_id", nodeController.GetNodeByID).Name = "get-node"
+	nodeGroup.GET("/:node_id/configuration", nodeController.GetNodeConfiguration).Name = "get-node-configuration"
+	//nodeGroup.GET("/:node_id/manual-reading", nodeController.GetNodeByID).Name = "get-node-manual-reading"
+
+	// Readings
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }

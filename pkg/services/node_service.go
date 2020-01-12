@@ -22,7 +22,7 @@ func NewNodeService(dbClient db_client.DbClient) NodeService {
 
 func (n *nodeServiceImpl) GetNode(nodeId string) (*models.Node, error) {
 	node := models.Node{Id: nodeId}
-	err := n.nodeRepository.Get(node)
+	err := n.nodeRepository.Get(&node)
 	return &node, err
 }
 

@@ -5,4 +5,5 @@ type Node struct {
 	Description   string `json:"description"`
 	Configuration string `json:"configuration"`
 	State         string `json:"state"`
+	ManualReading bool   `json:"manual_reading"`
 }

@@ -13,7 +13,7 @@ type nodeRepositoryImpl struct {
 func NewNodeRepository(dbClient db_client.DbClient) Repository {
 	nodeMetadata := table.Metadata{
 		Name:    "nodes",
-		Columns: []string{"id", "description", "configuration", "state"},
+		Columns: []string{"id", "description", "configuration", "state", "manual_reading"},
 		PartKey: []string{"id"},
 		SortKey: nil,
 	}
