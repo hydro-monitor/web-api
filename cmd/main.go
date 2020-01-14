@@ -100,11 +100,9 @@ func main() {
 
 	// Services
 	nodeService := services.NewNodeService(db)
-	readingsService := services.NewReadingsService()
 
 	// Controllers
 	nodeController := controllers.NewNodeController(nodeService)
-	readingsController := controllers.NewReadingsController(readingsService)
 
 	// Middleware
 	e.Use(middleware.Logger())
@@ -120,7 +118,7 @@ func main() {
 	nodeGroup := apiGroup.Group("/nodes")
 	nodeGroup.GET("/:node_id", nodeController.GetNodeByID).Name = "get-node"
 	nodeGroup.GET("/:node_id/configuration", nodeController.GetNodeConfiguration).Name = "get-node-configuration"
-	nodeGroup.POST("", readingsController.CreateReading)
+	nodeGroup.POST("/:node_id/readings", nodeController.CreateReading)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }
