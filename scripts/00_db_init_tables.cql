@@ -15,10 +15,10 @@ CREATE TABLE IF NOT EXISTS hydromon.readings (
 );
 
 CREATE TABLE IF NOT EXISTS hydromon.photos (
-    reading_id uuid,
-    photo_id timeuuid,
+    reading_time timeuuid,
+    number int,
     photo blob,
-    PRIMARY KEY (reading_id, photo_id)
+    PRIMARY KEY (reading_time, number)
 );
 
 CREATE TABLE IF NOT EXISTS hydromon.configurations (

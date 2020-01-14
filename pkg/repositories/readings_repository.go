@@ -1,9 +1,16 @@
 package repositories
 
 import (
+	"github.com/gocql/gocql"
 	"github.com/scylladb/gocqlx/table"
 	"hydro_monitor/web_api/pkg/clients/db"
 )
+
+type Reading struct {
+	NodeId      string
+	ReadingTime gocql.UUID
+	WaterLevel  float32
+}
 
 func NewReadingsRepository(client db.Client) Repository {
 	readingsMetadata := table.Metadata{
