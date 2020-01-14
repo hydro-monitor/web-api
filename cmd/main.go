@@ -120,8 +120,7 @@ func main() {
 	nodeGroup := apiGroup.Group("/nodes")
 	nodeGroup.GET("/:node_id", nodeController.GetNodeByID).Name = "get-node"
 	nodeGroup.GET("/:node_id/configuration", nodeController.GetNodeConfiguration).Name = "get-node-configuration"
+	nodeGroup.POST("", readingsController.CreateReading)
 
-	// Readings
-	e.POST("/holahola", readingsController.CreateReading)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }
