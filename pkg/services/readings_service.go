@@ -1,24 +1,19 @@
 package services
 
 import (
-	"hydro_monitor/web_api/pkg/controllers"
+	"hydro_monitor/web_api/pkg/models/api"
 	"io/ioutil"
 )
 
 type ReadingsService interface {
-	GetReading(id string)
-	CreateReading(reading controllers.Reading) error
+	CreateReading(reading api.Reading) error
 }
 
 type readingsServiceImpl struct {
 }
 
-func (r readingsServiceImpl) CreateReading(reading controllers.Reading) error {
+func (r readingsServiceImpl) CreateReading(reading api.Reading) error {
 	return ioutil.WriteFile(reading.Time.String(), reading.Picture, 0644)
-}
-
-func (r readingsServiceImpl) GetReading(id string) {
-	panic("implement me")
 }
 
 func NewReadingsService() ReadingsService {
