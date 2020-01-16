@@ -83,12 +83,12 @@ func main() {
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host localhost
-// @BasePath /api
+// @BasePath /api_models
 func main() {
 	// Database
-	db := db.NewDB(strings.Split(os.Getenv("DB_HOSTS"), ","), os.Getenv("DB_KEYSPACE"))
-	db.Migrate("./scripts")
-	defer db.Close()
+	client := db.NewDB(strings.Split(os.Getenv("DB_HOSTS"), ","), os.Getenv("DB_KEYSPACE"))
+	client.Migrate("./scripts")
+	defer client.Close()
 
 	// Router
 	e := echo.New()
@@ -99,10 +99,12 @@ func main() {
 	}
 
 	// Services
-	nodeService := services.NewNodeService(db)
+	nodeService := services.NewNodeService(client)
+	readingsService := services.NewReadingsService(client)
 
 	// Controllers
 	nodeController := controllers.NewNodeController(nodeService)
+	readingsController := controllers.NewReadingsController(readingsService)
 
 	// Middleware
 	e.Use(middleware.Logger())
@@ -118,7 +120,8 @@ func main() {
 	nodeGroup := apiGroup.Group("/nodes")
 	nodeGroup.GET("/:node_id", nodeController.GetNodeByID).Name = "get-node"
 	nodeGroup.GET("/:node_id/configuration", nodeController.GetNodeConfiguration).Name = "get-node-configuration"
-	nodeGroup.POST("/:node_id/readings", nodeController.CreateReading)
+	nodeGroup.POST("/:node_id/readings", readingsController.CreateReading)
 
+	apiGroup.GET("/readings/:reading_id/photo", readingsController.GetReadingPhoto)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }

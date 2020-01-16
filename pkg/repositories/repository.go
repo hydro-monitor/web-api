@@ -20,5 +20,5 @@ func (r repositoryImpl) Get(args interface{}) error {
 }
 
 func (r repositoryImpl) Insert(args interface{}) error {
-	panic("implement me")
+	return r.client.Insert(r.table, args)
 }

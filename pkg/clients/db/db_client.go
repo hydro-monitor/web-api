@@ -12,11 +12,18 @@ import (
 type Client interface {
 	Migrate(dir string)
 	Get(table *table.Table, args interface{}) error
+	Insert(table *table.Table, args interface{}) error
 	Close()
 }
 
 type clientImpl struct {
 	session *gocql.Session
+}
+
+func (db *clientImpl) Insert(table *table.Table, args interface{}) error {
+	stmt, names := table.Insert()
+	q := gocqlx.Query(db.session.Query(stmt), names).BindStruct(args)
+	return q.ExecRelease()
 }
 
 func NewDB(hosts []string, keyspace string) Client {
