@@ -47,7 +47,7 @@ type swaggerInfo struct {
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
 	Host:        "localhost",
-	BasePath:    "/api",
+	BasePath:    "/api_models",
 	Schemes:     []string{},
 	Title:       "Hydro Monitor Web API",
 	Description: "This is the Hydro Monitor Web API",

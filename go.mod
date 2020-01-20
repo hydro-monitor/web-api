@@ -10,6 +10,7 @@ require (
 	github.com/go-openapi/swag v0.19.6 // indirect
 	github.com/gocql/gocql v0.0.0-20190717234527-2ba2dd7440dc
 	github.com/joho/godotenv v1.3.0
+	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.1.13
 	github.com/labstack/gommon v0.3.0
 	github.com/scylladb/gocqlx v1.3.1

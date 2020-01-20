@@ -15,7 +15,7 @@ type nodeServiceImpl struct {
 	nodeRepository repositories.Repository
 }
 
-func NewNodeService(dbClient db_client.DbClient) NodeService {
+func NewNodeService(dbClient db_client.Client) NodeService {
 	nodeRepository := repositories.NewNodeRepository(dbClient)
 	return &nodeServiceImpl{nodeRepository: nodeRepository}
 }
