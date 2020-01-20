@@ -83,7 +83,7 @@ func main() {
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host localhost
-// @BasePath /api_models
+// @BasePath /api
 func main() {
 	// Database
 	client := db.NewDB(strings.Split(os.Getenv("DB_HOSTS"), ","), os.Getenv("DB_KEYSPACE"))
@@ -121,6 +121,7 @@ func main() {
 	nodeGroup.GET("/:node_id", nodeController.GetNodeByID).Name = "get-node"
 	nodeGroup.GET("/:node_id/configuration", nodeController.GetNodeConfiguration).Name = "get-node-configuration"
 	nodeGroup.POST("/:node_id/readings", readingsController.CreateReading)
+	nodeGroup.GET("/:node_id/readings/:reading_id", readingsController.GetNodeReading)
 
 	apiGroup.GET("/readings/:reading_id/photo", readingsController.GetReadingPhoto)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))

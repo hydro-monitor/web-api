@@ -12,11 +12,22 @@ import (
 type ReadingsController interface {
 	CreateReading(c echo.Context) error
 	GetNodeReadings(c echo.Context) error
+	GetNodeReading(c echo.Context) error
 	GetReadingPhoto(c echo.Context) error
 }
 
 type readingsControllerImpl struct {
 	service services.ReadingsService
+}
+
+func (r *readingsControllerImpl) GetNodeReading(c echo.Context) error {
+	nodeId := c.Param("node_id")
+	readingId := c.Param("reading_id")
+	apiReading, err := r.service.GetNodeReading(nodeId, readingId)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, apiReading)
 }
 
 func (r *readingsControllerImpl) GetNodeReadings(c echo.Context) error {
@@ -43,10 +54,11 @@ func (r *readingsControllerImpl) CreateReading(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 	reading.Picture = picture
-	if err := r.service.CreateReading(nodeId, reading); err != nil {
+	newReading, err := r.service.CreateReading(nodeId, reading)
+	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
-	return c.NoContent(http.StatusCreated)
+	return c.JSON(http.StatusCreated, newReading)
 }
 
 func (r *readingsControllerImpl) extractPicture(c echo.Context) ([]byte, error) {
