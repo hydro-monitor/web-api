@@ -123,6 +123,6 @@ func main() {
 	nodeGroup.POST("/:node_id/readings", readingsController.CreateReading)
 	nodeGroup.GET("/:node_id/readings/:reading_id", readingsController.GetNodeReading)
 
-	apiGroup.GET("/readings/:reading_id/photo", readingsController.GetReadingPhoto)
+	apiGroup.GET("/readings/:reading_id/photos", readingsController.GetReadingPhoto)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }
