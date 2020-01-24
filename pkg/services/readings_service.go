@@ -10,6 +10,7 @@ import (
 
 type ReadingsService interface {
 	CreateReading(nodeId string, reading *api_models.Reading) (*api_models.GetReadingDTO, error)
+	AddPhotoToReading(photoDTO *api_models.PhotoDTO) (*api_models.PhotoMetadataDTO, error)
 	GetNodeReadings(nodeId string) error
 	GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, error)
 	GetReadingPhoto(readingId string, number int) (*db_models.Photo, error)
@@ -18,6 +19,26 @@ type ReadingsService interface {
 type readingsServiceImpl struct {
 	readingsRepository repositories.Repository
 	photosRepository   repositories.Repository
+}
+
+func (r *readingsServiceImpl) AddPhotoToReading(photoDTO *api_models.PhotoDTO) (*api_models.PhotoMetadataDTO, error) {
+	readingUUID, err := gocql.ParseUUID(photoDTO.ReadingId)
+	if err != nil {
+		return nil, err
+	}
+	dbPhoto := db_models.Photo{
+		ReadingTime: readingUUID,
+		Number:      photoDTO.PhotoNumber,
+		Picture:     photoDTO.Photo,
+	}
+	if err := r.photosRepository.Insert(dbPhoto); err != nil {
+		return nil, err
+	}
+	apiPhotoMetadata := api_models.PhotoMetadataDTO{
+		ReadingId:   photoDTO.ReadingId,
+		PhotoNumber: photoDTO.PhotoNumber,
+	}
+	return &apiPhotoMetadata, nil
 }
 
 func (r *readingsServiceImpl) GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, error) {
@@ -33,13 +54,8 @@ func (r *readingsServiceImpl) GetNodeReading(nodeId string, readingId string) (*
 	if err != nil {
 		return nil, err
 	}
-	apiReading := api_models.GetReadingDTO{
-		WaterLevel: dbReading.WaterLevel,
-		Pictures:   make([]int, 0),
-	}
+	apiReading := api_models.GetReadingDTO{WaterLevel: dbReading.WaterLevel}
 	return &apiReading, nil
-	/*	dbPhoto := db_models.Photo{ReadingTime: readingUUID}
-		err = r.photosRepository.Get(dbPhoto)*/
 }
 
 func (r *readingsServiceImpl) GetReadingPhoto(readingId string, number int) (*db_models.Photo, error) {
@@ -64,24 +80,14 @@ func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.R
 		ReadingTime: readingTime,
 		WaterLevel:  reading.WaterLevel,
 	}
-	dbPhoto := db_models.Photo{
-		ReadingTime: readingTime,
-		Number:      0,
-		Picture:     reading.Picture,
-	}
 	if err := r.readingsRepository.Insert(dbReading); err != nil {
-		return nil, err
-	}
-	if err := r.photosRepository.Insert(dbPhoto); err != nil {
 		return nil, err
 	}
 	apiReading := api_models.GetReadingDTO{
 		NodeId:     dbReading.NodeId,
 		ReadingId:  dbReading.ReadingTime.String(),
 		WaterLevel: dbReading.WaterLevel,
-		Pictures:   make([]int, 0),
 	}
-	apiReading.Pictures = append(apiReading.Pictures, dbPhoto.Number)
 	return &apiReading, nil
 }
 

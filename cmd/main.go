@@ -124,5 +124,6 @@ func main() {
 	nodeGroup.GET("/:node_id/readings/:reading_id", readingsController.GetNodeReading)
 
 	apiGroup.GET("/readings/:reading_id/photos", readingsController.GetReadingPhoto)
+	apiGroup.POST("/readings/:reading_id/photos", readingsController.AddPhotoToReading)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }
