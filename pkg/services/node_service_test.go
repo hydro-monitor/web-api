@@ -14,7 +14,7 @@ type NodeServiceTestSuite struct {
 }
 
 func (suite *NodeServiceTestSuite) SetupTest() {
-	dbClient := new(mocks.DbClient)
+	dbClient := new(mocks.Client)
 	suite.nodeService = NewNodeService(dbClient)
 }
 
