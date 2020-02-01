@@ -7,17 +7,25 @@ import (
 	"github.com/scylladb/gocqlx"
 	"github.com/scylladb/gocqlx/migrate"
 	"github.com/scylladb/gocqlx/table"
+	"hydro_monitor/web_api/pkg/models/db_models"
 )
 
 type Client interface {
 	Migrate(dir string)
 	Get(table *table.Table, args interface{}) error
 	Insert(table *table.Table, args interface{}) error
+	Update(table *table.Table, args db_models.DbDTO) error
 	Close()
 }
 
 type clientImpl struct {
 	session *gocql.Session
+}
+
+func (db *clientImpl) Update(table *table.Table, args db_models.DbDTO) error {
+	stmt, names := table.Update(args.GetColumns()...)
+	q := gocqlx.Query(db.session.Query(stmt), names).BindStruct(args)
+	return q.ExecRelease()
 }
 
 func (db *clientImpl) Insert(table *table.Table, args interface{}) error {

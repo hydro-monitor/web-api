@@ -39,3 +39,17 @@ func (_m *NodeController) GetNodeConfiguration(c echo.Context) error {
 
 	return r0
 }
+
+// UpdateNodeManualReading provides a mock function with given fields: c
+func (_m *NodeController) UpdateNodeManualReading(c echo.Context) error {
+	ret := _m.Called(c)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(echo.Context) error); ok {
+		r0 = rf(c)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}

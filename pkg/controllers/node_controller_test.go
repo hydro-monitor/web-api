@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"github.com/bmizerany/assert"
 	"github.com/labstack/echo/v4"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"hydro_monitor/web_api/mocks"
 	"hydro_monitor/web_api/pkg/models"
 	"net/http"
 	"net/http/httptest"
@@ -13,35 +13,18 @@ import (
 )
 
 /*
-	Test objects
-*/
-type NodeServiceMock struct {
-	mock.Mock
-}
-
-func (n *NodeServiceMock) GetNode(nodeId string) (*models.Node, error) {
-	args := n.Called(nodeId)
-	return args.Get(0).(*models.Node), args.Error(1)
-}
-
-func (n *NodeServiceMock) GetNodeConfiguration(nodeId string) (*models.NodeConfiguration, error) {
-	args := n.Called(nodeId)
-	return args.Get(0).(*models.NodeConfiguration), args.Error(1)
-}
-
-/*
 	Test suite
 */
 type NodeControllerTestSuite struct {
 	suite.Suite
-	nodeServiceMock *NodeServiceMock
+	nodeServiceMock *mocks.NodeService
 	nodeController  NodeController
 	e               *echo.Echo
 	rec             *httptest.ResponseRecorder
 }
 
 func (suite *NodeControllerTestSuite) SetupTest() {
-	suite.nodeServiceMock = new(NodeServiceMock)
+	suite.nodeServiceMock = new(mocks.NodeService)
 	suite.nodeController = NewNodeController(suite.nodeServiceMock)
 	suite.e = echo.New()
 	suite.rec = httptest.NewRecorder()
