@@ -7,3 +7,7 @@ type Reading struct {
 	ReadingTime gocql.UUID
 	WaterLevel  float64
 }
+
+func (r *Reading) GetColumns() []string {
+	return nil
+}

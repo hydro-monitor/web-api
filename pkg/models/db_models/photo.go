@@ -7,3 +7,7 @@ type Photo struct {
 	Number      int
 	Picture     []byte
 }
+
+func (p *Photo) GetColumns() []string {
+	return nil
+}

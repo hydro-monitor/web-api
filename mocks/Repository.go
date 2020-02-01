@@ -28,11 +28,11 @@ func (_m *Repository) Get(args interface{}) error {
 }
 
 // Insert provides a mock function with given fields: args
-func (_m *Repository) Insert(args interface{}) error {
+func (_m *Repository) Insert(args db_models.DbDTO) error {
 	ret := _m.Called(args)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(interface{}) error); ok {
+	if rf, ok := ret.Get(0).(func(db_models.DbDTO) error); ok {
 		r0 = rf(args)
 	} else {
 		r0 = ret.Error(0)

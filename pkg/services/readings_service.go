@@ -26,7 +26,7 @@ func (r *readingsServiceImpl) AddPhotoToReading(photoDTO *api_models.PhotoDTO) (
 	if err != nil {
 		return nil, err
 	}
-	dbPhoto := db_models.Photo{
+	dbPhoto := &db_models.Photo{
 		ReadingTime: readingUUID,
 		Number:      photoDTO.PhotoNumber,
 		Picture:     photoDTO.Photo,
@@ -75,7 +75,7 @@ func (r *readingsServiceImpl) GetNodeReadings(nodeId string) error {
 
 func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.Reading) (*api_models.GetReadingDTO, error) {
 	readingTime := gocql.UUIDFromTime(reading.Time)
-	dbReading := db_models.Reading{
+	dbReading := &db_models.Reading{
 		NodeId:      nodeId,
 		ReadingTime: readingTime,
 		WaterLevel:  reading.WaterLevel,

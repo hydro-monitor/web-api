@@ -10,12 +10,18 @@ import (
 
 type NodeService interface {
 	GetNode(nodeId string) (*models.Node, error)
+	GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error)
 	GetNodeConfiguration(nodeId string) (*models.NodeConfiguration, error)
 	UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error)
 }
 
 type nodeServiceImpl struct {
 	nodeRepository repositories.Repository
+}
+
+func (n *nodeServiceImpl) GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error) {
+	//respManualReading := &db_models.ManualReadingDTO{NodeId: nodeId}
+	return nil, nil
 }
 
 func (n *nodeServiceImpl) UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error) {
