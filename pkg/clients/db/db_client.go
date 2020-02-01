@@ -12,7 +12,7 @@ import (
 
 type Client interface {
 	Migrate(dir string)
-	Get(table *table.Table, args interface{}) error
+	Get(table *table.Table, args db_models.DbDTO) error
 	Insert(table *table.Table, args db_models.DbDTO) error
 	Update(table *table.Table, args db_models.DbDTO) error
 	Close()
@@ -54,8 +54,8 @@ func (db *clientImpl) Migrate(dir string) {
 	}
 }
 
-func (db *clientImpl) Get(table *table.Table, args interface{}) error {
-	stmt, names := table.Get()
+func (db *clientImpl) Get(table *table.Table, args db_models.DbDTO) error {
+	stmt, names := table.Get(args.GetColumns()...)
 	q := gocqlx.Query(db.session.Query(stmt), names).BindStruct(args)
 	return q.GetRelease(args)
 }

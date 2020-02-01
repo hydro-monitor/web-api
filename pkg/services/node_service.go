@@ -9,7 +9,7 @@ import (
 )
 
 type NodeService interface {
-	GetNode(nodeId string) (*models.Node, error)
+	GetNode(nodeId string) (*api_models.NodeDTO, error)
 	GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error)
 	GetNodeConfiguration(nodeId string) (*models.NodeConfiguration, error)
 	UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error)
@@ -20,8 +20,11 @@ type nodeServiceImpl struct {
 }
 
 func (n *nodeServiceImpl) GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error) {
-	//respManualReading := &db_models.ManualReadingDTO{NodeId: nodeId}
-	return nil, nil
+	respManualReading := &db_models.ManualReadingDTO{NodeId: nodeId}
+	if err := n.nodeRepository.Get(respManualReading); err != nil {
+		return nil, err
+	}
+	return respManualReading.ToAPIManualReadingDTO(), nil
 }
 
 func (n *nodeServiceImpl) UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error) {
@@ -41,10 +44,10 @@ func NewNodeService(dbClient db.Client) NodeService {
 	return &nodeServiceImpl{nodeRepository: nodeRepository}
 }
 
-func (n *nodeServiceImpl) GetNode(nodeId string) (*models.Node, error) {
-	node := models.Node{Id: nodeId}
+func (n *nodeServiceImpl) GetNode(nodeId string) (*api_models.NodeDTO, error) {
+	node := db_models.NodeDTO{Id: nodeId}
 	err := n.nodeRepository.Get(&node)
-	return &node, err
+	return node.ToAPINodeDTO(), err
 }
 
 func (n *nodeServiceImpl) GetNodeConfiguration(nodeId string) (*models.NodeConfiguration, error) {

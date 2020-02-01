@@ -61,6 +61,7 @@ func main() {
 	nodeGroup := apiGroup.Group("/nodes")
 	nodeGroup.GET("/:node_id", nodeController.GetNodeByID)
 	nodeGroup.GET("/:node_id/configuration", nodeController.GetNodeConfiguration)
+	nodeGroup.GET("/:node_id/manual-reading", nodeController.GetNodeManualReadingStatus)
 	nodeGroup.PUT("/:node_id/manual-reading", nodeController.UpdateNodeManualReading)
 	nodeGroup.POST("/:node_id/readings", readingsController.CreateReading)
 	nodeGroup.GET("/:node_id/readings/:reading_id", readingsController.GetNodeReading)

@@ -7,7 +7,7 @@ import (
 )
 
 type Repository interface {
-	Get(args interface{}) error
+	Get(args db_models.DbDTO) error
 	Insert(args db_models.DbDTO) error
 	Update(args db_models.DbDTO) error
 }
@@ -17,7 +17,7 @@ type repositoryImpl struct {
 	client db.Client
 }
 
-func (r repositoryImpl) Get(args interface{}) error {
+func (r repositoryImpl) Get(args db_models.DbDTO) error {
 	return r.client.Get(r.table, args)
 }
 

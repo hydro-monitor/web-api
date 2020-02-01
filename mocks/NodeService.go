@@ -16,15 +16,15 @@ type NodeService struct {
 }
 
 // GetNode provides a mock function with given fields: nodeId
-func (_m *NodeService) GetNode(nodeId string) (*models.Node, error) {
+func (_m *NodeService) GetNode(nodeId string) (*api_models.NodeDTO, error) {
 	ret := _m.Called(nodeId)
 
-	var r0 *models.Node
-	if rf, ok := ret.Get(0).(func(string) *models.Node); ok {
+	var r0 *api_models.NodeDTO
+	if rf, ok := ret.Get(0).(func(string) *api_models.NodeDTO); ok {
 		r0 = rf(nodeId)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Node)
+			r0 = ret.Get(0).(*api_models.NodeDTO)
 		}
 	}
 

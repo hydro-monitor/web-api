@@ -9,12 +9,22 @@ import (
 
 type NodeController interface {
 	GetNodeByID(c echo.Context) error
+	GetNodeManualReadingStatus(c echo.Context) error
 	GetNodeConfiguration(c echo.Context) error
 	UpdateNodeManualReading(c echo.Context) error
 }
 
 type nodeControllerImpl struct {
 	nodeService services.NodeService
+}
+
+func (n *nodeControllerImpl) GetNodeManualReadingStatus(c echo.Context) error {
+	nodeId := c.Param("node_id")
+	respManualReading, err := n.nodeService.GetNodeManualReadingStatus(nodeId)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, respManualReading)
 }
 
 func (n *nodeControllerImpl) UpdateNodeManualReading(c echo.Context) error {

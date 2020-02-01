@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"hydro_monitor/web_api/mocks"
 	"hydro_monitor/web_api/pkg/models"
+	"hydro_monitor/web_api/pkg/models/api_models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -31,7 +32,7 @@ func (suite *NodeControllerTestSuite) SetupTest() {
 }
 
 func (suite *NodeControllerTestSuite) TestGetNode() {
-	node := models.Node{
+	node := api_models.NodeDTO{
 		Id:            "1",
 		Description:   "A node",
 		Configuration: "1",
@@ -47,7 +48,7 @@ func (suite *NodeControllerTestSuite) TestGetNode() {
 	suite.nodeServiceMock.On("GetNode", "1").Return(&node, nil)
 
 	_ = suite.nodeController.GetNodeByID(c)
-	var response models.Node
+	var response api_models.NodeDTO
 	_ = json.Unmarshal(suite.rec.Body.Bytes(), &response)
 
 	assert.Equal(suite.T(), http.StatusOK, suite.rec.Code)
