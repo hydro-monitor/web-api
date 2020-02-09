@@ -1,6 +1,7 @@
-package models
+package api_models
 
 type State struct {
+	NodeId      string  `json:"nodeId"`
 	Name        string  `json:"name"`
 	Interval    int     `json:"interval"`
 	UpperLimit  float64 `json:"upperLimit"`

@@ -2,7 +2,6 @@ package services
 
 import (
 	"hydro_monitor/web_api/pkg/clients/db"
-	"hydro_monitor/web_api/pkg/models"
 	"hydro_monitor/web_api/pkg/models/api_models"
 	"hydro_monitor/web_api/pkg/models/db_models"
 	"hydro_monitor/web_api/pkg/repositories"
@@ -11,12 +10,13 @@ import (
 type NodeService interface {
 	GetNode(nodeId string) (*api_models.NodeDTO, error)
 	GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error)
-	GetNodeConfiguration(nodeId string) (*models.NodeConfiguration, error)
+	GetNodeConfiguration(nodeId string) ([]*api_models.State, error)
 	UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error)
 }
 
 type nodeServiceImpl struct {
-	nodeRepository repositories.Repository
+	nodeRepository   repositories.Repository
+	statesRepository repositories.Repository
 }
 
 func (n *nodeServiceImpl) GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error) {
@@ -41,7 +41,8 @@ func (n *nodeServiceImpl) UpdateNodeManualReading(nodeId string, manualReading b
 
 func NewNodeService(dbClient db.Client) NodeService {
 	nodeRepository := repositories.NewNodeRepository(dbClient)
-	return &nodeServiceImpl{nodeRepository: nodeRepository}
+	statesRepository := repositories.NewStatesRepository(dbClient)
+	return &nodeServiceImpl{nodeRepository: nodeRepository, statesRepository: statesRepository}
 }
 
 func (n *nodeServiceImpl) GetNode(nodeId string) (*api_models.NodeDTO, error) {
@@ -50,21 +51,10 @@ func (n *nodeServiceImpl) GetNode(nodeId string) (*api_models.NodeDTO, error) {
 	return node.ToAPINodeDTO(), err
 }
 
-func (n *nodeServiceImpl) GetNodeConfiguration(nodeId string) (*models.NodeConfiguration, error) {
-	state1 := models.State{
-		Name:        "Normal",
-		Interval:    60,
-		UpperLimit:  9999999,
-		LowerLimit:  -9999999,
-		PicturesNum: 0,
-		Next:        "Alto",
-		Prev:        "Bajo",
+func (n *nodeServiceImpl) GetNodeConfiguration(nodeId string) ([]*api_models.State, error) {
+	statesDto := db_models.NewStatesDTO(nodeId)
+	if err := n.statesRepository.Select(statesDto); err != nil {
+		return nil, err
 	}
-	statesMap := make(map[string]*models.State)
-	statesMap[state1.Name] = &state1
-	expectedNodeConfiguration := models.NodeConfiguration{
-		NodeId: nodeId,
-		States: statesMap,
-	}
-	return &expectedNodeConfiguration, nil
+	return statesDto.ConvertToAPIStates(), nil
 }

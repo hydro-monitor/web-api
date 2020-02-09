@@ -15,11 +15,18 @@ type Client interface {
 	Get(table *table.Table, args db_models.DbDTO) error
 	Insert(table *table.Table, args db_models.DbDTO) error
 	Update(table *table.Table, args db_models.DbDTO) error
+	Select(table *table.Table, args db_models.SelectDTO) error
 	Close()
 }
 
 type clientImpl struct {
 	session *gocql.Session
+}
+
+func (db *clientImpl) Select(table *table.Table, args db_models.SelectDTO) error {
+	stmt, names := table.Select(args.GetColumns()...)
+	q := gocqlx.Query(db.session.Query(stmt), names).BindMap(args.GetBindMap())
+	return q.SelectRelease(args.GetArgs())
 }
 
 func (db *clientImpl) Update(table *table.Table, args db_models.DbDTO) error {

@@ -55,6 +55,9 @@ func (n *nodeControllerImpl) GetNodeByID(c echo.Context) error {
 
 func (n *nodeControllerImpl) GetNodeConfiguration(c echo.Context) error {
 	nodeId := c.Param("node_id")
-	nodeConfiguration, _ := n.nodeService.GetNodeConfiguration(nodeId)
+	nodeConfiguration, err := n.nodeService.GetNodeConfiguration(nodeId)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
 	return c.JSON(http.StatusOK, nodeConfiguration)
 }
