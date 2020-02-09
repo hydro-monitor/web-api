@@ -84,17 +84,26 @@ func (_m *ReadingsService) GetNodeReading(nodeId string, readingId string) (*api
 }
 
 // GetNodeReadings provides a mock function with given fields: nodeId
-func (_m *ReadingsService) GetNodeReadings(nodeId string) error {
+func (_m *ReadingsService) GetNodeReadings(nodeId string) ([]*api_models.GetReadingDTO, error) {
 	ret := _m.Called(nodeId)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(string) error); ok {
+	var r0 []*api_models.GetReadingDTO
+	if rf, ok := ret.Get(0).(func(string) []*api_models.GetReadingDTO); ok {
 		r0 = rf(nodeId)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*api_models.GetReadingDTO)
+		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(nodeId)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // GetReadingPhoto provides a mock function with given fields: readingId, number

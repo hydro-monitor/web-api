@@ -9,9 +9,11 @@ CREATE TABLE IF NOT EXISTS hydromon.nodes (
 
 CREATE TABLE IF NOT EXISTS hydromon.readings (
     node_id text,
-    reading_time timeuuid,
+    reading_id timeuuid,
+    reading_time timestamp,
     water_level double,
-    PRIMARY KEY (node_id, reading_time)
+    manual_reading boolean,
+    PRIMARY KEY (node_id, reading_id)
 );
 
 CREATE TABLE IF NOT EXISTS hydromon.photos (

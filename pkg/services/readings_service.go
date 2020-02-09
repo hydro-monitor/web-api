@@ -11,7 +11,7 @@ import (
 type ReadingsService interface {
 	CreateReading(nodeId string, reading *api_models.Reading) (*api_models.GetReadingDTO, error)
 	AddPhotoToReading(photoDTO *api_models.PhotoDTO) (*api_models.PhotoMetadataDTO, error)
-	GetNodeReadings(nodeId string) error
+	GetNodeReadings(nodeId string) ([]*api_models.GetReadingDTO, error)
 	GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, error)
 	GetReadingPhoto(readingId string, number int) (*db_models.Photo, error)
 }
@@ -47,8 +47,8 @@ func (r *readingsServiceImpl) GetNodeReading(nodeId string, readingId string) (*
 		return nil, err
 	}
 	dbReading := db_models.Reading{
-		NodeId:      nodeId,
-		ReadingTime: readingUUID,
+		NodeId:    nodeId,
+		ReadingId: readingUUID,
 	}
 	err = r.readingsRepository.Get(&dbReading)
 	if err != nil {
@@ -68,27 +68,26 @@ func (r *readingsServiceImpl) GetReadingPhoto(readingId string, number int) (*db
 	return &dbPhoto, err
 }
 
-func (r *readingsServiceImpl) GetNodeReadings(nodeId string) error {
-	reading := db_models.Reading{NodeId: nodeId}
-	return r.readingsRepository.Get(&reading)
+func (r *readingsServiceImpl) GetNodeReadings(nodeId string) ([]*api_models.GetReadingDTO, error) {
+	readings := db_models.NewReadingsDTO(nodeId)
+	if err := r.readingsRepository.Select(readings); err != nil {
+		return nil, err
+	}
+	return readings.ConvertToAPIGetReadings(), nil
 }
 
 func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.Reading) (*api_models.GetReadingDTO, error) {
-	readingTime := gocql.UUIDFromTime(reading.Time)
+	readingTimeUUID := gocql.UUIDFromTime(reading.Time)
 	dbReading := &db_models.Reading{
 		NodeId:      nodeId,
-		ReadingTime: readingTime,
+		ReadingId:   readingTimeUUID,
+		ReadingTime: reading.Time,
 		WaterLevel:  reading.WaterLevel,
 	}
 	if err := r.readingsRepository.Insert(dbReading); err != nil {
 		return nil, err
 	}
-	apiReading := api_models.GetReadingDTO{
-		NodeId:     dbReading.NodeId,
-		ReadingId:  dbReading.ReadingTime.String(),
-		WaterLevel: dbReading.WaterLevel,
-	}
-	return &apiReading, nil
+	return dbReading.ConvertToAPIGetReading(), nil
 }
 
 func NewReadingsService(client db.Client) ReadingsService {
