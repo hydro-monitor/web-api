@@ -1,8 +1,6 @@
 CREATE TABLE IF NOT EXISTS hydromon.nodes (
     id text,
     description text,
-    configuration text,
-    state text,
     manual_reading boolean,
     PRIMARY KEY (id)
 );
