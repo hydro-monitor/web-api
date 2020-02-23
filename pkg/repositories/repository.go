@@ -12,6 +12,7 @@ type Repository interface {
 	Insert(args db_models.DbDTO) error
 	Update(args db_models.DbDTO) error
 	Select(args db_models.SelectDTO) error
+	SelectAll(args db_models.SelectDTO) error
 }
 
 type repositoryImpl struct {
@@ -37,4 +38,8 @@ func (r *repositoryImpl) Update(args db_models.DbDTO) error {
 
 func (r *repositoryImpl) Select(args db_models.SelectDTO) error {
 	return r.client.Select(r.table, args)
+}
+
+func (r *repositoryImpl) SelectAll(args db_models.SelectDTO)  error {
+	return r.client.SelectAll(r.table, args)
 }

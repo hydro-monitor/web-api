@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/gommon/log"
 	"github.com/scylladb/gocqlx"
 	"github.com/scylladb/gocqlx/migrate"
+	"github.com/scylladb/gocqlx/qb"
 	"github.com/scylladb/gocqlx/table"
 	"hydro_monitor/web_api/pkg/models/db_models"
 )
@@ -17,11 +18,18 @@ type Client interface {
 	Insert(table *table.Table, args db_models.DbDTO) error
 	Update(table *table.Table, args db_models.DbDTO) error
 	Select(table *table.Table, args db_models.SelectDTO) error
+	SelectAll(table *table.Table,args db_models.SelectDTO) error
 	Close()
 }
 
 type clientImpl struct {
 	session *gocql.Session
+}
+
+func (db *clientImpl) SelectAll(table *table.Table, args db_models.SelectDTO) error {
+	stmt, names := qb.Select(table.Name()).ToCql()
+	q := gocqlx.Query(db.session.Query(stmt), names)
+	return q.SelectRelease(args.GetArgs())
 }
 
 func (db *clientImpl) Delete(table *table.Table, args db_models.DbDTO) error {

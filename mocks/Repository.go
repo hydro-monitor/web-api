@@ -69,6 +69,20 @@ func (_m *Repository) Select(args db_models.SelectDTO) error {
 	return r0
 }
 
+// SelectAll provides a mock function with given fields: args
+func (_m *Repository) SelectAll(args db_models.SelectDTO) error {
+	ret := _m.Called(args)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(db_models.SelectDTO) error); ok {
+		r0 = rf(args)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Update provides a mock function with given fields: args
 func (_m *Repository) Update(args db_models.DbDTO) error {
 	ret := _m.Called(args)

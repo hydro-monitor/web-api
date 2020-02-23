@@ -11,6 +11,7 @@ type NodeService interface {
 	CreateNode(node *api_models.NodeDTO) error
 	DeleteNode(nodeId string) error
 	GetNode(nodeId string) (*api_models.NodeDTO, error)
+	GetNodes() ([]*api_models.NodeDTO, error)
 	GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error)
 	GetNodeConfiguration(nodeId string) ([]*api_models.State, error)
 	UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error)
@@ -19,6 +20,14 @@ type NodeService interface {
 type nodeServiceImpl struct {
 	nodeRepository   repositories.Repository
 	statesRepository repositories.Repository
+}
+
+func (n *nodeServiceImpl) GetNodes() ([]*api_models.NodeDTO, error) {
+	nodesDTO := db_models.NewNodesDTO()
+	if err := n.nodeRepository.SelectAll(nodesDTO); err != nil {
+		return nil, err
+	}
+	return nodesDTO.ConvertToApiNodes(), nil
 }
 
 func (n *nodeServiceImpl) DeleteNode(nodeId string) error {

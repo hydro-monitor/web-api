@@ -10,6 +10,7 @@ import (
 type NodeController interface {
 	DeleteNode(c echo.Context) error
 	PostNode(c echo.Context) error
+	GetNodes(c echo.Context) error
 	GetNodeByID(c echo.Context) error
 	GetNodeManualReadingStatus(c echo.Context) error
 	GetNodeConfiguration(c echo.Context) error
@@ -18,6 +19,14 @@ type NodeController interface {
 
 type nodeControllerImpl struct {
 	nodeService services.NodeService
+}
+
+func (n *nodeControllerImpl) GetNodes(c echo.Context) error {
+	nodes, err := n.nodeService.GetNodes()
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, nodes)
 }
 
 func (n *nodeControllerImpl) DeleteNode(c echo.Context) error {
