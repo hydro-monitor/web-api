@@ -50,6 +50,7 @@ func main() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(middleware.CORS())
 
 	// Routes
 	apiGroup := e.Group("/api")
@@ -65,6 +66,7 @@ func main() {
 	nodeGroup.PUT("/:node_id/manual-reading", nodeController.UpdateNodeManualReading)
 	nodeGroup.POST("/:node_id/readings", readingsController.CreateReading)
 	nodeGroup.GET("/:node_id/readings/:reading_id", readingsController.GetNodeReading)
+	nodeGroup.GET("/:node_id/readings", readingsController.GetNodeReadings)
 	nodeGroup.GET("/:node_id/readings/:reading_id/photos", readingsController.GetReadingPhoto)
 	nodeGroup.POST("/:node_id/readings/:reading_id/photos", readingsController.AddPhotoToReading)
 

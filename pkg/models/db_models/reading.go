@@ -1,13 +1,29 @@
 package db_models
 
-import "github.com/gocql/gocql"
+import (
+	"github.com/gocql/gocql"
+	"hydro_monitor/web_api/pkg/models/api_models"
+	"time"
+)
 
 type Reading struct {
-	NodeId      string
-	ReadingTime gocql.UUID
-	WaterLevel  float64
+	NodeId        string
+	ReadingId     gocql.UUID
+	ReadingTime   time.Time
+	WaterLevel    float64
+	ManualReading bool
 }
 
 func (r *Reading) GetColumns() []string {
 	return nil
+}
+
+func (r *Reading) ConvertToAPIGetReading() *api_models.GetReadingDTO {
+	return &api_models.GetReadingDTO{
+		NodeId:        r.NodeId,
+		ReadingId:     r.ReadingId.String(),
+		ReadingTime:   r.ReadingTime,
+		WaterLevel:    r.WaterLevel,
+		ManualReading: r.ManualReading,
+	}
 }

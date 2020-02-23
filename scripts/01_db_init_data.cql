@@ -1,5 +1,5 @@
-INSERT INTO hydromon.nodes (id, description, configuration, state, manual_reading) VALUES
-('lujan-1', 'Nodo instalado debajo de un puente', 'configuracion-1', '1', false);
+INSERT INTO hydromon.nodes (id, description, manual_reading) VALUES
+('lujan-1', 'Nodo instalado debajo de un puente', false);
 
 INSERT INTO hydromon.states (node_id, name, photos_per_reading, reading_interval, lower_limit, upper_limit, previous_state, next_state) VALUES
 ('lujan-1', '1', 1, 3600, -999, 1, null, '2');

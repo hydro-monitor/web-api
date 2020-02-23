@@ -48,7 +48,12 @@ func (r *readingsControllerImpl) GetNodeReading(c echo.Context) error {
 }
 
 func (r *readingsControllerImpl) GetNodeReadings(c echo.Context) error {
-	panic("not implemented")
+	nodeId := c.Param("node_id")
+	getReadings, err := r.service.GetNodeReadings(nodeId)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, getReadings)
 }
 
 func (r *readingsControllerImpl) GetReadingPhoto(c echo.Context) error {

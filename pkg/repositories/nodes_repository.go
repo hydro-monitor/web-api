@@ -8,7 +8,7 @@ import (
 func NewNodeRepository(client db.Client) Repository {
 	nodeMetadata := table.Metadata{
 		Name:    "nodes",
-		Columns: []string{"id", "description", "configuration", "state", "manual_reading"},
+		Columns: []string{"id", "description", "manual_reading"},
 		PartKey: []string{"id"},
 		SortKey: nil,
 	}
