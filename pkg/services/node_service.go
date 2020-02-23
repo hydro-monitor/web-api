@@ -8,6 +8,8 @@ import (
 )
 
 type NodeService interface {
+	CreateNode(node *api_models.NodeDTO) error
+	DeleteNode(nodeId string) error
 	GetNode(nodeId string) (*api_models.NodeDTO, error)
 	GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error)
 	GetNodeConfiguration(nodeId string) ([]*api_models.State, error)
@@ -17,6 +19,20 @@ type NodeService interface {
 type nodeServiceImpl struct {
 	nodeRepository   repositories.Repository
 	statesRepository repositories.Repository
+}
+
+func (n *nodeServiceImpl) DeleteNode(nodeId string) error {
+	dbNode := &db_models.NodeDTO{Id: nodeId}
+	return n.nodeRepository.Delete(dbNode)
+}
+
+func (n *nodeServiceImpl) CreateNode(node *api_models.NodeDTO) error {
+	dbNode := &db_models.NodeDTO{
+		Id:            node.Id,
+		Description:   node.Description,
+		ManualReading: false,
+	}
+	return n.nodeRepository.Insert(dbNode)
 }
 
 func (n *nodeServiceImpl) GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error) {

@@ -12,6 +12,7 @@ import (
 
 type Client interface {
 	Migrate(dir string)
+	Delete(table *table.Table, args db_models.DbDTO) error
 	Get(table *table.Table, args db_models.DbDTO) error
 	Insert(table *table.Table, args db_models.DbDTO) error
 	Update(table *table.Table, args db_models.DbDTO) error
@@ -21,6 +22,12 @@ type Client interface {
 
 type clientImpl struct {
 	session *gocql.Session
+}
+
+func (db *clientImpl) Delete(table *table.Table, args db_models.DbDTO) error {
+	stmt, names := table.Delete(args.GetColumns()...)
+	q := gocqlx.Query(db.session.Query(stmt), names).BindStruct(args)
+	return q.ExecRelease()
 }
 
 func (db *clientImpl) Select(table *table.Table, args db_models.SelectDTO) error {

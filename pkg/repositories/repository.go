@@ -7,6 +7,7 @@ import (
 )
 
 type Repository interface {
+	Delete(args db_models.DbDTO) error
 	Get(args db_models.DbDTO) error
 	Insert(args db_models.DbDTO) error
 	Update(args db_models.DbDTO) error
@@ -18,7 +19,11 @@ type repositoryImpl struct {
 	client db.Client
 }
 
-func (r repositoryImpl) Get(args db_models.DbDTO) error {
+func (r *repositoryImpl) Delete(args db_models.DbDTO) error {
+	return r.client.Delete(r.table, args)
+}
+
+func (r *repositoryImpl) Get(args db_models.DbDTO) error {
 	return r.client.Get(r.table, args)
 }
 

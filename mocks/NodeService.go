@@ -13,6 +13,34 @@ type NodeService struct {
 	mock.Mock
 }
 
+// CreateNode provides a mock function with given fields: node
+func (_m *NodeService) CreateNode(node *api_models.NodeDTO) error {
+	ret := _m.Called(node)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*api_models.NodeDTO) error); ok {
+		r0 = rf(node)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// DeleteNode provides a mock function with given fields: nodeId
+func (_m *NodeService) DeleteNode(nodeId string) error {
+	ret := _m.Called(nodeId)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(nodeId)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetNode provides a mock function with given fields: nodeId
 func (_m *NodeService) GetNode(nodeId string) (*api_models.NodeDTO, error) {
 	ret := _m.Called(nodeId)

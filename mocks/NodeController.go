@@ -12,6 +12,20 @@ type NodeController struct {
 	mock.Mock
 }
 
+// DeleteNode provides a mock function with given fields: c
+func (_m *NodeController) DeleteNode(c echo.Context) error {
+	ret := _m.Called(c)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(echo.Context) error); ok {
+		r0 = rf(c)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetNodeByID provides a mock function with given fields: c
 func (_m *NodeController) GetNodeByID(c echo.Context) error {
 	ret := _m.Called(c)
@@ -42,6 +56,20 @@ func (_m *NodeController) GetNodeConfiguration(c echo.Context) error {
 
 // GetNodeManualReadingStatus provides a mock function with given fields: c
 func (_m *NodeController) GetNodeManualReadingStatus(c echo.Context) error {
+	ret := _m.Called(c)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(echo.Context) error); ok {
+		r0 = rf(c)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// PostNode provides a mock function with given fields: c
+func (_m *NodeController) PostNode(c echo.Context) error {
 	ret := _m.Called(c)
 
 	var r0 error
