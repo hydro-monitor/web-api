@@ -147,6 +147,20 @@ func (_m *NodeService) GetNodes() ([]*api_models.NodeDTO, error) {
 	return r0, r1
 }
 
+// UpdateNodeConfiguration provides a mock function with given fields: states
+func (_m *NodeService) UpdateNodeConfiguration(states []*api_models.State) error {
+	ret := _m.Called(states)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func([]*api_models.State) error); ok {
+		r0 = rf(states)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // UpdateNodeManualReading provides a mock function with given fields: nodeId, manualReading
 func (_m *NodeService) UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error) {
 	ret := _m.Called(nodeId, manualReading)
