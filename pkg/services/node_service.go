@@ -8,6 +8,7 @@ import (
 )
 
 type NodeService interface {
+	CreateNodeConfiguration(states []*api_models.State) error
 	CreateNode(node *api_models.NodeDTO) error
 	DeleteNode(nodeId string) error
 	GetNode(nodeId string) (*api_models.NodeDTO, error)
@@ -20,6 +21,25 @@ type NodeService interface {
 type nodeServiceImpl struct {
 	nodeRepository   repositories.Repository
 	statesRepository repositories.Repository
+}
+
+func (n *nodeServiceImpl) CreateNodeConfiguration(states []*api_models.State) error {
+	for _, state := range states {
+		dbState := &db_models.StateDTO{
+			NodeId:           state.NodeId,
+			Name:             state.Name,
+			PhotosPerReading: state.PicturesNum,
+			ReadingInterval:  state.Interval,
+			LowerLimit:       state.LowerLimit,
+			UpperLimit:       state.UpperLimit,
+			NextState:        state.Next,
+			PreviousState:    state.Prev,
+		}
+		if err := n.statesRepository.Insert(dbState); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (n *nodeServiceImpl) GetNodes() ([]*api_models.NodeDTO, error) {

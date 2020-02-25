@@ -8,6 +8,7 @@ import (
 )
 
 type NodeController interface {
+	CreateNodeConfiguration(c echo.Context) error
 	DeleteNode(c echo.Context) error
 	PostNode(c echo.Context) error
 	GetNodes(c echo.Context) error
@@ -19,6 +20,17 @@ type NodeController interface {
 
 type nodeControllerImpl struct {
 	nodeService services.NodeService
+}
+
+func (n *nodeControllerImpl) CreateNodeConfiguration(c echo.Context) error {
+	var states []*api_models.State
+	if err := c.Bind(&states); err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+	if err := n.nodeService.CreateNodeConfiguration(states); err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusCreated, states)
 }
 
 func (n *nodeControllerImpl) GetNodes(c echo.Context) error {
