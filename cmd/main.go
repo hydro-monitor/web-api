@@ -66,6 +66,7 @@ func main() {
 	nodeGroup.DELETE("/:node_id", nodeController.DeleteNode)
 	nodeGroup.GET("/:node_id/configuration", nodeController.GetNodeConfiguration)
 	nodeGroup.POST("/:node_id/configuration", nodeController.CreateNodeConfiguration)
+	nodeGroup.PUT("/:node_id/configuration", nodeController.UpdateNodeConfiguration)
 	nodeGroup.GET("/:node_id/manual-reading", nodeController.GetNodeManualReadingStatus)
 	nodeGroup.PUT("/:node_id/manual-reading", nodeController.UpdateNodeManualReading)
 	nodeGroup.POST("/:node_id/readings", readingsController.CreateReading)

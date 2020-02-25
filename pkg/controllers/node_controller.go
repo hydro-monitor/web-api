@@ -15,6 +15,7 @@ type NodeController interface {
 	GetNodeByID(c echo.Context) error
 	GetNodeManualReadingStatus(c echo.Context) error
 	GetNodeConfiguration(c echo.Context) error
+	UpdateNodeConfiguration(c echo.Context) error
 	UpdateNodeManualReading(c echo.Context) error
 }
 
@@ -22,11 +23,23 @@ type nodeControllerImpl struct {
 	nodeService services.NodeService
 }
 
+func (n *nodeControllerImpl) UpdateNodeConfiguration(c echo.Context) error {
+	var states []*api_models.State
+	if err := c.Bind(&states); err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+	if err := n.nodeService.CreateNodeConfiguration(states); err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	return c.NoContent(http.StatusOK)
+}
+
 func (n *nodeControllerImpl) CreateNodeConfiguration(c echo.Context) error {
 	var states []*api_models.State
 	if err := c.Bind(&states); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
+	// TODO decide wether having two endpoints for creating/updating node configurations is necessary
 	if err := n.nodeService.CreateNodeConfiguration(states); err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
