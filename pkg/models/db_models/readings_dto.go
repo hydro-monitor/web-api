@@ -23,7 +23,7 @@ func (r *ReadingsDTO) GetArgs() interface{} {
 }
 
 func (r *ReadingsDTO) ConvertToAPIGetReadings() []*api_models.GetReadingDTO {
-	var getReadings []*api_models.GetReadingDTO
+	getReadings := make([]*api_models.GetReadingDTO, 0)
 	for _, r := range r.Readings {
 		getReadings = append(getReadings, r.ConvertToAPIGetReading())
 	}

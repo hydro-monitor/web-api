@@ -31,7 +31,7 @@ func (n *nodeControllerImpl) UpdateNodeConfiguration(c echo.Context) error {
 	if err := n.nodeService.CreateNodeConfiguration(states); err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
-	return c.NoContent(http.StatusOK)
+	return c.JSON(http.StatusOK, states)
 }
 
 func (n *nodeControllerImpl) CreateNodeConfiguration(c echo.Context) error {
@@ -39,7 +39,7 @@ func (n *nodeControllerImpl) CreateNodeConfiguration(c echo.Context) error {
 	if err := c.Bind(&states); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
-	// TODO decide wether having two endpoints for creating/updating node configurations is necessary
+	// TODO decide whether having two endpoints for creating/updating node configurations is necessary
 	if err := n.nodeService.CreateNodeConfiguration(states); err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
