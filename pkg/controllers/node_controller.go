@@ -103,7 +103,7 @@ func (n *nodeControllerImpl) GetNodeByID(c echo.Context) error {
 	nodeId := c.Param("node_id")
 	node, err := n.nodeService.GetNode(nodeId)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return err.ToHTTPError()
 	}
 	return c.JSON(http.StatusOK, node)
 }

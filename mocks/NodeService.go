@@ -4,6 +4,7 @@ package mocks
 
 import (
 	api_models "hydro_monitor/web_api/pkg/models/api_models"
+	"hydro_monitor/web_api/pkg/services"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -56,7 +57,7 @@ func (_m *NodeService) DeleteNode(nodeId string) error {
 }
 
 // GetNode provides a mock function with given fields: nodeId
-func (_m *NodeService) GetNode(nodeId string) (*api_models.NodeDTO, error) {
+func (_m *NodeService) GetNode(nodeId string) (*api_models.NodeDTO, services.ServiceError) {
 	ret := _m.Called(nodeId)
 
 	var r0 *api_models.NodeDTO
