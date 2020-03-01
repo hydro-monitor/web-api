@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/gocql/gocql"
 	"hydro_monitor/web_api/pkg/clients/db"
 	"hydro_monitor/web_api/pkg/models/api_models"
 	"hydro_monitor/web_api/pkg/models/db_models"
@@ -11,10 +12,10 @@ type NodeService interface {
 	CreateNodeConfiguration(states []*api_models.State) error
 	CreateNode(node *api_models.NodeDTO) error
 	DeleteNode(nodeId string) error
-	GetNode(nodeId string) (*api_models.NodeDTO, error)
+	GetNode(nodeId string) (*api_models.NodeDTO, ServiceError)
 	GetNodes() ([]*api_models.NodeDTO, error)
 	GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error)
-	GetNodeConfiguration(nodeId string) ([]*api_models.State, error)
+	GetNodeConfiguration(nodeId string) ([]*api_models.State, ServiceError)
 	UpdateNodeConfiguration(states []*api_models.State) error
 	UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error)
 }
@@ -110,16 +111,25 @@ func NewNodeService(dbClient db.Client) NodeService {
 	return &nodeServiceImpl{nodeRepository: nodeRepository, statesRepository: statesRepository}
 }
 
-func (n *nodeServiceImpl) GetNode(nodeId string) (*api_models.NodeDTO, error) {
+func (n *nodeServiceImpl) GetNode(nodeId string) (*api_models.NodeDTO, ServiceError) {
 	node := db_models.NodeDTO{Id: nodeId}
 	err := n.nodeRepository.Get(&node)
-	return node.ToAPINodeDTO(), err
+	if err != nil {
+		if err == gocql.ErrNotFound {
+			return nil, NewNotFoundError("Node not found", err)
+		}
+		return nil, NewGenericServiceError("Server error when getting node", err)
+	}
+	return node.ToAPINodeDTO(), nil
 }
 
-func (n *nodeServiceImpl) GetNodeConfiguration(nodeId string) ([]*api_models.State, error) {
+func (n *nodeServiceImpl) GetNodeConfiguration(nodeId string) ([]*api_models.State, ServiceError) {
 	statesDto := db_models.NewStatesDTO(nodeId)
-	if err := n.statesRepository.Select(statesDto); err != nil {
-		return nil, err
+	if err := n.statesRepository.Select(statesDto); err != nil || len(statesDto.States) == 0 {
+		if err == gocql.ErrNotFound || len(statesDto.States) == 0 {
+			return nil, NewNotFoundError("Node configuration not found", gocql.ErrNotFound)
+		}
+		return nil, NewGenericServiceError("Server error when getting node configuration", err)
 	}
 	return statesDto.ConvertToAPIStates(), nil
 }
