@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -17,11 +18,11 @@ type serviceErrorImpl struct {
 }
 
 func (s *serviceErrorImpl) Error() string {
-	return s.cause.Error()
+	return fmt.Sprintf("%s. Server error: '%s'", s.message, s.cause.Error())
 }
 
 func (s serviceErrorImpl) ToHTTPError() *echo.HTTPError {
-	return echo.NewHTTPError(s.httpCode, s.message)
+	return echo.NewHTTPError(s.httpCode, s.Error())
 }
 
 func NewGenericServiceError(message string, cause error) ServiceError {
@@ -35,6 +36,14 @@ func NewGenericServiceError(message string, cause error) ServiceError {
 func NewNotFoundError(message string, cause error) ServiceError {
 	return &serviceErrorImpl{
 		httpCode: http.StatusNotFound,
+		message:  message,
+		cause:    cause,
+	}
+}
+
+func NewBadReadingTimeError(message string, cause error) ServiceError {
+	return &serviceErrorImpl{
+		httpCode: http.StatusBadRequest,
 		message:  message,
 		cause:    cause,
 	}

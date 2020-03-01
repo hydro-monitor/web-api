@@ -5,6 +5,7 @@ package mocks
 import (
 	api_models "hydro_monitor/web_api/pkg/models/api_models"
 	db_models "hydro_monitor/web_api/pkg/models/db_models"
+	"hydro_monitor/web_api/pkg/services"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -61,7 +62,7 @@ func (_m *ReadingsService) CreateReading(nodeId string, reading *api_models.Read
 }
 
 // GetNodeReading provides a mock function with given fields: nodeId, readingId
-func (_m *ReadingsService) GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, error) {
+func (_m *ReadingsService) GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, services.ServiceError) {
 	ret := _m.Called(nodeId, readingId)
 
 	var r0 *api_models.GetReadingDTO
@@ -107,7 +108,7 @@ func (_m *ReadingsService) GetNodeReadings(nodeId string) ([]*api_models.GetRead
 }
 
 // GetReadingPhoto provides a mock function with given fields: readingId, number
-func (_m *ReadingsService) GetReadingPhoto(readingId string, number int) (*db_models.Photo, error) {
+func (_m *ReadingsService) GetReadingPhoto(readingId string, number int) (*db_models.Photo, services.ServiceError) {
 	ret := _m.Called(readingId, number)
 
 	var r0 *db_models.Photo

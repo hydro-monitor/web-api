@@ -80,7 +80,7 @@ func (_m *NodeService) GetNode(nodeId string) (*api_models.NodeDTO, services.Ser
 }
 
 // GetNodeConfiguration provides a mock function with given fields: nodeId
-func (_m *NodeService) GetNodeConfiguration(nodeId string) ([]*api_models.State, error) {
+func (_m *NodeService) GetNodeConfiguration(nodeId string) ([]*api_models.State, services.ServiceError) {
 	ret := _m.Called(nodeId)
 
 	var r0 []*api_models.State

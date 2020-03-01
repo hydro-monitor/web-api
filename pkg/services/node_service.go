@@ -15,7 +15,7 @@ type NodeService interface {
 	GetNode(nodeId string) (*api_models.NodeDTO, ServiceError)
 	GetNodes() ([]*api_models.NodeDTO, error)
 	GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error)
-	GetNodeConfiguration(nodeId string) ([]*api_models.State, error)
+	GetNodeConfiguration(nodeId string) ([]*api_models.State, ServiceError)
 	UpdateNodeConfiguration(states []*api_models.State) error
 	UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error)
 }
@@ -117,17 +117,19 @@ func (n *nodeServiceImpl) GetNode(nodeId string) (*api_models.NodeDTO, ServiceEr
 	if err != nil {
 		if err == gocql.ErrNotFound {
 			return nil, NewNotFoundError("Node not found", err)
-		} else {
-			return nil, NewGenericServiceError("Server error when getting node", err)
 		}
+		return nil, NewGenericServiceError("Server error when getting node", err)
 	}
 	return node.ToAPINodeDTO(), nil
 }
 
-func (n *nodeServiceImpl) GetNodeConfiguration(nodeId string) ([]*api_models.State, error) {
+func (n *nodeServiceImpl) GetNodeConfiguration(nodeId string) ([]*api_models.State, ServiceError) {
 	statesDto := db_models.NewStatesDTO(nodeId)
-	if err := n.statesRepository.Select(statesDto); err != nil {
-		return nil, err
+	if err := n.statesRepository.Select(statesDto); err != nil || len(statesDto.States) == 0 {
+		if err == gocql.ErrNotFound || len(statesDto.States) == 0 {
+			return nil, NewNotFoundError("Node configuration not found", gocql.ErrNotFound)
+		}
+		return nil, NewGenericServiceError("Server error when getting node configuration", err)
 	}
 	return statesDto.ConvertToAPIStates(), nil
 }

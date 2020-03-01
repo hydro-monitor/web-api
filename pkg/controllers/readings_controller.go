@@ -42,7 +42,7 @@ func (r *readingsControllerImpl) GetNodeReading(c echo.Context) error {
 	readingId := c.Param("reading_id")
 	apiReading, err := r.service.GetNodeReading(nodeId, readingId)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return err.ToHTTPError()
 	}
 	return c.JSON(http.StatusOK, apiReading)
 }

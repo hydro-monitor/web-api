@@ -12,8 +12,8 @@ type ReadingsService interface {
 	CreateReading(nodeId string, reading *api_models.Reading) (*api_models.GetReadingDTO, error)
 	AddPhotoToReading(photoDTO *api_models.PhotoDTO) (*api_models.PhotoMetadataDTO, error)
 	GetNodeReadings(nodeId string) ([]*api_models.GetReadingDTO, error)
-	GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, error)
-	GetReadingPhoto(readingId string, number int) (*db_models.Photo, error)
+	GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, ServiceError)
+	GetReadingPhoto(readingId string, number int) (*db_models.Photo, ServiceError)
 }
 
 type readingsServiceImpl struct {
@@ -41,10 +41,10 @@ func (r *readingsServiceImpl) AddPhotoToReading(photoDTO *api_models.PhotoDTO) (
 	return &apiPhotoMetadata, nil
 }
 
-func (r *readingsServiceImpl) GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, error) {
+func (r *readingsServiceImpl) GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, ServiceError) {
 	readingUUID, err := gocql.ParseUUID(readingId)
 	if err != nil {
-		return nil, err
+		return nil, NewBadReadingTimeError("Incorrect reading time (bad format)", err)
 	}
 	dbReading := db_models.Reading{
 		NodeId:    nodeId,
@@ -52,20 +52,29 @@ func (r *readingsServiceImpl) GetNodeReading(nodeId string, readingId string) (*
 	}
 	err = r.readingsRepository.Get(&dbReading)
 	if err != nil {
-		return nil, err
+		if err == gocql.ErrNotFound {
+			return nil, NewNotFoundError("Node reading not found", err)
+		}
+		return nil, NewGenericServiceError("Server error when getting node reading", err)
 	}
 	apiReading := api_models.GetReadingDTO{WaterLevel: dbReading.WaterLevel}
 	return &apiReading, nil
 }
 
-func (r *readingsServiceImpl) GetReadingPhoto(readingId string, number int) (*db_models.Photo, error) {
+func (r *readingsServiceImpl) GetReadingPhoto(readingId string, number int) (*db_models.Photo, ServiceError) {
 	readingUUID, err := gocql.ParseUUID(readingId)
 	if err != nil {
-		return nil, err
+		return nil, NewBadReadingTimeError("Incorrect reading time (bad format)", err)
 	}
 	dbPhoto := db_models.Photo{ReadingTime: readingUUID}
 	err = r.photosRepository.Get(&dbPhoto)
-	return &dbPhoto, err
+	if err != nil {
+		if err == gocql.ErrNotFound {
+			return nil, NewNotFoundError("Reading photo not found", err)
+		}
+		return nil, NewGenericServiceError("Server error when getting reading photo", err)
+	}
+	return &dbPhoto, nil
 }
 
 func (r *readingsServiceImpl) GetNodeReadings(nodeId string) ([]*api_models.GetReadingDTO, error) {
