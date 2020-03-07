@@ -18,6 +18,14 @@ func (r *Reading) GetColumns() []string {
 	return nil
 }
 
+func (r *Reading) ConvertToSingleAPIGetReading() *api_models.GetReadingDTO {
+	return &api_models.GetReadingDTO{
+		ReadingTime:   r.ReadingTime,
+		WaterLevel:    r.WaterLevel,
+		ManualReading: r.ManualReading,
+	}
+}
+
 func (r *Reading) ConvertToAPIGetReading() *api_models.GetReadingDTO {
 	return &api_models.GetReadingDTO{
 		ReadingId:     r.ReadingId.String(),

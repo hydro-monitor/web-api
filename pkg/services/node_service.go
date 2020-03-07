@@ -120,7 +120,7 @@ func (n *nodeServiceImpl) GetNode(nodeId string) (*api_models.NodeDTO, ServiceEr
 		}
 		return nil, NewGenericServiceError("Server error when getting node", err)
 	}
-	return node.ToAPINodeDTO(), nil
+	return node.ToSingleAPINodeDTO(), nil
 }
 
 func (n *nodeServiceImpl) GetNodeConfiguration(nodeId string) ([]*api_models.State, ServiceError) {
