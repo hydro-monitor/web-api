@@ -19,7 +19,6 @@ func (s *StateDTO) GetColumns() []string {
 
 func (s *StateDTO) ConvertToAPIState() *api_models.State {
 	return &api_models.State{
-		NodeId:      s.NodeId,
 		Name:        s.Name,
 		Interval:    s.ReadingInterval,
 		UpperLimit:  s.UpperLimit,

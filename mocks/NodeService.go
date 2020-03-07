@@ -29,13 +29,13 @@ func (_m *NodeService) CreateNode(node *api_models.NodeDTO) error {
 	return r0
 }
 
-// CreateNodeConfiguration provides a mock function with given fields: states
-func (_m *NodeService) CreateNodeConfiguration(states []*api_models.State) error {
-	ret := _m.Called(states)
+// CreateNodeConfiguration provides a mock function with given fields: nodeId, states
+func (_m *NodeService) CreateNodeConfiguration(nodeId string, states []*api_models.State) error {
+	ret := _m.Called(nodeId, states)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func([]*api_models.State) error); ok {
-		r0 = rf(states)
+	if rf, ok := ret.Get(0).(func(string, []*api_models.State) error); ok {
+		r0 = rf(nodeId, states)
 	} else {
 		r0 = ret.Error(0)
 	}

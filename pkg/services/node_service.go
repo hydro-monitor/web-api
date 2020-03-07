@@ -9,7 +9,7 @@ import (
 )
 
 type NodeService interface {
-	CreateNodeConfiguration(states []*api_models.State) error
+	CreateNodeConfiguration(nodeId string, states []*api_models.State) error
 	CreateNode(node *api_models.NodeDTO) error
 	DeleteNode(nodeId string) error
 	GetNode(nodeId string) (*api_models.NodeDTO, ServiceError)
@@ -28,7 +28,7 @@ type nodeServiceImpl struct {
 func (n *nodeServiceImpl) UpdateNodeConfiguration(states []*api_models.State) error {
 	for _, state := range states {
 		dbState := &db_models.StateDTO{
-			NodeId:           state.NodeId,
+			NodeId:           "",
 			Name:             state.Name,
 			PhotosPerReading: state.PicturesNum,
 			ReadingInterval:  state.Interval,
@@ -44,10 +44,10 @@ func (n *nodeServiceImpl) UpdateNodeConfiguration(states []*api_models.State) er
 	return nil
 }
 
-func (n *nodeServiceImpl) CreateNodeConfiguration(states []*api_models.State) error {
+func (n *nodeServiceImpl) CreateNodeConfiguration(nodeId string, states []*api_models.State) error {
 	for _, state := range states {
 		dbState := &db_models.StateDTO{
-			NodeId:           state.NodeId,
+			NodeId:           nodeId,
 			Name:             state.Name,
 			PhotosPerReading: state.PicturesNum,
 			ReadingInterval:  state.Interval,

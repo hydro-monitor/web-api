@@ -5,13 +5,16 @@ import (
 	"hydro_monitor/web_api/pkg/models/api_models"
 )
 
+var statesColumns = []string{"name", "photos_per_reading", "reading_interval", "lower_limit", "upper_limit",
+	"previous_state", "next_state"}
+
 type StatesDTO struct {
 	nodeId string
 	States []*StateDTO
 }
 
 func (s *StatesDTO) GetColumns() []string {
-	return nil
+	return statesColumns
 }
 
 func (s *StatesDTO) GetBindMap() qb.M {

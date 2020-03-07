@@ -20,7 +20,6 @@ func (r *Reading) GetColumns() []string {
 
 func (r *Reading) ConvertToAPIGetReading() *api_models.GetReadingDTO {
 	return &api_models.GetReadingDTO{
-		NodeId:        r.NodeId,
 		ReadingId:     r.ReadingId.String(),
 		ReadingTime:   r.ReadingTime,
 		WaterLevel:    r.WaterLevel,

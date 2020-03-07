@@ -86,6 +86,7 @@ func (r *readingsServiceImpl) GetNodeReadings(nodeId string) ([]*api_models.GetR
 }
 
 func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.Reading) (*api_models.GetReadingDTO, error) {
+
 	readingTimeUUID := gocql.UUIDFromTime(reading.Time)
 	dbReading := &db_models.Reading{
 		NodeId:      nodeId,
