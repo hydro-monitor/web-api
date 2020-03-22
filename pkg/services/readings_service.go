@@ -57,8 +57,7 @@ func (r *readingsServiceImpl) GetNodeReading(nodeId string, readingId string) (*
 		}
 		return nil, NewGenericServiceError("Server error when getting node reading", err)
 	}
-	apiReading := api_models.GetReadingDTO{WaterLevel: dbReading.WaterLevel}
-	return &apiReading, nil
+	return dbReading.ConvertToSingleAPIGetReading(), nil
 }
 
 func (r *readingsServiceImpl) GetReadingPhoto(readingId string, number int) (*db_models.Photo, ServiceError) {

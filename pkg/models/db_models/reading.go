@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+var readingColumn = []string{"reading_time", "water_level", "manual_reading"}
+
 type Reading struct {
 	NodeId        string
 	ReadingId     gocql.UUID
@@ -15,12 +17,19 @@ type Reading struct {
 }
 
 func (r *Reading) GetColumns() []string {
-	return nil
+	return readingColumn
+}
+
+func (r *Reading) ConvertToSingleAPIGetReading() *api_models.GetReadingDTO {
+	return &api_models.GetReadingDTO{
+		ReadingTime:   r.ReadingTime,
+		WaterLevel:    r.WaterLevel,
+		ManualReading: r.ManualReading,
+	}
 }
 
 func (r *Reading) ConvertToAPIGetReading() *api_models.GetReadingDTO {
 	return &api_models.GetReadingDTO{
-		NodeId:        r.NodeId,
 		ReadingId:     r.ReadingId.String(),
 		ReadingTime:   r.ReadingTime,
 		WaterLevel:    r.WaterLevel,

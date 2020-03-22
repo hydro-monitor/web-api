@@ -24,23 +24,25 @@ type nodeControllerImpl struct {
 }
 
 func (n *nodeControllerImpl) UpdateNodeConfiguration(c echo.Context) error {
+	nodeId := c.Param("node_id")
 	var states []*api_models.State
 	if err := c.Bind(&states); err != nil {
-		return c.String(http.StatusBadRequest, err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if err := n.nodeService.CreateNodeConfiguration(states); err != nil {
+	if err := n.nodeService.CreateNodeConfiguration(nodeId, states); err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, states)
 }
 
 func (n *nodeControllerImpl) CreateNodeConfiguration(c echo.Context) error {
+	nodeId := c.Param("node_id")
 	var states []*api_models.State
 	if err := c.Bind(&states); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 	// TODO decide whether having two endpoints for creating/updating node configurations is necessary
-	if err := n.nodeService.CreateNodeConfiguration(states); err != nil {
+	if err := n.nodeService.CreateNodeConfiguration(nodeId, states); err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusCreated, states)

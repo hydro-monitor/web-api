@@ -5,13 +5,15 @@ import (
 	"hydro_monitor/web_api/pkg/models/api_models"
 )
 
+var readingsColumns = []string{"reading_id", "reading_time", "water_level", "manual_reading"}
+
 type ReadingsDTO struct {
 	nodeId   string
 	Readings []*Reading
 }
 
 func (r *ReadingsDTO) GetColumns() []string {
-	return nil
+	return readingsColumns
 }
 
 func (r *ReadingsDTO) GetBindMap() qb.M {
