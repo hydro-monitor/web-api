@@ -30,12 +30,12 @@ func (_m *NodeService) CreateNode(node *api_models.NodeDTO) error {
 }
 
 // CreateNodeConfiguration provides a mock function with given fields: nodeId, states
-func (_m *NodeService) CreateNodeConfiguration(nodeId string, states []*api_models.State) error {
-	ret := _m.Called(nodeId, states)
+func (_m *NodeService) CreateNodeConfiguration(nodeId string, configuration map[string]*api_models.StateDTO) error {
+	ret := _m.Called(nodeId, configuration)
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(string, []*api_models.State) error); ok {
-		r0 = rf(nodeId, states)
+		r0 = rf(nodeId, configuration)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -83,7 +83,7 @@ func (_m *NodeService) GetNode(nodeId string) (*api_models.NodeDTO, services.Ser
 }
 
 // GetNodeConfiguration provides a mock function with given fields: nodeId
-func (_m *NodeService) GetNodeConfiguration(nodeId string) ([]*api_models.State, services.ServiceError) {
+func (_m *NodeService) GetNodeConfiguration(nodeId string) (map[string]*api_models.StateDTO, services.ServiceError) {
 	ret := _m.Called(nodeId)
 
 	var r0 []*api_models.State

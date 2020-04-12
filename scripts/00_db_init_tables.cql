@@ -21,6 +21,12 @@ CREATE TABLE IF NOT EXISTS hydromon.photos (
     PRIMARY KEY (reading_time, number)
 );
 
+CREATE TABLE IF NOT EXISTS hydromon.configurations (
+    node_id text,
+    configuration text,
+    PRIMARY KEY (node_id)
+);
+
 CREATE TABLE IF NOT EXISTS hydromon.states (
     node_id text,
     name text,
