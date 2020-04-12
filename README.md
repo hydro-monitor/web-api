@@ -24,6 +24,6 @@ solo es necesario la primera vez, luego puede simplemente correrse `docker start
 3. Crear el keyspace en la base de datos:
     1. Conectarse a Cassandra a traves de `cqlsh`: `docker run -it --network hydromon-net --rm cassandra cqlsh hydromon-cassandra`.
     2. Crear el keyspace: `CREATE KEYSPACE hydromon WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };`
-4. Compilar el servidor: `make`.
+4. Compilar el servidor: `make web-api-linux`.
 5. Ejecutar `docker build -t hydromon-server .`.
 6. Iniciar el container: `docker run --network hydromon-net -p 8080:8080 hydromon-server`.
