@@ -72,7 +72,7 @@ func (n *nodeServiceImpl) GetNodes() ([]*api_models.NodeDTO, error) {
 }
 
 func (n *nodeServiceImpl) DeleteNode(nodeId string) error {
-	dbNode := &db_models.NodeDTO{Id: nodeId}
+	dbNode := &db_models.DeleteNodeDTO{Id: nodeId}
 	return n.nodeRepository.Delete(dbNode)
 }
 
