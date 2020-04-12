@@ -112,9 +112,37 @@ func (n *nodeControllerImpl) GetNodeByID(c echo.Context) error {
 
 func (n *nodeControllerImpl) GetNodeConfiguration(c echo.Context) error {
 	nodeId := c.Param("node_id")
-	nodeConfiguration, err := n.nodeService.GetNodeConfiguration(nodeId)
+	_, err := n.nodeService.GetNodeConfiguration(nodeId)
 	if err != nil {
 		return err.ToHTTPError()
 	}
-	return c.JSON(http.StatusOK, nodeConfiguration)
+	state1 := api_models.StateDTO{
+		Interval:    25,
+		UpperLimit:  1,
+		LowerLimit:  -999,
+		PicturesNum: 1,
+		Next:        "2",
+		Prev:        "",
+	}
+	state2 := api_models.StateDTO{
+		Interval:    10,
+		UpperLimit:  2,
+		LowerLimit:  1,
+		PicturesNum: 1,
+		Next:        "3",
+		Prev:        "1",
+	}
+	state3 := api_models.StateDTO{
+		Interval:    5,
+		UpperLimit:  999,
+		LowerLimit:  2,
+		PicturesNum: 1,
+		Next:        "",
+		Prev:        "2",
+	}
+	stateMap := make(map[string]*api_models.StateDTO)
+	stateMap["1"] = &state1
+	stateMap["2"] = &state2
+	stateMap["3"] = &state3
+	return c.JSON(http.StatusOK, stateMap)
 }
