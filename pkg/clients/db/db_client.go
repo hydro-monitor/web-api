@@ -18,7 +18,7 @@ type Client interface {
 	Insert(table *table.Table, args db_models.DbDTO) error
 	Update(table *table.Table, args db_models.DbDTO) error
 	Select(table *table.Table, args db_models.SelectDTO) error
-	SelectAll(table *table.Table,args db_models.SelectDTO) error
+	SelectAll(table *table.Table, args db_models.SelectDTO) error
 	Close()
 }
 
@@ -61,6 +61,7 @@ func NewDB(hosts []string, keyspace string) Client {
 	cluster.Hosts = hosts
 	cluster.Keyspace = keyspace
 	cluster.PoolConfig.HostSelectionPolicy = gocql.RoundRobinHostPolicy()
+	cluster.Consistency = gocql.One
 	session, err := cluster.CreateSession()
 	if err != nil {
 		log.Error("Hosts: ", hosts)

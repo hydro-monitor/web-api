@@ -16,6 +16,7 @@ web-api:
 
 web-api-linux:
 	env GOOS=linux GOARCH=amd64 go build -o _output/web-api ./cmd
+	docker build -t hydromon-server .
 
 image-web-api:
 	go mod vendor

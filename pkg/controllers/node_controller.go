@@ -15,7 +15,6 @@ type NodeController interface {
 	GetNodeByID(c echo.Context) error
 	GetNodeManualReadingStatus(c echo.Context) error
 	GetNodeConfiguration(c echo.Context) error
-	UpdateNodeConfiguration(c echo.Context) error
 	UpdateNodeManualReading(c echo.Context) error
 }
 
@@ -23,29 +22,16 @@ type nodeControllerImpl struct {
 	nodeService services.NodeService
 }
 
-func (n *nodeControllerImpl) UpdateNodeConfiguration(c echo.Context) error {
-	nodeId := c.Param("node_id")
-	var states []*api_models.State
-	if err := c.Bind(&states); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-	if err := n.nodeService.CreateNodeConfiguration(nodeId, states); err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
-	}
-	return c.JSON(http.StatusOK, states)
-}
-
 func (n *nodeControllerImpl) CreateNodeConfiguration(c echo.Context) error {
 	nodeId := c.Param("node_id")
-	var states []*api_models.State
-	if err := c.Bind(&states); err != nil {
-		return c.String(http.StatusBadRequest, err.Error())
+	configuration := make(map[string]*api_models.StateDTO)
+	if err := c.Bind(&configuration); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	// TODO decide whether having two endpoints for creating/updating node configurations is necessary
-	if err := n.nodeService.CreateNodeConfiguration(nodeId, states); err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+	if err := n.nodeService.CreateNodeConfiguration(nodeId, configuration); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	return c.JSON(http.StatusCreated, states)
+	return c.JSON(http.StatusCreated, configuration)
 }
 
 func (n *nodeControllerImpl) GetNodes(c echo.Context) error {
@@ -112,9 +98,9 @@ func (n *nodeControllerImpl) GetNodeByID(c echo.Context) error {
 
 func (n *nodeControllerImpl) GetNodeConfiguration(c echo.Context) error {
 	nodeId := c.Param("node_id")
-	nodeConfiguration, err := n.nodeService.GetNodeConfiguration(nodeId)
+	configuration, err := n.nodeService.GetNodeConfiguration(nodeId)
 	if err != nil {
 		return err.ToHTTPError()
 	}
-	return c.JSON(http.StatusOK, nodeConfiguration)
+	return c.JSON(http.StatusOK, configuration)
 }

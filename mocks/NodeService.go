@@ -29,13 +29,13 @@ func (_m *NodeService) CreateNode(node *api_models.NodeDTO) error {
 	return r0
 }
 
-// CreateNodeConfiguration provides a mock function with given fields: nodeId, states
-func (_m *NodeService) CreateNodeConfiguration(nodeId string, states []*api_models.State) error {
-	ret := _m.Called(nodeId, states)
+// CreateNodeConfiguration provides a mock function with given fields: nodeId, configuration
+func (_m *NodeService) CreateNodeConfiguration(nodeId string, configuration map[string]*api_models.StateDTO) error {
+	ret := _m.Called(nodeId, configuration)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, []*api_models.State) error); ok {
-		r0 = rf(nodeId, states)
+	if rf, ok := ret.Get(0).(func(string, map[string]*api_models.StateDTO) error); ok {
+		r0 = rf(nodeId, configuration)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -83,15 +83,15 @@ func (_m *NodeService) GetNode(nodeId string) (*api_models.NodeDTO, services.Ser
 }
 
 // GetNodeConfiguration provides a mock function with given fields: nodeId
-func (_m *NodeService) GetNodeConfiguration(nodeId string) ([]*api_models.State, services.ServiceError) {
+func (_m *NodeService) GetNodeConfiguration(nodeId string) (map[string]*api_models.StateDTO, services.ServiceError) {
 	ret := _m.Called(nodeId)
 
-	var r0 []*api_models.State
-	if rf, ok := ret.Get(0).(func(string) []*api_models.State); ok {
+	var r0 map[string]*api_models.StateDTO
+	if rf, ok := ret.Get(0).(func(string) map[string]*api_models.StateDTO); ok {
 		r0 = rf(nodeId)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*api_models.State)
+			r0 = ret.Get(0).(map[string]*api_models.StateDTO)
 		}
 	}
 
@@ -151,20 +151,6 @@ func (_m *NodeService) GetNodes() ([]*api_models.NodeDTO, error) {
 	}
 
 	return r0, r1
-}
-
-// UpdateNodeConfiguration provides a mock function with given fields: states
-func (_m *NodeService) UpdateNodeConfiguration(states []*api_models.State) error {
-	ret := _m.Called(states)
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func([]*api_models.State) error); ok {
-		r0 = rf(states)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
 }
 
 // UpdateNodeManualReading provides a mock function with given fields: nodeId, manualReading

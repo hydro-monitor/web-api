@@ -1,6 +1,7 @@
 package services
 
 import (
+	"encoding/json"
 	"github.com/gocql/gocql"
 	"hydro_monitor/web_api/pkg/clients/db"
 	"hydro_monitor/web_api/pkg/models/api_models"
@@ -9,58 +10,28 @@ import (
 )
 
 type NodeService interface {
-	CreateNodeConfiguration(nodeId string, states []*api_models.State) error
+	CreateNodeConfiguration(nodeId string, configuration map[string]*api_models.StateDTO) error
 	CreateNode(node *api_models.NodeDTO) error
 	DeleteNode(nodeId string) error
 	GetNode(nodeId string) (*api_models.NodeDTO, ServiceError)
 	GetNodes() ([]*api_models.NodeDTO, error)
 	GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error)
-	GetNodeConfiguration(nodeId string) ([]*api_models.State, ServiceError)
-	UpdateNodeConfiguration(states []*api_models.State) error
+	GetNodeConfiguration(nodeId string) (map[string]*api_models.StateDTO, ServiceError)
 	UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error)
 }
 
 type nodeServiceImpl struct {
-	nodeRepository   repositories.Repository
-	statesRepository repositories.Repository
+	nodeRepository           repositories.Repository
+	configurationsRepository repositories.Repository
 }
 
-func (n *nodeServiceImpl) UpdateNodeConfiguration(states []*api_models.State) error {
-	for _, state := range states {
-		dbState := &db_models.StateDTO{
-			NodeId:           "",
-			Name:             state.Name,
-			PhotosPerReading: state.PicturesNum,
-			ReadingInterval:  state.Interval,
-			LowerLimit:       state.LowerLimit,
-			UpperLimit:       state.UpperLimit,
-			NextState:        state.Next,
-			PreviousState:    state.Prev,
-		}
-		if err := n.statesRepository.Update(dbState); err != nil {
-			return err
-		}
+func (n *nodeServiceImpl) CreateNodeConfiguration(nodeId string, configuration map[string]*api_models.StateDTO) error {
+	rawConfiguration, err := json.Marshal(configuration)
+	if err != nil {
+		return NewGenericServiceError("Error when trying to marshal node's configuration", err)
 	}
-	return nil
-}
-
-func (n *nodeServiceImpl) CreateNodeConfiguration(nodeId string, states []*api_models.State) error {
-	for _, state := range states {
-		dbState := &db_models.StateDTO{
-			NodeId:           nodeId,
-			Name:             state.Name,
-			PhotosPerReading: state.PicturesNum,
-			ReadingInterval:  state.Interval,
-			LowerLimit:       state.LowerLimit,
-			UpperLimit:       state.UpperLimit,
-			NextState:        state.Next,
-			PreviousState:    state.Prev,
-		}
-		if err := n.statesRepository.Insert(dbState); err != nil {
-			return err
-		}
-	}
-	return nil
+	configurationDTO := &db_models.ConfigurationDTO{NodeId: nodeId, Configuration: string(rawConfiguration)}
+	return n.configurationsRepository.Insert(configurationDTO)
 }
 
 func (n *nodeServiceImpl) GetNodes() ([]*api_models.NodeDTO, error) {
@@ -72,7 +43,7 @@ func (n *nodeServiceImpl) GetNodes() ([]*api_models.NodeDTO, error) {
 }
 
 func (n *nodeServiceImpl) DeleteNode(nodeId string) error {
-	dbNode := &db_models.NodeDTO{Id: nodeId}
+	dbNode := &db_models.DeleteNodeDTO{Id: nodeId}
 	return n.nodeRepository.Delete(dbNode)
 }
 
@@ -105,12 +76,6 @@ func (n *nodeServiceImpl) UpdateNodeManualReading(nodeId string, manualReading b
 	return resp, nil
 }
 
-func NewNodeService(dbClient db.Client) NodeService {
-	nodeRepository := repositories.NewNodeRepository(dbClient)
-	statesRepository := repositories.NewStatesRepository(dbClient)
-	return &nodeServiceImpl{nodeRepository: nodeRepository, statesRepository: statesRepository}
-}
-
 func (n *nodeServiceImpl) GetNode(nodeId string) (*api_models.NodeDTO, ServiceError) {
 	node := db_models.NodeDTO{Id: nodeId}
 	err := n.nodeRepository.Get(&node)
@@ -123,13 +88,26 @@ func (n *nodeServiceImpl) GetNode(nodeId string) (*api_models.NodeDTO, ServiceEr
 	return node.ToSingleAPINodeDTO(), nil
 }
 
-func (n *nodeServiceImpl) GetNodeConfiguration(nodeId string) ([]*api_models.State, ServiceError) {
-	statesDto := db_models.NewStatesDTO(nodeId)
-	if err := n.statesRepository.Select(statesDto); err != nil || len(statesDto.States) == 0 {
-		if err == gocql.ErrNotFound || len(statesDto.States) == 0 {
+func (n *nodeServiceImpl) GetNodeConfiguration(nodeId string) (map[string]*api_models.StateDTO, ServiceError) {
+	configuration := make(map[string]*api_models.StateDTO)
+	configurationDTO := &db_models.ConfigurationDTO{NodeId: nodeId}
+	if err := n.configurationsRepository.Get(configurationDTO); err != nil {
+		if err == gocql.ErrNotFound {
 			return nil, NewNotFoundError("Node configuration not found", gocql.ErrNotFound)
 		}
 		return nil, NewGenericServiceError("Server error when getting node configuration", err)
 	}
-	return statesDto.ConvertToAPIStates(), nil
+	if err := json.Unmarshal([]byte(configurationDTO.Configuration), &configuration); err != nil {
+		return nil, NewGenericServiceError("Server error when unmarshaling node configuration", err)
+	}
+	return configuration, nil
+}
+
+func NewNodeService(dbClient db.Client) NodeService {
+	nodeRepository := repositories.NewNodeRepository(dbClient)
+	configurationsRepository := repositories.NewConfigurationsRepository(dbClient)
+	return &nodeServiceImpl{
+		nodeRepository:           nodeRepository,
+		configurationsRepository: configurationsRepository,
+	}
 }

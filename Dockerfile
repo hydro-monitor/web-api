@@ -1,7 +1,7 @@
 FROM alpine
 
 ENV PORT 8080
-ENV DB_HOSTS hydromon-cassandra
+ENV DB_HOSTS hydromon-cassandra-1
 ENV DB_KEYSPACE hydromon
 
 WORKDIR /hydromon-server
