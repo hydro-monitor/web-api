@@ -5,6 +5,6 @@ type StateDTO struct {
 	UpperLimit  float64 `json:"upperLimit"`
 	LowerLimit  float64 `json:"lowerLimit"`
 	PicturesNum int     `json:"picturesNum"`
-	Next        string  `json:"next"` // State name (key)
-	Prev        string  `json:"prev"` // State name (key)
+	Next        string  `json:"next"`
+	Prev        string  `json:"prev"`
 }

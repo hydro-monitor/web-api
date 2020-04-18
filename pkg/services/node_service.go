@@ -17,33 +17,12 @@ type NodeService interface {
 	GetNodes() ([]*api_models.NodeDTO, error)
 	GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error)
 	GetNodeConfiguration(nodeId string) (map[string]*api_models.StateDTO, ServiceError)
-	UpdateNodeConfiguration(states []*api_models.State) error
 	UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error)
 }
 
 type nodeServiceImpl struct {
 	nodeRepository           repositories.Repository
-	statesRepository         repositories.Repository
 	configurationsRepository repositories.Repository
-}
-
-func (n *nodeServiceImpl) UpdateNodeConfiguration(states []*api_models.State) error {
-	for _, state := range states {
-		dbState := &db_models.StateDTO{
-			NodeId:           "",
-			Name:             state.Name,
-			PhotosPerReading: state.PicturesNum,
-			ReadingInterval:  state.Interval,
-			LowerLimit:       state.LowerLimit,
-			UpperLimit:       state.UpperLimit,
-			NextState:        state.Next,
-			PreviousState:    state.Prev,
-		}
-		if err := n.statesRepository.Update(dbState); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func (n *nodeServiceImpl) CreateNodeConfiguration(nodeId string, configuration map[string]*api_models.StateDTO) error {
@@ -53,22 +32,6 @@ func (n *nodeServiceImpl) CreateNodeConfiguration(nodeId string, configuration m
 	}
 	configurationDTO := &db_models.ConfigurationDTO{NodeId: nodeId, Configuration: string(rawConfiguration)}
 	return n.configurationsRepository.Insert(configurationDTO)
-	/*	for _, state := range configuration {
-			dbState := &db_models.StateDTO{
-				NodeId:           nodeId,
-				Name:             state.Name,
-				PhotosPerReading: state.PicturesNum,
-				ReadingInterval:  state.Interval,
-				LowerLimit:       state.LowerLimit,
-				UpperLimit:       state.UpperLimit,
-				NextState:        state.Next,
-				PreviousState:    state.Prev,
-			}
-			if err := n.statesRepository.Insert(dbState); err != nil {
-				return err
-			}
-		}
-		return nil*/
 }
 
 func (n *nodeServiceImpl) GetNodes() ([]*api_models.NodeDTO, error) {
@@ -138,23 +101,13 @@ func (n *nodeServiceImpl) GetNodeConfiguration(nodeId string) (map[string]*api_m
 		return nil, NewGenericServiceError("Server error when unmarshaling node configuration", err)
 	}
 	return configuration, nil
-	/*	statesDto := db_models.NewStatesDTO(nodeId)
-		if err := n.statesRepository.Select(statesDto); err != nil || len(statesDto.States) == 0 {
-			if err == gocql.ErrNotFound || len(statesDto.States) == 0 {
-				return nil, NewNotFoundError("Node configuration not found", gocql.ErrNotFound)
-			}
-			return nil, NewGenericServiceError("Server error when getting node configuration", err)
-		}
-		return statesDto.ConvertToAPIStates(), nil*/
 }
 
 func NewNodeService(dbClient db.Client) NodeService {
 	nodeRepository := repositories.NewNodeRepository(dbClient)
-	statesRepository := repositories.NewStatesRepository(dbClient)
 	configurationsRepository := repositories.NewConfigurationsRepository(dbClient)
 	return &nodeServiceImpl{
 		nodeRepository:           nodeRepository,
-		statesRepository:         statesRepository,
 		configurationsRepository: configurationsRepository,
 	}
 }

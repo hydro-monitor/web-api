@@ -26,15 +26,3 @@ CREATE TABLE IF NOT EXISTS hydromon.configurations (
     configuration text,
     PRIMARY KEY (node_id)
 );
-
-CREATE TABLE IF NOT EXISTS hydromon.states (
-    node_id text,
-    name text,
-    photos_per_reading int,
-    reading_interval int,
-    lower_limit double, -- meters
-    upper_limit double, --meters
-    previous_state text,
-    next_state text,
-    PRIMARY KEY (node_id, name)
-);
