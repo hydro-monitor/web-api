@@ -26,7 +26,7 @@ solo es necesario la primera vez, luego puede simplemente correrse `docker start
     2. Crear el keyspace: `CREATE KEYSPACE hydromon WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };`
 4. Compilar el servidor: `make web-api-linux`.
 5. Ejecutar `docker build -t hydromon-server .`.
-6. Iniciar el container: `docker run --network hydromon-net -p 8080:8080 hydromon-server`.
+6. Iniciar el container: `docker run --net hydromon-net -p 8080:8080 -d hydromon-server`.
 
 
 ## Levantar un cluster de Cassandra
