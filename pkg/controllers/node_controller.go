@@ -15,16 +15,11 @@ type NodeController interface {
 	GetNodeByID(c echo.Context) error
 	GetNodeManualReadingStatus(c echo.Context) error
 	GetNodeConfiguration(c echo.Context) error
-	UpdateNodeConfiguration(c echo.Context) error
 	UpdateNodeManualReading(c echo.Context) error
 }
 
 type nodeControllerImpl struct {
 	nodeService services.NodeService
-}
-
-func (n *nodeControllerImpl) UpdateNodeConfiguration(c echo.Context) error {
-	return n.CreateNodeConfiguration(c)
 }
 
 func (n *nodeControllerImpl) CreateNodeConfiguration(c echo.Context) error {
@@ -37,15 +32,6 @@ func (n *nodeControllerImpl) CreateNodeConfiguration(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusCreated, configuration)
-	/*	var states []*api_models.State
-		if err := c.Bind(&states); err != nil {
-			return c.String(http.StatusBadRequest, err.Error())
-		}
-		// TODO decide whether having two endpoints for creating/updating node configurations is necessary
-		if err := n.nodeService.CreateNodeConfiguration(nodeId, states); err != nil {
-			return c.String(http.StatusInternalServerError, err.Error())
-		}
-		return c.JSON(http.StatusCreated, states)*/
 }
 
 func (n *nodeControllerImpl) GetNodes(c echo.Context) error {
@@ -116,33 +102,5 @@ func (n *nodeControllerImpl) GetNodeConfiguration(c echo.Context) error {
 	if err != nil {
 		return err.ToHTTPError()
 	}
-	state1 := api_models.StateDTO{
-		Interval:    25,
-		UpperLimit:  1,
-		LowerLimit:  -999,
-		PicturesNum: 1,
-		Next:        "2",
-		Prev:        "",
-	}
-	state2 := api_models.StateDTO{
-		Interval:    10,
-		UpperLimit:  2,
-		LowerLimit:  1,
-		PicturesNum: 1,
-		Next:        "3",
-		Prev:        "1",
-	}
-	state3 := api_models.StateDTO{
-		Interval:    5,
-		UpperLimit:  999,
-		LowerLimit:  2,
-		PicturesNum: 1,
-		Next:        "",
-		Prev:        "2",
-	}
-	stateMap := make(map[string]*api_models.StateDTO)
-	stateMap["1"] = &state1
-	stateMap["2"] = &state2
-	stateMap["3"] = &state3
 	return c.JSON(http.StatusOK, configuration)
 }
