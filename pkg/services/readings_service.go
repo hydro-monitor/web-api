@@ -9,7 +9,7 @@ import (
 )
 
 type ReadingsService interface {
-	CreateReading(nodeId string, reading *api_models.Reading) (*api_models.GetReadingDTO, error)
+	CreateReading(nodeId string, reading *api_models.ReadingDTO) (*api_models.GetReadingDTO, error)
 	AddPhotoToReading(photoDTO *api_models.PhotoDTO) (*api_models.PhotoMetadataDTO, error)
 	GetNodeReadings(nodeId string) ([]*api_models.GetReadingDTO, error)
 	GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, ServiceError)
@@ -69,7 +69,7 @@ func (r *readingsServiceImpl) GetReadingPhoto(readingId string, number int) (*db
 	err = r.photosRepository.Get(&dbPhoto)
 	if err != nil {
 		if err == gocql.ErrNotFound {
-			return nil, NewNotFoundError("Reading photo not found", err)
+			return nil, NewNotFoundError("ReadingDTO photo not found", err)
 		}
 		return nil, NewGenericServiceError("Server error when getting reading photo", err)
 	}
@@ -84,7 +84,7 @@ func (r *readingsServiceImpl) GetNodeReadings(nodeId string) ([]*api_models.GetR
 	return readings.ConvertToAPIGetReadings(), nil
 }
 
-func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.Reading) (*api_models.GetReadingDTO, error) {
+func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.ReadingDTO) (*api_models.GetReadingDTO, error) {
 	readingTimeUUID := gocql.UUIDFromTime(reading.Time)
 	dbReading := &db_models.Reading{
 		NodeId:      nodeId,

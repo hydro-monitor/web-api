@@ -19,8 +19,9 @@ La replicación del servidor es invisible al usuario, lo que se expone es un loa
 Para ejecutar el servidor se deben realizar los siguientes pasos:
 
 1. Crear una Docker network: `docker network create hydromon-net`.
-2. Iniciar un container con Cassandra: `docker run --name hydromon-cassandra --net hydromon-net -d cassandra`. Esto
+2. Iniciar un container con Cassandra: `docker run --name hydromon-cassandra-1 --net hydromon-net -d cassandra`. Esto
 solo es necesario la primera vez, luego puede simplemente correrse `docker start hydromon-cassandra`.
+También puede exponerse el puerto 9042 para poder conectarse con el servidor sin que esté corriendo en Docker.
 3. Crear el keyspace en la base de datos:
     1. Conectarse a Cassandra a traves de `cqlsh`: `docker run -it --network hydromon-net --rm cassandra cqlsh hydromon-cassandra`.
     2. Crear el keyspace: `CREATE KEYSPACE hydromon WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };`
