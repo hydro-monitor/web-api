@@ -1,5 +1,9 @@
 # Servidor
 
+[![Build Status](https://travis-ci.org/hydro-monitor/web-api.svg?branch=master)](https://travis-ci.org/hydro-monitor/web-api)
+[![Go Report Card](https://goreportcard.com/badge/github.com/hydro-monitor/web-api)](https://goreportcard.com/report/github.com/hydro-monitor/web-api)
+[![codebeat badge](https://codebeat.co/badges/bec1313f-1ff4-4ea7-bc75-6839183ce20e)](https://codebeat.co/projects/github-com-hydro-monitor-web-api-master)
+
 Repositorio del servidor del sistema de medicion y estudios de rios realizado como parte del trabajo profesional de los alumnos Agustina Barbetta y Manuel Porto.
 
 Dentro del servidor se encuentra:
