@@ -5,6 +5,7 @@ import (
 	"hydro_monitor/web_api/pkg/clients/db"
 )
 
+// NewPhotosRepository crea un nuevo repositorio para interactuar con la tabla de "photos" de la base de datos
 func NewPhotosRepository(client db.Client) Repository {
 	photosMetadata := table.Metadata{
 		Name:    "photos",
