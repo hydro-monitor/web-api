@@ -9,12 +9,14 @@ import (
 	"hydro_monitor/web_api/pkg/clients/db"
 	"hydro_monitor/web_api/pkg/controllers"
 	"hydro_monitor/web_api/pkg/services"
+	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 // @title Hydro Monitor Web API
-// @version 1.0
+// @version 0.1.0
 // @description This is the Hydro Monitor Web API
 
 // @contact.name Manuel Porto
@@ -37,6 +39,10 @@ func main() {
 	if port == "" {
 		e.Logger.Fatal("$PORT not set")
 		return
+	}
+	s := &http.Server{
+		Addr:        fmt.Sprintf(":%s", port),
+		ReadTimeout: 5 * time.Minute,
 	}
 
 	// Services
@@ -74,5 +80,5 @@ func main() {
 	nodeGroup.GET("/:node_id/readings/:reading_id/photos", readingsController.GetReadingPhoto)
 	nodeGroup.POST("/:node_id/readings/:reading_id/photos", readingsController.AddPhotoToReading)
 
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
+	e.Logger.Fatal(e.StartServer(s))
 }

@@ -40,11 +40,11 @@ func (_m *ReadingsService) AddPhotoToReading(photoDTO *api_models.PhotoDTO) (*ap
 }
 
 // CreateReading provides a mock function with given fields: nodeId, reading
-func (_m *ReadingsService) CreateReading(nodeId string, reading *api_models.Reading) (*api_models.GetReadingDTO, error) {
+func (_m *ReadingsService) CreateReading(nodeId string, reading *api_models.ReadingDTO) (*api_models.GetReadingDTO, error) {
 	ret := _m.Called(nodeId, reading)
 
 	var r0 *api_models.GetReadingDTO
-	if rf, ok := ret.Get(0).(func(string, *api_models.Reading) *api_models.GetReadingDTO); ok {
+	if rf, ok := ret.Get(0).(func(string, *api_models.ReadingDTO) *api_models.GetReadingDTO); ok {
 		r0 = rf(nodeId, reading)
 	} else {
 		if ret.Get(0) != nil {
@@ -53,7 +53,7 @@ func (_m *ReadingsService) CreateReading(nodeId string, reading *api_models.Read
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, *api_models.Reading) error); ok {
+	if rf, ok := ret.Get(1).(func(string, *api_models.ReadingDTO) error); ok {
 		r1 = rf(nodeId, reading)
 	} else {
 		r1 = ret.Error(1)

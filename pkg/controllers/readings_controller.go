@@ -21,6 +21,19 @@ type readingsControllerImpl struct {
 	service services.ReadingsService
 }
 
+// AddPhotoToReading godoc
+// @Summary Agrega una foto a la medición
+// @Tags readings
+// @Accept  jpeg
+// @Param node_id path string true "ID del nodo"
+// @Param reading_id path string true "ID de la medición"
+// @Param picture body png true "Foto de la medición"
+// @Success 201
+// @Failure 400 {object} echo.HTTPError
+// @Failure 404 {object} echo.HTTPError
+// @Failure 422 {object} echo.HTTPError
+// @Failure 500 {object} echo.HTTPError
+// @Router /nodes/{node_id}/readings/{reading_id}/photos [post]
 func (r *readingsControllerImpl) AddPhotoToReading(c echo.Context) error {
 	readingId := c.Param("reading_id")
 	photo := new(api_models.PhotoDTO)
@@ -37,6 +50,16 @@ func (r *readingsControllerImpl) AddPhotoToReading(c echo.Context) error {
 	return c.NoContent(http.StatusCreated)
 }
 
+// GetNodeReading godoc
+// @Summary Obtiene los datos de una medición
+// @Tags readings
+// @Produce  json
+// @Param node_id path string true "ID del nodo"
+// @Param reading_id path string true "ID de la medición"
+// @Success 200 {object} api_models.GetReadingDTO
+// @Failure 404 {object} echo.HTTPError
+// @Failure 500 {object} echo.HTTPError
+// @Router /nodes/{node_id}/readings/{reading_id} [get]
 func (r *readingsControllerImpl) GetNodeReading(c echo.Context) error {
 	nodeId := c.Param("node_id")
 	readingId := c.Param("reading_id")
@@ -47,6 +70,15 @@ func (r *readingsControllerImpl) GetNodeReading(c echo.Context) error {
 	return c.JSON(http.StatusOK, apiReading)
 }
 
+// GetNodeReadings godoc
+// @Summary Obtiene las mediciones de un nodo
+// @Tags readings
+// @Produce  json
+// @Param node_id path string true "ID del nodo"
+// @Success 200 {array} api_models.GetReadingDTO
+// @Failure 404 {object} echo.HTTPError
+// @Failure 500 {object} echo.HTTPError
+// @Router /nodes/{node_id}/readings [get]
 func (r *readingsControllerImpl) GetNodeReadings(c echo.Context) error {
 	nodeId := c.Param("node_id")
 	getReadings, err := r.service.GetNodeReadings(nodeId)
@@ -56,6 +88,16 @@ func (r *readingsControllerImpl) GetNodeReadings(c echo.Context) error {
 	return c.JSON(http.StatusOK, getReadings)
 }
 
+// GetReadingPhoto godoc
+// @Summary Obtiene la foto de una medición
+// @Tags readings
+// @Produce  jpeg
+// @Param node_id path string true "ID del nodo"
+// @Param reading_id path string true "ID de la medición"
+// @Success 200
+// @Failure 404 {object} echo.HTTPError
+// @Failure 500 {object} echo.HTTPError
+// @Router /nodes/{node_id}/readings/{reading_id}/photos [get]
 func (r *readingsControllerImpl) GetReadingPhoto(c echo.Context) error {
 	readingId := c.Param("reading_id")
 	photo, err := r.service.GetReadingPhoto(readingId, 0)
@@ -65,9 +107,21 @@ func (r *readingsControllerImpl) GetReadingPhoto(c echo.Context) error {
 	return c.Blob(http.StatusOK, "image/jpeg", photo.Picture)
 }
 
+// CreateReading godoc
+// @Summary Crea una medición
+// @Tags readings
+// @Accept mpfd
+// @Produce  json
+// @Param node_id path string true "ID del nodo"
+// @Param reading body api_models.ReadingDTO true "Datos de la medición"
+// @Success 200 {object} api_models.GetReadingDTO
+// @Failure 400 {object} echo.HTTPError
+// @Failure 404 {object} echo.HTTPError
+// @Failure 500 {object} echo.HTTPError
+// @Router /nodes/{node_id}/readings [post]
 func (r *readingsControllerImpl) CreateReading(c echo.Context) error {
 	nodeId := c.Param("node_id")
-	reading := new(api_models.Reading)
+	reading := new(api_models.ReadingDTO)
 	if err := c.Bind(reading); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}

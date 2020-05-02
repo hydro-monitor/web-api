@@ -5,6 +5,7 @@ import (
 	"hydro_monitor/web_api/pkg/clients/db"
 )
 
+// NewReadingsRepository crea un nuevo repositorio para interactuar con la tabla de readings de la base de datos
 func NewReadingsRepository(client db.Client) Repository {
 	readingsMetadata := table.Metadata{
 		Name:    "readings",
