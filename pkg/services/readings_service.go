@@ -96,10 +96,11 @@ func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.R
 	}
 	readingTimeUUID := gocql.UUIDFromTime(reading.Time)
 	dbReading := &db_models.Reading{
-		NodeId:      nodeId,
-		ReadingId:   readingTimeUUID,
-		ReadingTime: reading.Time,
-		WaterLevel:  reading.WaterLevel,
+		NodeId:        nodeId,
+		ReadingId:     readingTimeUUID,
+		ReadingTime:   reading.Time,
+		WaterLevel:    reading.WaterLevel,
+		ManualReading: reading.ManualReading,
 	}
 	if err := r.readingsRepository.Insert(dbReading); err != nil {
 		return nil, err
