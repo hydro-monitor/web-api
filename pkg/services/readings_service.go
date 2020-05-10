@@ -2,7 +2,6 @@ package services
 
 import (
 	"github.com/gocql/gocql"
-	"hydro_monitor/web_api/pkg/clients/db"
 	"hydro_monitor/web_api/pkg/models/api_models"
 	"hydro_monitor/web_api/pkg/models/db_models"
 	"hydro_monitor/web_api/pkg/repositories"
@@ -17,6 +16,7 @@ type ReadingsService interface {
 }
 
 type readingsServiceImpl struct {
+	nodesRepository    repositories.Repository
 	readingsRepository repositories.Repository
 	photosRepository   repositories.Repository
 }
@@ -79,12 +79,21 @@ func (r *readingsServiceImpl) GetReadingPhoto(readingId string, number int) (*db
 func (r *readingsServiceImpl) GetNodeReadings(nodeId string) ([]*api_models.GetReadingDTO, error) {
 	readings := db_models.NewReadingsDTO(nodeId)
 	if err := r.readingsRepository.Select(readings); err != nil {
-		return nil, err
+		if err == gocql.ErrNotFound {
+			return nil, NewNotFoundError("Node readings not found", err)
+		}
+		return nil, NewGenericServiceError("Server error when getting node readings", err)
 	}
 	return readings.ConvertToAPIGetReadings(), nil
 }
 
 func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.ReadingDTO) (*api_models.GetReadingDTO, error) {
+	if err := r.nodesRepository.Get(&db_models.NodeDTO{Id: nodeId}); err != nil {
+		if err == gocql.ErrNotFound {
+			return nil, NewNotFoundError("Node not found", err)
+		}
+		return nil, NewGenericServiceError("Server error when trying to create new reading", err)
+	}
 	readingTimeUUID := gocql.UUIDFromTime(reading.Time)
 	dbReading := &db_models.Reading{
 		NodeId:      nodeId,
@@ -98,8 +107,10 @@ func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.R
 	return dbReading.ConvertToAPIGetReading(), nil
 }
 
-func NewReadingsService(client db.Client) ReadingsService {
-	readingsRepository := repositories.NewReadingsRepository(client)
-	photosRepository := repositories.NewPhotosRepository(client)
-	return &readingsServiceImpl{readingsRepository: readingsRepository, photosRepository: photosRepository}
+func NewReadingsService(nodesRepository repositories.Repository, photosRepository repositories.Repository, readingsRepository repositories.Repository) ReadingsService {
+	return &readingsServiceImpl{
+		nodesRepository:    nodesRepository,
+		readingsRepository: readingsRepository,
+		photosRepository:   photosRepository,
+	}
 }
