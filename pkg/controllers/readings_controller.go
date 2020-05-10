@@ -46,7 +46,9 @@ func (r *readingsControllerImpl) AddPhotoToReading(c echo.Context) error {
 		return c.String(http.StatusUnprocessableEntity, err.Error())
 	}
 	photo.Photo = photoFile
-	r.service.AddPhotoToReading(photo)
+	if _, err := r.service.AddPhotoToReading(photo); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
 	return c.NoContent(http.StatusCreated)
 }
 

@@ -3,7 +3,6 @@ package services
 import (
 	"encoding/json"
 	"github.com/gocql/gocql"
-	"hydro_monitor/web_api/pkg/clients/db"
 	"hydro_monitor/web_api/pkg/models/api_models"
 	"hydro_monitor/web_api/pkg/models/db_models"
 	"hydro_monitor/web_api/pkg/repositories"
@@ -21,7 +20,7 @@ type NodeService interface {
 }
 
 type nodeServiceImpl struct {
-	nodeRepository           repositories.Repository
+	nodesRepository          repositories.Repository
 	configurationsRepository repositories.Repository
 }
 
@@ -36,7 +35,7 @@ func (n *nodeServiceImpl) CreateNodeConfiguration(nodeId string, configuration m
 
 func (n *nodeServiceImpl) GetNodes() ([]*api_models.NodeDTO, error) {
 	nodesDTO := db_models.NewNodesDTO()
-	if err := n.nodeRepository.SelectAll(nodesDTO); err != nil {
+	if err := n.nodesRepository.SelectAll(nodesDTO); err != nil {
 		return nil, err
 	}
 	return nodesDTO.ConvertToApiNodes(), nil
@@ -44,7 +43,7 @@ func (n *nodeServiceImpl) GetNodes() ([]*api_models.NodeDTO, error) {
 
 func (n *nodeServiceImpl) DeleteNode(nodeId string) error {
 	dbNode := &db_models.DeleteNodeDTO{Id: nodeId}
-	return n.nodeRepository.Delete(dbNode)
+	return n.nodesRepository.Delete(dbNode)
 }
 
 func (n *nodeServiceImpl) CreateNode(node *api_models.NodeDTO) error {
@@ -53,12 +52,12 @@ func (n *nodeServiceImpl) CreateNode(node *api_models.NodeDTO) error {
 		Description:   node.Description,
 		ManualReading: false,
 	}
-	return n.nodeRepository.Insert(dbNode)
+	return n.nodesRepository.Insert(dbNode)
 }
 
 func (n *nodeServiceImpl) GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error) {
 	respManualReading := &db_models.ManualReadingDTO{NodeId: nodeId}
-	if err := n.nodeRepository.Get(respManualReading); err != nil {
+	if err := n.nodesRepository.Get(respManualReading); err != nil {
 		return nil, err
 	}
 	return respManualReading.ToAPIManualReadingDTO(), nil
@@ -69,7 +68,7 @@ func (n *nodeServiceImpl) UpdateNodeManualReading(nodeId string, manualReading b
 		NodeId:        nodeId,
 		ManualReading: manualReading,
 	}
-	if err := n.nodeRepository.Update(node); err != nil {
+	if err := n.nodesRepository.Update(node); err != nil {
 		return nil, err
 	}
 	resp := &api_models.ManualReadingDTO{ManualReading: node.ManualReading}
@@ -78,7 +77,7 @@ func (n *nodeServiceImpl) UpdateNodeManualReading(nodeId string, manualReading b
 
 func (n *nodeServiceImpl) GetNode(nodeId string) (*api_models.NodeDTO, ServiceError) {
 	node := db_models.NodeDTO{Id: nodeId}
-	err := n.nodeRepository.Get(&node)
+	err := n.nodesRepository.Get(&node)
 	if err != nil {
 		if err == gocql.ErrNotFound {
 			return nil, NewNotFoundError("Node not found", err)
@@ -103,11 +102,9 @@ func (n *nodeServiceImpl) GetNodeConfiguration(nodeId string) (map[string]*api_m
 	return configuration, nil
 }
 
-func NewNodeService(dbClient db.Client) NodeService {
-	nodeRepository := repositories.NewNodeRepository(dbClient)
-	configurationsRepository := repositories.NewConfigurationsRepository(dbClient)
+func NewNodeService(configurationsRepository repositories.Repository, nodesRepository repositories.Repository) NodeService {
 	return &nodeServiceImpl{
-		nodeRepository:           nodeRepository,
+		nodesRepository:          nodesRepository,
 		configurationsRepository: configurationsRepository,
 	}
 }
