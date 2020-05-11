@@ -17,7 +17,7 @@ type Client interface {
 	Get(table *table.Table, args db_models.DbDTO) error
 	Insert(table *table.Table, args db_models.DbDTO) error
 	Update(table *table.Table, args db_models.DbDTO) error
-	Select(table *table.Table, args db_models.SelectDTO) error
+	Select(table *table.Table, args db_models.SelectDTO, pageState []byte, pageSize int) error
 	SelectAll(table *table.Table, args db_models.SelectDTO) error
 	Close()
 }
@@ -38,9 +38,13 @@ func (db *clientImpl) Delete(table *table.Table, args db_models.DbDTO) error {
 	return q.ExecRelease()
 }
 
-func (db *clientImpl) Select(table *table.Table, args db_models.SelectDTO) error {
+func (db *clientImpl) Select(table *table.Table, args db_models.SelectDTO, pageState []byte, pageSize int) error {
 	stmt, names := table.Select(args.GetColumns()...)
 	q := gocqlx.Query(db.session.Query(stmt), names).BindMap(args.GetBindMap())
+	if pageSize > 0 {
+		q.PageState(pageState)
+		q.PageSize(pageSize)
+	}
 	return q.SelectRelease(args.GetArgs())
 }
 

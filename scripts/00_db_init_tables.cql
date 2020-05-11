@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS hydromon.readings (
     water_level double,
     manual_reading boolean,
     PRIMARY KEY (node_id, reading_id)
-);
+) WITH CLUSTERING ORDER BY (reading_id DESC);
 
 CREATE TABLE IF NOT EXISTS hydromon.photos (
     reading_time timeuuid,

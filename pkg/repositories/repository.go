@@ -13,7 +13,7 @@ type Repository interface {
 	Get(args db_models.DbDTO) error
 	Insert(args db_models.DbDTO) error
 	Update(args db_models.DbDTO) error
-	Select(args db_models.SelectDTO) error
+	Select(args db_models.SelectDTO, pageState []byte, pageSize int) error
 	SelectAll(args db_models.SelectDTO) error
 }
 
@@ -42,8 +42,8 @@ func (r *repositoryImpl) Update(args db_models.DbDTO) error {
 	return r.client.Update(r.table, args)
 }
 
-func (r *repositoryImpl) Select(args db_models.SelectDTO) error {
-	return r.client.Select(r.table, args)
+func (r *repositoryImpl) Select(args db_models.SelectDTO, pageState []byte, pageSize int) error {
+	return r.client.Select(r.table, args, pageState, pageSize)
 }
 
 func (r *repositoryImpl) SelectAll(args db_models.SelectDTO) error {
