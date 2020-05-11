@@ -55,13 +55,13 @@ func (_m *Repository) Insert(args db_models.DbDTO) error {
 	return r0
 }
 
-// Select provides a mock function with given fields: args
-func (_m *Repository) Select(args db_models.SelectDTO) error {
-	ret := _m.Called(args)
+// Select provides a mock function with given fields: args, pageState, pageSize
+func (_m *Repository) Select(args db_models.SelectDTO, pageState []byte, pageSize int) error {
+	ret := _m.Called(args, pageState, pageSize)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(db_models.SelectDTO) error); ok {
-		r0 = rf(args)
+	if rf, ok := ret.Get(0).(func(db_models.SelectDTO, []byte, int) error); ok {
+		r0 = rf(args, pageState, pageSize)
 	} else {
 		r0 = ret.Error(0)
 	}

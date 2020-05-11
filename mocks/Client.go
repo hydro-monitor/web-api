@@ -67,13 +67,13 @@ func (_m *Client) Migrate(dir string) {
 	_m.Called(dir)
 }
 
-// Select provides a mock function with given fields: _a0, args
-func (_m *Client) Select(_a0 *table.Table, args db_models.SelectDTO) error {
-	ret := _m.Called(_a0, args)
+// Select provides a mock function with given fields: _a0, args, pageState, pageSize
+func (_m *Client) Select(_a0 *table.Table, args db_models.SelectDTO, pageState []byte, pageSize int) error {
+	ret := _m.Called(_a0, args, pageState, pageSize)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*table.Table, db_models.SelectDTO) error); ok {
-		r0 = rf(_a0, args)
+	if rf, ok := ret.Get(0).(func(*table.Table, db_models.SelectDTO, []byte, int) error); ok {
+		r0 = rf(_a0, args, pageState, pageSize)
 	} else {
 		r0 = ret.Error(0)
 	}

@@ -87,24 +87,51 @@ func (_m *ReadingsService) GetNodeReading(nodeId string, readingId string) (*api
 	return r0, r1
 }
 
-// GetNodeReadings provides a mock function with given fields: nodeId
-func (_m *ReadingsService) GetNodeReadings(nodeId string) ([]*api_models.GetReadingDTO, error) {
-	ret := _m.Called(nodeId)
+// GetNodeReadings provides a mock function with given fields: nodeId, pageState, pageSize
+func (_m *ReadingsService) GetNodeReadings(nodeId string, pageState []byte, pageSize int) ([]*api_models.GetReadingDTO, services.ServiceError) {
+	ret := _m.Called(nodeId, pageState, pageSize)
 
 	var r0 []*api_models.GetReadingDTO
-	if rf, ok := ret.Get(0).(func(string) []*api_models.GetReadingDTO); ok {
-		r0 = rf(nodeId)
+	if rf, ok := ret.Get(0).(func(string, []byte, int) []*api_models.GetReadingDTO); ok {
+		r0 = rf(nodeId, pageState, pageSize)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*api_models.GetReadingDTO)
 		}
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(nodeId)
+	var r1 services.ServiceError
+	if rf, ok := ret.Get(1).(func(string, []byte, int) services.ServiceError); ok {
+		r1 = rf(nodeId, pageState, pageSize)
 	} else {
-		r1 = ret.Error(1)
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).(services.ServiceError)
+		}
+	}
+
+	return r0, r1
+}
+
+// GetNodesLastReading provides a mock function with given fields: nodes
+func (_m *ReadingsService) GetNodesLastReading(nodes []*api_models.NodeDTO) (map[string]*api_models.GetReadingDTO, services.ServiceError) {
+	ret := _m.Called(nodes)
+
+	var r0 map[string]*api_models.GetReadingDTO
+	if rf, ok := ret.Get(0).(func([]*api_models.NodeDTO) map[string]*api_models.GetReadingDTO); ok {
+		r0 = rf(nodes)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(map[string]*api_models.GetReadingDTO)
+		}
+	}
+
+	var r1 services.ServiceError
+	if rf, ok := ret.Get(1).(func([]*api_models.NodeDTO) services.ServiceError); ok {
+		r1 = rf(nodes)
+	} else {
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).(services.ServiceError)
+		}
 	}
 
 	return r0, r1

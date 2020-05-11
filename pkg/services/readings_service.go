@@ -10,8 +10,9 @@ import (
 type ReadingsService interface {
 	CreateReading(nodeId string, reading *api_models.ReadingDTO) (*api_models.GetReadingDTO, error)
 	AddPhotoToReading(photoDTO *api_models.PhotoDTO) (*api_models.PhotoMetadataDTO, error)
-	GetNodeReadings(nodeId string) ([]*api_models.GetReadingDTO, error)
+	GetNodeReadings(nodeId string, pageState []byte, pageSize int) ([]*api_models.GetReadingDTO, ServiceError)
 	GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, ServiceError)
+	GetNodesLastReading(nodes []*api_models.NodeDTO) (map[string]*api_models.GetReadingDTO, ServiceError)
 	GetReadingPhoto(readingId string, number int) (*db_models.Photo, ServiceError)
 }
 
@@ -76,15 +77,32 @@ func (r *readingsServiceImpl) GetReadingPhoto(readingId string, number int) (*db
 	return &dbPhoto, nil
 }
 
-func (r *readingsServiceImpl) GetNodeReadings(nodeId string) ([]*api_models.GetReadingDTO, error) {
+func (r *readingsServiceImpl) GetNodeReadings(nodeId string, pageState []byte, pageSize int) ([]*api_models.GetReadingDTO, ServiceError) {
 	readings := db_models.NewReadingsDTO(nodeId)
-	if err := r.readingsRepository.Select(readings); err != nil {
+	if err := r.readingsRepository.Select(readings, pageState, pageSize); err != nil {
 		if err == gocql.ErrNotFound {
 			return nil, NewNotFoundError("Node readings not found", err)
 		}
 		return nil, NewGenericServiceError("Server error when getting node readings", err)
 	}
 	return readings.ConvertToAPIGetReadings(), nil
+}
+
+func (r *readingsServiceImpl) GetNodesLastReading(nodes []*api_models.NodeDTO) (map[string]*api_models.GetReadingDTO, ServiceError) {
+	lastReadings := make(map[string]*api_models.GetReadingDTO)
+	for _, node := range nodes {
+		readings, err := r.GetNodeReadings(node.Id, nil, 1)
+		if err != nil {
+			return nil, err
+		}
+		if len(readings) == 1 {
+			lastReadings[node.Id] = readings[0]
+		} else {
+			// TODO ver si hacer esto o directamente no devolver el nodo
+			lastReadings[node.Id] = nil
+		}
+	}
+	return lastReadings, nil
 }
 
 func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.ReadingDTO) (*api_models.GetReadingDTO, error) {

@@ -14,11 +14,25 @@ type ReadingsController interface {
 	AddPhotoToReading(c echo.Context) error
 	GetNodeReadings(c echo.Context) error
 	GetNodeReading(c echo.Context) error
+	GetNodesLastReading(c echo.Context) error
 	GetReadingPhoto(c echo.Context) error
 }
 
 type readingsControllerImpl struct {
-	service services.ReadingsService
+	nodesService    services.NodeService
+	readingsService services.ReadingsService
+}
+
+func (r *readingsControllerImpl) GetNodesLastReading(c echo.Context) error {
+	nodes, err := r.nodesService.GetNodes()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	lastReadings, err2 := r.readingsService.GetNodesLastReading(nodes)
+	if err2 != nil {
+		return err2
+	}
+	return c.JSON(http.StatusOK, lastReadings)
 }
 
 // AddPhotoToReading godoc
@@ -46,7 +60,7 @@ func (r *readingsControllerImpl) AddPhotoToReading(c echo.Context) error {
 		return c.String(http.StatusUnprocessableEntity, err.Error())
 	}
 	photo.Photo = photoFile
-	if _, err := r.service.AddPhotoToReading(photo); err != nil {
+	if _, err := r.readingsService.AddPhotoToReading(photo); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	return c.NoContent(http.StatusCreated)
@@ -65,7 +79,7 @@ func (r *readingsControllerImpl) AddPhotoToReading(c echo.Context) error {
 func (r *readingsControllerImpl) GetNodeReading(c echo.Context) error {
 	nodeId := c.Param("node_id")
 	readingId := c.Param("reading_id")
-	apiReading, err := r.service.GetNodeReading(nodeId, readingId)
+	apiReading, err := r.readingsService.GetNodeReading(nodeId, readingId)
 	if err != nil {
 		return err.ToHTTPError()
 	}
@@ -83,7 +97,7 @@ func (r *readingsControllerImpl) GetNodeReading(c echo.Context) error {
 // @Router /nodes/{node_id}/readings [get]
 func (r *readingsControllerImpl) GetNodeReadings(c echo.Context) error {
 	nodeId := c.Param("node_id")
-	getReadings, err := r.service.GetNodeReadings(nodeId)
+	getReadings, err := r.readingsService.GetNodeReadings(nodeId, nil, 0)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
@@ -102,7 +116,7 @@ func (r *readingsControllerImpl) GetNodeReadings(c echo.Context) error {
 // @Router /nodes/{node_id}/readings/{reading_id}/photos [get]
 func (r *readingsControllerImpl) GetReadingPhoto(c echo.Context) error {
 	readingId := c.Param("reading_id")
-	photo, err := r.service.GetReadingPhoto(readingId, 0)
+	photo, err := r.readingsService.GetReadingPhoto(readingId, 0)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
@@ -127,7 +141,7 @@ func (r *readingsControllerImpl) CreateReading(c echo.Context) error {
 	if err := c.Bind(reading); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
-	newReading, err := r.service.CreateReading(nodeId, reading)
+	newReading, err := r.readingsService.CreateReading(nodeId, reading)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
@@ -152,6 +166,6 @@ func (r *readingsControllerImpl) extractPicture(c echo.Context) ([]byte, error) 
 	return buf.Bytes(), nil
 }
 
-func NewReadingsController(service services.ReadingsService) ReadingsController {
-	return &readingsControllerImpl{service: service}
+func NewReadingsController(nodesService services.NodeService, readingsService services.ReadingsService) ReadingsController {
+	return &readingsControllerImpl{nodesService: nodesService, readingsService: readingsService}
 }

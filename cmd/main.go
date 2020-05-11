@@ -61,7 +61,7 @@ func main() {
 
 	// Controllers
 	nodeController := controllers.NewNodeController(nodeService)
-	readingsController := controllers.NewReadingsController(readingsService)
+	readingsController := controllers.NewReadingsController(nodeService, readingsService)
 
 	// Middleware
 	e.Use(middleware.Logger())
@@ -78,6 +78,7 @@ func main() {
 	nodeGroup := apiGroup.Group("/nodes")
 	nodeGroup.GET("", nodeController.GetNodes)
 	nodeGroup.POST("", nodeController.PostNode)
+	nodeGroup.GET("/last-reading", readingsController.GetNodesLastReading)
 	nodeGroup.GET("/:node_id", nodeController.GetNodeByID)
 	nodeGroup.DELETE("/:node_id", nodeController.DeleteNode)
 	nodeGroup.GET("/:node_id/configuration", nodeController.GetNodeConfiguration)
