@@ -18,7 +18,10 @@ type serviceErrorImpl struct {
 }
 
 func (s *serviceErrorImpl) Error() string {
-	return fmt.Sprintf("%s. Server error: '%s'", s.message, s.cause.Error())
+	if s.cause != nil {
+		return fmt.Sprintf("%s. Server error: '%s'", s.message, s.cause.Error())
+	}
+	return fmt.Sprintf(s.message)
 }
 
 func (s serviceErrorImpl) ToHTTPError() *echo.HTTPError {
@@ -44,6 +47,22 @@ func NewNotFoundError(message string, cause error) ServiceError {
 func NewBadReadingTimeError(message string, cause error) ServiceError {
 	return &serviceErrorImpl{
 		httpCode: http.StatusBadRequest,
+		message:  message,
+		cause:    cause,
+	}
+}
+
+func NewInvalidCredentialsError(message string, cause error) ServiceError {
+	return &serviceErrorImpl{
+		httpCode: http.StatusUnauthorized,
+		message:  message,
+		cause:    cause,
+	}
+}
+
+func NewUserRegistrationError(message string, cause error) ServiceError {
+	return &serviceErrorImpl{
+		httpCode: http.StatusInternalServerError,
 		message:  message,
 		cause:    cause,
 	}

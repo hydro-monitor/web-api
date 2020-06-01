@@ -54,14 +54,17 @@ func main() {
 	nodesRepository := repositories.NewNodeRepository(client)
 	photosRepository := repositories.NewPhotosRepository(client)
 	readingsRepository := repositories.NewReadingsRepository(client)
+	usersRepository := repositories.NewUsersRepository(client)
 
 	// Services
 	nodeService := services.NewNodeService(configurationsRepository, nodesRepository)
 	readingsService := services.NewReadingsService(nodesRepository, photosRepository, readingsRepository)
+	usersService := services.NewUsersService(usersRepository)
 
 	// Controllers
 	nodeController := controllers.NewNodeController(nodeService)
 	readingsController := controllers.NewReadingsController(nodeService, readingsService)
+	usersController := controllers.NewUsersController(usersService)
 
 	// Middleware
 	e.Use(middleware.Logger())
@@ -90,6 +93,10 @@ func main() {
 	nodeGroup.GET("/:node_id/readings", readingsController.GetNodeReadings)
 	nodeGroup.GET("/:node_id/readings/:reading_id/photos", readingsController.GetReadingPhoto)
 	nodeGroup.POST("/:node_id/readings/:reading_id/photos", readingsController.AddPhotoToReading)
+
+	// Users
+	apiGroup.POST("/session", usersController.Login)
+	apiGroup.POST("/users", usersController.Register)
 
 	e.Logger.Fatal(e.StartServer(s))
 }

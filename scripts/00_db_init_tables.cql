@@ -1,3 +1,10 @@
+CREATE TABLE IF NOT EXISTS hydromon.users (
+    email text,
+    password blob,
+    admin boolean,
+    PRIMARY KEY (email)
+);
+
 CREATE TABLE IF NOT EXISTS hydromon.nodes (
     id text,
     description text,
