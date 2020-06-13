@@ -8,7 +8,7 @@ import (
 func NewUsersRepository(client db.Client) Repository {
 	usersMetadata := table.Metadata{
 		Name:    "users",
-		Columns: []string{"email", "password", "admin"},
+		Columns: []string{"email", "name", "last_name", "password", "admin"},
 		PartKey: []string{"email"},
 		SortKey: nil,
 	}

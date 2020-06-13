@@ -12,10 +12,16 @@ import (
 type UsersController interface {
 	Login(c echo.Context) error
 	Register(c echo.Context) error
+	GetUser(c echo.Context) error
 }
 
 type usersControllerImpl struct {
 	usersService services.UsersService
+}
+
+func (u *usersControllerImpl) GetUser(c echo.Context) error {
+	mail := c.Param("mail")
+
 }
 
 func (u *usersControllerImpl) Register(c echo.Context) error {
