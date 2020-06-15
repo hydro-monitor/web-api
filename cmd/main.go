@@ -97,6 +97,9 @@ func main() {
 	// Users
 	apiGroup.POST("/session", usersController.Login)
 	apiGroup.POST("/users", usersController.Register)
+	apiGroup.GET("/users/:email", usersController.GetUser)
+	apiGroup.PUT("/users/:email", usersController.UpdateUser)
+	apiGroup.DELETE("/users/:email", usersController.DeleteUser)
 
 	e.Logger.Fatal(e.StartServer(s))
 }

@@ -67,6 +67,48 @@ func (_m *Client) Migrate(dir string) {
 	_m.Called(dir)
 }
 
+// SafeInsert provides a mock function with given fields: _a0, args
+func (_m *Client) SafeInsert(_a0 *table.Table, args db_models.DbDTO) (bool, error) {
+	ret := _m.Called(_a0, args)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(*table.Table, db_models.DbDTO) bool); ok {
+		r0 = rf(_a0, args)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*table.Table, db_models.DbDTO) error); ok {
+		r1 = rf(_a0, args)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SafeUpdate provides a mock function with given fields: _a0, args
+func (_m *Client) SafeUpdate(_a0 *table.Table, args db_models.DbDTO) (bool, error) {
+	ret := _m.Called(_a0, args)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(*table.Table, db_models.DbDTO) bool); ok {
+		r0 = rf(_a0, args)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*table.Table, db_models.DbDTO) error); ok {
+		r1 = rf(_a0, args)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Select provides a mock function with given fields: _a0, args, pageState, pageSize
 func (_m *Client) Select(_a0 *table.Table, args db_models.SelectDTO, pageState []byte, pageSize int) error {
 	ret := _m.Called(_a0, args, pageState, pageSize)

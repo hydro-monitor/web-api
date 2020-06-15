@@ -67,3 +67,11 @@ func NewUserRegistrationError(message string, cause error) ServiceError {
 		cause:    cause,
 	}
 }
+
+func NewServiceError(httpCode int, message string, cause error) ServiceError {
+	return &serviceErrorImpl{
+		httpCode: httpCode,
+		message:  message,
+		cause:    cause,
+	}
+}

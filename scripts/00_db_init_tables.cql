@@ -1,5 +1,7 @@
 CREATE TABLE IF NOT EXISTS hydromon.users (
     email text,
+    name text,
+    last_name text,
     password blob,
     admin boolean,
     PRIMARY KEY (email)

@@ -1,3 +1,8 @@
+INSERT INTO hydromon.users (email, name, last_name, password, admin) VALUES
+('john.doe@example.com', 'John', 'Doe', null, true);
+INSERT INTO hydromon.users (email, name, last_name, password, admin) VALUES
+('marcia.clark@example.com', 'Marcia', 'Clark', null, false);
+
 INSERT INTO hydromon.nodes (id, description, manual_reading) VALUES
 ('lujan-1', 'Nodo instalado debajo de un puente', false);
 

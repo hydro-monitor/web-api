@@ -16,7 +16,9 @@ type Client interface {
 	Delete(table *table.Table, args db_models.DbDTO) error
 	Get(table *table.Table, args db_models.DbDTO) error
 	Insert(table *table.Table, args db_models.DbDTO) error
+	SafeInsert(table *table.Table, args db_models.DbDTO) (bool, error)
 	Update(table *table.Table, args db_models.DbDTO) error
+	SafeUpdate(table *table.Table, args db_models.DbDTO) (bool, error)
 	Select(table *table.Table, args db_models.SelectDTO, pageState []byte, pageSize int) error
 	SelectAll(table *table.Table, args db_models.SelectDTO) error
 	Close()
@@ -54,10 +56,22 @@ func (db *clientImpl) Update(table *table.Table, args db_models.DbDTO) error {
 	return q.ExecRelease()
 }
 
+func (db *clientImpl) SafeUpdate(table *table.Table, args db_models.DbDTO) (bool, error) {
+	stmt, names := table.Update(args.GetColumns()...)
+	q := gocqlx.Query(db.session.Query(stmt), names).BindStruct(args)
+	return true, q.ExecRelease()
+}
+
 func (db *clientImpl) Insert(table *table.Table, args db_models.DbDTO) error {
 	stmt, names := table.Insert()
 	q := gocqlx.Query(db.session.Query(stmt), names).BindStruct(args)
 	return q.ExecRelease()
+}
+
+func (db *clientImpl) SafeInsert(table *table.Table, args db_models.DbDTO) (bool, error) {
+	stmt, names := qb.Insert(table.Name()).Columns(args.GetColumns()...).Unique().ToCql()
+	q := gocqlx.Query(db.session.Query(stmt), names).BindStruct(args)
+	return q.ScanCAS()
 }
 
 func NewDB(hosts []string, keyspace string) Client {

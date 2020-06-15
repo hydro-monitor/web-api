@@ -12,8 +12,64 @@ type UsersController struct {
 	mock.Mock
 }
 
+// DeleteUser provides a mock function with given fields: c
+func (_m *UsersController) DeleteUser(c echo.Context) error {
+	ret := _m.Called(c)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(echo.Context) error); ok {
+		r0 = rf(c)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// GetUser provides a mock function with given fields: c
+func (_m *UsersController) GetUser(c echo.Context) error {
+	ret := _m.Called(c)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(echo.Context) error); ok {
+		r0 = rf(c)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Login provides a mock function with given fields: c
 func (_m *UsersController) Login(c echo.Context) error {
+	ret := _m.Called(c)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(echo.Context) error); ok {
+		r0 = rf(c)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Register provides a mock function with given fields: c
+func (_m *UsersController) Register(c echo.Context) error {
+	ret := _m.Called(c)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(echo.Context) error); ok {
+		r0 = rf(c)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpdateUser provides a mock function with given fields: c
+func (_m *UsersController) UpdateUser(c echo.Context) error {
 	ret := _m.Called(c)
 
 	var r0 error
