@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-openapi/spec v0.19.5 // indirect
 	github.com/go-openapi/swag v0.19.6 // indirect
 	github.com/gocql/gocql v0.0.0-20190717234527-2ba2dd7440dc
@@ -15,4 +16,5 @@ require (
 	github.com/stretchr/testify v1.5.1
 	github.com/swaggo/echo-swagger v0.0.0-20191205130555-62f81ea88919
 	github.com/swaggo/swag v1.6.5
+	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
 )

@@ -41,6 +41,38 @@ func (_m *Repository) Get(args db_models.DbDTO) error {
 	return r0
 }
 
+// GetColumns provides a mock function with given fields:
+func (_m *Repository) GetColumns() []string {
+	ret := _m.Called()
+
+	var r0 []string
+	if rf, ok := ret.Get(0).(func() []string); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+
+	return r0
+}
+
+// GetPartitionKey provides a mock function with given fields:
+func (_m *Repository) GetPartitionKey() []string {
+	ret := _m.Called()
+
+	var r0 []string
+	if rf, ok := ret.Get(0).(func() []string); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+
+	return r0
+}
+
 // Insert provides a mock function with given fields: args
 func (_m *Repository) Insert(args db_models.DbDTO) error {
 	ret := _m.Called(args)
@@ -53,6 +85,48 @@ func (_m *Repository) Insert(args db_models.DbDTO) error {
 	}
 
 	return r0
+}
+
+// SafeInsert provides a mock function with given fields: args
+func (_m *Repository) SafeInsert(args db_models.DbDTO) (bool, error) {
+	ret := _m.Called(args)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(db_models.DbDTO) bool); ok {
+		r0 = rf(args)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(db_models.DbDTO) error); ok {
+		r1 = rf(args)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SafeUpdate provides a mock function with given fields: args
+func (_m *Repository) SafeUpdate(args db_models.DbDTO) (bool, error) {
+	ret := _m.Called(args)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(db_models.DbDTO) bool); ok {
+		r0 = rf(args)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(db_models.DbDTO) error); ok {
+		r1 = rf(args)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Select provides a mock function with given fields: args, pageState, pageSize

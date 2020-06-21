@@ -9,10 +9,14 @@ import (
 
 // Repository es la interfaz que permite interactuar con la base de datos
 type Repository interface {
+	GetColumns() []string
+	GetPartitionKey() []string
 	Delete(args db_models.DbDTO) error
 	Get(args db_models.DbDTO) error
 	Insert(args db_models.DbDTO) error
+	SafeInsert(args db_models.DbDTO) (bool, error)
 	Update(args db_models.DbDTO) error
+	SafeUpdate(args db_models.DbDTO) (bool, error)
 	Select(args db_models.SelectDTO, pageState []byte, pageSize int) error
 	SelectAll(args db_models.SelectDTO) error
 }
@@ -20,6 +24,14 @@ type Repository interface {
 type repositoryImpl struct {
 	table  *table.Table
 	client db.Client
+}
+
+func (r *repositoryImpl) GetColumns() []string {
+	return r.table.Metadata().Columns
+}
+
+func (r *repositoryImpl) GetPartitionKey() []string {
+	return r.table.Metadata().PartKey
 }
 
 // Delete borra un registro de la base de datos
@@ -37,9 +49,17 @@ func (r repositoryImpl) Insert(args db_models.DbDTO) error {
 	return r.client.Insert(r.table, args)
 }
 
+func (r repositoryImpl) SafeInsert(args db_models.DbDTO) (bool, error) {
+	return r.client.SafeInsert(r.table, args)
+}
+
 // Update actualiza un registro en la base de datos
 func (r *repositoryImpl) Update(args db_models.DbDTO) error {
 	return r.client.Update(r.table, args)
+}
+
+func (r *repositoryImpl) SafeUpdate(args db_models.DbDTO) (bool, error) {
+	return r.client.SafeUpdate(r.table, args)
 }
 
 func (r *repositoryImpl) Select(args db_models.SelectDTO, pageState []byte, pageSize int) error {

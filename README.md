@@ -27,7 +27,7 @@ Para ejecutar el servidor se deben realizar los siguientes pasos:
 solo es necesario la primera vez, luego puede simplemente correrse `docker start hydromon-cassandra`.
 También puede exponerse el puerto 9042 para poder conectarse con el servidor sin que esté corriendo en Docker.
 3. Crear el keyspace en la base de datos:
-    1. Conectarse a Cassandra a traves de `cqlsh`: `docker run -it --network hydromon-net --rm cassandra cqlsh hydromon-cassandra`.
+    1. Conectarse a Cassandra a través de `cqlsh`: `docker run -it --network hydromon-net --rm cassandra cqlsh hydromon-cassandra`.
     2. Crear el keyspace: `CREATE KEYSPACE hydromon WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };`
 4. Compilar el servidor: `make web-api-linux`.
 5. Ejecutar `docker build -t hydromon-server .`.
