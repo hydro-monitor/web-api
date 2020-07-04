@@ -16,12 +16,25 @@ type NodeService interface {
 	GetNodes() ([]*api_models.NodeDTO, error)
 	GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error)
 	GetNodeConfiguration(nodeId string) (map[string]*api_models.StateDTO, ServiceError)
+	UpdateNode(node *api_models.NodeDTO) ServiceError
 	UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error)
 }
 
 type nodeServiceImpl struct {
 	nodesRepository          repositories.Repository
 	configurationsRepository repositories.Repository
+}
+
+func (n *nodeServiceImpl) UpdateNode(node *api_models.NodeDTO) ServiceError {
+	dbNode := &db_models.NodeDTO{
+		Id:            node.Id,
+		Description:   node.Description,
+		ManualReading: node.ManualReading,
+	}
+	if err := n.nodesRepository.Update(dbNode); err != nil {
+		return NewGenericServiceError("Error when trying to update node information", err)
+	}
+	return nil
 }
 
 func (n *nodeServiceImpl) CreateNodeConfiguration(nodeId string, configuration map[string]*api_models.StateDTO) error {
@@ -47,10 +60,11 @@ func (n *nodeServiceImpl) DeleteNode(nodeId string) error {
 }
 
 func (n *nodeServiceImpl) CreateNode(node *api_models.NodeDTO) error {
+	manualReadingFalse := false
 	dbNode := &db_models.NodeDTO{
 		Id:            node.Id,
 		Description:   node.Description,
-		ManualReading: false,
+		ManualReading: &manualReadingFalse,
 	}
 	return n.nodesRepository.Insert(dbNode)
 }
@@ -76,7 +90,7 @@ func (n *nodeServiceImpl) UpdateNodeManualReading(nodeId string, manualReading b
 }
 
 func (n *nodeServiceImpl) GetNode(nodeId string) (*api_models.NodeDTO, ServiceError) {
-	node := db_models.NodeDTO{Id: nodeId}
+	node := db_models.NodeDTO{Id: &nodeId}
 	err := n.nodesRepository.Get(&node)
 	if err != nil {
 		if err == gocql.ErrNotFound {

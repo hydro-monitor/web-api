@@ -49,7 +49,7 @@ func (suite *ReadingsServiceTestSuite) TestCreateReading() {
 		ManualReading: false,
 	}
 
-	suite.nodesRepositoryMock.On("Get", &db_models.NodeDTO{Id: nodeId}).Return(nil)
+	suite.nodesRepositoryMock.On("Get", &db_models.NodeDTO{Id: &nodeId}).Return(nil)
 	suite.readingsRepositoryMock.On("Insert", mock.Anything).Return(nil)
 
 	res, err := suite.readingsService.CreateReading(nodeId, reading)
@@ -66,7 +66,7 @@ func (suite *ReadingsServiceTestSuite) TestCreateReadingWithNonExistingNode() {
 	gocqlNotFoundError := gocql.ErrNotFound
 	expectedError := services.NewNotFoundError("Node not found", gocqlNotFoundError)
 
-	suite.nodesRepositoryMock.On("Get", &db_models.NodeDTO{Id: nodeId}).Return(gocqlNotFoundError)
+	suite.nodesRepositoryMock.On("Get", &db_models.NodeDTO{Id: &nodeId}).Return(gocqlNotFoundError)
 
 	res, err := suite.readingsService.CreateReading(nodeId, reading)
 

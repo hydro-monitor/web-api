@@ -31,9 +31,11 @@ func (suite *NodeControllerTestSuite) SetupTest() {
 }
 
 func (suite *NodeControllerTestSuite) TestGetNode() {
+	id := "1"
+	description := "A node"
 	node := api_models.NodeDTO{
-		Id:          "1",
-		Description: "A node",
+		Id:          &id,
+		Description: &description,
 	}
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
