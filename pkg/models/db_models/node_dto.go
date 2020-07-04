@@ -2,15 +2,20 @@ package db_models
 
 import "hydro_monitor/web_api/pkg/models/api_models"
 
-var nodeColumns = []string{"description", "manual_reading"}
-
 type NodeDTO struct {
-	Id            string `db:"id"`
-	Description   string `db:"description"`
-	ManualReading bool   `db:"manual_reading"`
+	Id            *string `db:"id"`
+	Description   *string `db:"description"`
+	ManualReading *bool   `db:"manual_reading"`
 }
 
 func (n *NodeDTO) GetColumns() []string {
+	nodeColumns := make([]string, 0)
+	if n.Description != nil {
+		nodeColumns = append(nodeColumns, "description")
+	}
+	if n.ManualReading != nil {
+		nodeColumns = append(nodeColumns, "manual_reading")
+	}
 	return nodeColumns
 }
 

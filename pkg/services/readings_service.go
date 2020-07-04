@@ -91,22 +91,22 @@ func (r *readingsServiceImpl) GetNodeReadings(nodeId string, pageState []byte, p
 func (r *readingsServiceImpl) GetNodesLastReading(nodes []*api_models.NodeDTO) (map[string]*api_models.GetReadingDTO, ServiceError) {
 	lastReadings := make(map[string]*api_models.GetReadingDTO)
 	for _, node := range nodes {
-		readings, err := r.GetNodeReadings(node.Id, nil, 1)
+		readings, err := r.GetNodeReadings(*node.Id, nil, 1)
 		if err != nil {
 			return nil, err
 		}
 		if len(readings) == 1 {
-			lastReadings[node.Id] = readings[0]
+			lastReadings[*node.Id] = readings[0]
 		} else {
 			// TODO ver si hacer esto o directamente no devolver el nodo
-			lastReadings[node.Id] = nil
+			lastReadings[*node.Id] = nil
 		}
 	}
 	return lastReadings, nil
 }
 
 func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.ReadingDTO) (*api_models.GetReadingDTO, error) {
-	if err := r.nodesRepository.Get(&db_models.NodeDTO{Id: nodeId}); err != nil {
+	if err := r.nodesRepository.Get(&db_models.NodeDTO{Id: &nodeId}); err != nil {
 		if err == gocql.ErrNotFound {
 			return nil, NewNotFoundError("Node not found", err)
 		}

@@ -15,11 +15,35 @@ type NodeController interface {
 	GetNodeByID(c echo.Context) error
 	GetNodeManualReadingStatus(c echo.Context) error
 	GetNodeConfiguration(c echo.Context) error
+	UpdateNode(c echo.Context) error
 	UpdateNodeManualReading(c echo.Context) error
 }
 
 type nodeControllerImpl struct {
 	nodeService services.NodeService
+}
+
+// UpdateNode godoc
+// @Summary Actualiza la información de un nodo
+// @Description Actualiza la información de un nodo
+// @Tags nodes
+// @Accept  json
+// @Produce  json
+// @Param node_id path string true "ID del nodo"
+// @Success 200
+// @Failure 400 {object} echo.HTTPError
+// @Failure 500 {object} echo.HTTPError
+// @Router /nodes/{node_id} [put]
+func (n *nodeControllerImpl) UpdateNode(c echo.Context) error {
+	nodeId := c.Param("node_id")
+	node := &api_models.NodeDTO{Id: &nodeId}
+	if err := c.Bind(node); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	if err := n.nodeService.UpdateNode(node); err != nil {
+		return err.ToHTTPError()
+	}
+	return c.NoContent(http.StatusOK)
 }
 
 // CreateNodeConfiguration godoc
