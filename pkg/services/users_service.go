@@ -50,7 +50,6 @@ func (u *usersServiceImpl) UpdateUser(user *api_models.UserDTO) ServiceError {
 
 func (u *usersServiceImpl) DeleteUser(email string) ServiceError {
 	dbUser := &db_models.UserDTO{Email: &email}
-	dbUser.SetColumns(u.usersRepository.GetPartitionKey())
 	if err := u.usersRepository.Delete(dbUser); err != nil {
 		return NewGenericServiceError("Error when trying to delete user", err)
 	}
