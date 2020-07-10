@@ -23,7 +23,7 @@ type usersControllerImpl struct {
 
 func (u *usersControllerImpl) UpdateUser(c echo.Context) error {
 	email := c.Param("email")
-	apiUser := &api_models.UserDTO{Email: email}
+	apiUser := &api_models.UserDTO{Email: &email}
 	if err := c.Bind(apiUser); err != nil {
 		return echo.ErrBadRequest
 	}
