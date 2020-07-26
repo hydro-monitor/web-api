@@ -44,13 +44,13 @@ También puede exponerse el puerto 9042 para poder conectarse con el servidor si
 3. Si se desean agregar más nodos al cluster repetir el paso 2 cambiando el nombre de cada nodo.
 4. Crear el keyspace en la base de datos: `CREATE KEYSPACE hydromon WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };`
 
-#### Reemplazar un nodo fallido del Cluster
+#### Reemplazar un nodo fallido del cluster
 
 1. Ingresar a algún nodo activo y ejecutar: `nodetool status`. Registrar la ip del nodo que falló.
 2. Ejecutar `docker rm hydromon-cassandra-x` donde x es el número del nodo que falló.
 3. Ejecutar `docker run --name hydromon-cassandra-2 -d -net hydromon-net -e CASSANDRA_SEEDS=hydromon-cassandra-1 cassandra -Dcassandra.replace_address_first_boot=<dead_node_ip>`
 
-## Levantar un cluster de Cassandra con volúmenes persistentes
+### Levantar un cluster de Cassandra con volúmenes persistentes
 
 1. Crear una Docker network: `docker network create hydromon-net`.
 2. Crear el o los directorios donde residirá toda la información de los nodos de Cassandra.
@@ -60,17 +60,17 @@ También puede exponerse el puerto 9042 para poder conectarse con el servidor si
 5. Si se desean agregar más nodos al cluster repetir el paso 2 cambiando el nombre de cada nodo.
 6. Crear el keyspace en la base de datos: `CREATE KEYSPACE hydromon WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };`
 
-### ¿Cómo revivir un nodo caído con su volumen?
+#### ¿Cómo revivir un nodo caído con su volumen?
 
 Solo es necesario identificar el nodo que se detuvo y reiniciarlo con `docker start hydromon-cassandra-<node-number>`.
 
-### ¿Cómo revivir un nodo caído sin su volumen?
+#### ¿Cómo revivir un nodo caído sin su volumen?
 
 1. Identificar el nodo caído.
 2. Es probable que sea necesario eliminar el container previamente creado si se necesitan cambiar los parámetros del `docker run`.
 2. Ejecutar Ejecutar `docker run -v /my/own/datadir-<number>:/var/lib/cassandra --name hydromon-cassandra-<number> -d -net hydromon-net -e CASSANDRA_SEEDS=hydromon-cassandra-1 cassandra -Dcassandra.replace_address=<dead_node_ip>`.
 
-### ¿Cómo revivir tres nodos caídos con sus volúmenes?
+#### ¿Cómo revivir tres nodos caídos con sus volúmenes?
 
 Si todos los nodos de un cluster se detuvieron se deben reiniciar los mismos en el siguiente orden:
 1. Primero el o los nodos tipo SEED ya que si se reinicia alguno no seed no podrá conectarse al cluster.
