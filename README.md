@@ -46,12 +46,14 @@ También puede exponerse el puerto 9042 para poder conectarse con el servidor si
 2. Ejecutar `docker rm hydromon-cassandra-x` donde x es el número del nodo que falló.
 3. Ejecutar `docker run --name hydromon-cassandra-2 -d -net hydromon-net -e CASSANDRA_SEEDS=hydromon-cassandra-1 cassandra -Dcassandra.replace_address_first_boot=<dead_node_ip>`
 
-## Levantar un cluster de Cassandra con volúmenes
-1. Iniciar un container de Cassandra: `docker run -v /my/own/datadir:/var/lib/cassandra --name hydromon-cassandra-1 --net hydromon-net -d cassandra`.
-2. Para agregar nuevos containers ejecutar: 
+## Levantar un cluster de Cassandra con volúmenes persistentes
+1. Crear una Docker network: `docker network create hydromon-net`.
+2. Crear el o los directorios donde residirá toda la información de los nodos de Cassandra.
+3. Iniciar un container de Cassandra: `docker run -v /my/own/datadir:/var/lib/cassandra --name hydromon-cassandra-1 --net hydromon-net -d cassandra`.
+4. Para agregar nuevos containers ejecutar: 
 `docker run -v /my/own/datadir-2:/var/lib/cassandra --name hydromon-cassandra-2 -d -net hydromon-net -e CASSANDRA_SEEDS=hydromon-cassandra-1 cassandra`
-3. Si se desean agregar más nodos al cluster repetir el paso 2 cambiando el nombre de cada nodo.
-4. Crear el keyspace en la base de datos: `CREATE KEYSPACE hydromon WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };`
+5. Si se desean agregar más nodos al cluster repetir el paso 2 cambiando el nombre de cada nodo.
+6. Crear el keyspace en la base de datos: `CREATE KEYSPACE hydromon WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };`
 
 ### ¿Cómo revivir un nodo caído con su volumen?
 ### ¿Cómo revivir un nodo caído sin su volumen?
