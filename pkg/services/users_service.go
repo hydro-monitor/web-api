@@ -78,12 +78,16 @@ func (u *usersServiceImpl) Register(user *api_models.UserDTO) ServiceError {
 	if err != nil {
 		return NewUserRegistrationError("Error when trying to register a new user", err)
 	}
+	admin := false
+	if user.Admin != nil {
+		admin = *user.Admin
+	}
 	dbUSer := &db_models.UserDTO{
 		Email:    user.Email,
 		Name:     user.Name,
 		LastName: user.LastName,
 		Password: encryptedPassword,
-		Admin:    user.Admin,
+		Admin:    &admin,
 	}
 	dbUSer.SetColumns(u.usersRepository.GetColumns())
 	if applied, err2 := u.usersRepository.SafeInsert(dbUSer); !applied || err2 != nil {
