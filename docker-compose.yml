@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   hydromon-cassandra-1:
-    image: cassandra
+    build: ./scripts/cassandra
     volumes:
       - hydromon-cassandra-1-data:/var/lib/cassandra
     networks:
