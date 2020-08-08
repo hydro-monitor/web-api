@@ -110,8 +110,7 @@ func (u *usersServiceImpl) ValidateCredentials(email, password string) (*api_mod
 	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(password)); err != nil {
 		return nil, NewInvalidCredentialsError("Wrong username or password", err)
 	}
-	adminValue := true
-	return &api_models.UserDTO{Email: &email, Admin: &adminValue}, nil
+	return &api_models.UserDTO{Email: &email, Admin: user.Admin}, nil
 }
 
 func NewUsersService(usersRepository repositories.Repository) UsersService {
