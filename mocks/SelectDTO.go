@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	qb "github.com/scylladb/gocqlx/qb"
+	qb "github.com/scylladb/gocqlx/v2/qb"
 	mock "github.com/stretchr/testify/mock"
 )
 

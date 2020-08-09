@@ -10,11 +10,21 @@ import (
 	"hydro_monitor/web_api/pkg/controllers"
 	"hydro_monitor/web_api/pkg/repositories"
 	"hydro_monitor/web_api/pkg/services"
+	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
+
+func bootstrapDatabase(keyspaceName string, replicationFactor int) {
+	client := db.NewDB(strings.Split(os.Getenv("DB_HOSTS"), ","), "system")
+	defer client.Close()
+	if err := client.CreateKeyspace(keyspaceName, replicationFactor); err != nil {
+		log.Fatal("Couldn't create keyspace")
+	}
+}
 
 // @title Hydro Monitor Web API
 // @version 0.1.0
@@ -32,10 +42,32 @@ import (
 // @host localhost
 // @BasePath /api
 func main() {
+	hosts := os.Getenv("DB_HOSTS")
+	keyspaceName := os.Getenv("DB_KEYSPACE")
+	createKeyspace, err := strconv.ParseBool(os.Getenv("DB_CREATE_KEYSPACE"))
+	if err != nil {
+		log.Fatal("DB_CREATE_KEYSPACE must be a boolean")
+	}
+
+	if createKeyspace {
+		replicationFactor, err := strconv.Atoi(os.Getenv("DB_REPLICATION_FACTOR"))
+		if err != nil {
+			log.Fatal("DB_REPLICATION_FACTOR must be a number")
+		}
+		bootstrapDatabase(keyspaceName, replicationFactor)
+	}
+
 	// Database
-	client := db.NewDB(strings.Split(os.Getenv("DB_HOSTS"), ","), os.Getenv("DB_KEYSPACE"))
-	client.Migrate("./scripts")
+	client := db.NewDB(strings.Split(hosts, ","), keyspaceName)
 	defer client.Close()
+
+	runMigrations, err := strconv.ParseBool(os.Getenv("DB_RUN_MIGRATIONS"))
+	if err != nil {
+		log.Fatal("DB_RUN_MIGRATIONS must be a boolean")
+	}
+	if runMigrations {
+		client.Migrate("./scripts/db/migrations")
+	}
 
 	// Router
 	e := echo.New()

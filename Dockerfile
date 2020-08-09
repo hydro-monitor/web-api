@@ -3,6 +3,7 @@ FROM alpine
 ENV PORT 8080
 ENV DB_HOSTS hydromon-cassandra-1
 ENV DB_KEYSPACE hydromon
+ENV DB_REPLICATION_FACTOR 1
 
 WORKDIR /hydromon-server
 COPY _output/web-api /hydromon-server

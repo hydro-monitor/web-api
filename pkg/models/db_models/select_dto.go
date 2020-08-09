@@ -1,6 +1,6 @@
 package db_models
 
-import "github.com/scylladb/gocqlx/qb"
+import "github.com/scylladb/gocqlx/v2/qb"
 
 type SelectDTO interface {
 	GetColumns() []string
