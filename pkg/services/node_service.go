@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gocql/gocql"
 	"hydro_monitor/web_api/pkg/models/api_models"
 	"hydro_monitor/web_api/pkg/models/db_models"
@@ -38,6 +39,12 @@ func (n *nodeServiceImpl) UpdateNode(node *api_models.NodeDTO) ServiceError {
 }
 
 func (n *nodeServiceImpl) CreateNodeConfiguration(nodeId string, configuration map[string]*api_models.StateDTO) error {
+	validator := NewConfigurationValidator()
+	if valid := validator.ConfigurationIsValid(configuration); !valid {
+		return NewGenericClientError(
+			"Configuration is not valid",
+			fmt.Errorf("configuration %v is not valid", configuration))
+	}
 	rawConfiguration, err := json.Marshal(configuration)
 	if err != nil {
 		return NewGenericServiceError("Error when trying to marshal node's configuration", err)
