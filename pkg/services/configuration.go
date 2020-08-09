@@ -19,7 +19,6 @@ func NewConfigurationValidator() ConfigurationValidator {
 	return &configurationValidatorImpl{}
 }
 
-
 func (validator *configurationValidatorImpl) ConfigurationIsValid(configuration map[string]*api_models.StateDTO) bool {
 	return defaultStateIsValid(configuration) && customStatesAreValid(configuration) && stateLimitsAreValid(configuration)
 }
