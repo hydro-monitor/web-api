@@ -1,4 +1,4 @@
-version: "3.8"
+version: "2.4"
 
 services:
   hydromon-cassandra-1:
@@ -7,39 +7,39 @@ services:
       - hydromon-cassandra-1-data:/var/lib/cassandra
     networks:
       - hydromon-net
+    cpus: 1
+    mem_limit: 2G
 
   hydromon-cassandra-2:
     image: cassandra
-    command: /bin/bash -c "echo 'Waiting for seed node' && sleep 30 && /docker-entrypoint.sh cassandra -f"
+    command: /bin/bash -c "echo 'Waiting for seed node' && sleep 80 && /docker-entrypoint.sh cassandra -f"
     volumes:
       - hydromon-cassandra-2-data:/var/lib/cassandra
     networks:
       - hydromon-net
     environment:
       - "CASSANDRA_SEEDS=hydromon-cassandra-1"
+    restart: on-failure
     depends_on:
       - hydromon-cassandra-1
+    cpus: 1
+    mem_limit: 2G
 
   hydromon-cassandra-3:
     image: cassandra
-    command: /bin/bash -c "echo 'Waiting for seed node' && sleep 80 && /docker-entrypoint.sh cassandra -f"
+    command: /bin/bash -c "echo 'Waiting for seed node' && sleep 160 && /docker-entrypoint.sh cassandra -f"
     volumes:
       - hydromon-cassandra-3-data:/var/lib/cassandra
     networks:
       - hydromon-net
     environment:
       - "CASSANDRA_SEEDS=hydromon-cassandra-1"
+    restart: on-failure
     depends_on:
       - hydromon-cassandra-1
-  
-  web-api:
-    build: ..
-    ports:
-      - 8080:8080
-    networks:
-      - hydromon-net
-    depends_on:
-      - hydromon-cassandra-1
+      - hydromon-cassandra-2
+    cpus: 1
+    mem_limit: 2G
 
 volumes:
   hydromon-cassandra-1-data:
