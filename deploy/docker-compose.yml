@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   hydromon-cassandra-1:
-    build: ../build/docker/cassandra
+    image: cassandra
     volumes:
       - hydromon-cassandra-1-data:/var/lib/cassandra
     networks:
@@ -34,7 +34,6 @@ services:
   
   web-api:
     build: ..
-    command: /bin/bash -c "echo 'Waiting for seed node' && sleep 100 && /docker-entrypoint.sh web-api"
     ports:
       - 8080:8080
     networks:
@@ -46,3 +45,6 @@ volumes:
   hydromon-cassandra-1-data:
   hydromon-cassandra-2-data:
   hydromon-cassandra-3-data:
+
+networks:
+  hydromon-net:
