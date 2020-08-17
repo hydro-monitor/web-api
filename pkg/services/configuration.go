@@ -61,7 +61,7 @@ func customStatesAreValid(configuration map[string]*api_models.StateDTO) bool {
 		}
 		// Lower and upper limits can't be the same
 		if state.LowerLimit == state.UpperLimit {
-			fmt.Println("name:", stateName, "has matching lower and upper limit")
+			// state has matching lower and upper limit
 			return false
 		}
 	}
@@ -76,7 +76,6 @@ func stateLimitsAreValid(configuration map[string]*api_models.StateDTO) bool {
 		if stateName == defaultStateName {
 			continue
 		}
-		fmt.Println("name:", stateName, "=>", "state:", state)
 		interval := []float64{
 			state.LowerLimit,
 			state.UpperLimit,
@@ -92,7 +91,7 @@ func stateLimitsAreValid(configuration map[string]*api_models.StateDTO) bool {
 	// is an overlap
 	for i := 1; i < len(intervals); i++ {
 		if intervals[i - 1][1] > intervals[i][0] {
-			fmt.Println("overlap between intervals: ", intervals[i], intervals[i - 1])
+			// overlap between intervals: intervals[i], intervals[i - 1]
 			return false
 		}
 	}
