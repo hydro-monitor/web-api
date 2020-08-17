@@ -1,7 +1,7 @@
 package db_models
 
 import (
-	"github.com/scylladb/gocqlx/qb"
+	"github.com/scylladb/gocqlx/v2/qb"
 	"hydro_monitor/web_api/pkg/models/api_models"
 )
 
@@ -31,5 +31,5 @@ func (n *NodesDTO) ConvertToApiNodes() []*api_models.NodeDTO {
 
 func NewNodesDTO() *NodesDTO {
 	nodes := make([]*NodeDTO, 0)
-	return &NodesDTO{nodes:nodes}
+	return &NodesDTO{nodes: nodes}
 }

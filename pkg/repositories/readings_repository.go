@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"github.com/scylladb/gocqlx/table"
+	"github.com/scylladb/gocqlx/v2/table"
 	"hydro_monitor/web_api/pkg/clients/db"
 )
 

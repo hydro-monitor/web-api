@@ -1,0 +1,51 @@
+version: "3.3"
+
+services:
+  hydromon-cassandra-1:
+    image: cassandra
+    networks:
+      - hydromon-net
+
+  web-api-1:
+    build: .
+    environment:
+      - "PORT=8080"
+      - "DB_CREATE_KEYSPACE=true"
+      - "DB_RUN_MIGRATIONS=true"
+    ports:
+      - 8080:8080
+    networks:
+      - hydromon-net
+    depends_on:
+      - hydromon-cassandra-1
+
+  web-api-2:
+    build: .
+    environment:
+      - "PORT=8081"
+      - "DB_CREATE_KEYSPACE=false"
+      - "DB_RUN_MIGRATIONS=false"
+    ports:
+      - 8081:8081
+    networks:
+      - hydromon-net
+    depends_on:
+      - hydromon-cassandra-1
+      - web-api-1
+
+  web-api-3:
+    build: .
+    environment:
+      - "PORT=8082"
+      - "DB_CREATE_KEYSPACE=false"
+      - "DB_RUN_MIGRATIONS=false"
+    ports:
+      - 8082:8082
+    networks:
+      - hydromon-net
+    depends_on:
+      - hydromon-cassandra-1
+      - web-api-1
+
+networks:
+  hydromon-net:
