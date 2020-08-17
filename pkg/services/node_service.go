@@ -43,7 +43,7 @@ func (n *nodeServiceImpl) CreateNodeConfiguration(nodeId string, configuration m
 	if valid := validator.ConfigurationIsValid(configuration); !valid {
 		return NewGenericClientError(
 			"Configuration is not valid",
-			fmt.Errorf("configuration %v is not valid", configuration))
+			fmt.Errorf("configuration %s is not valid", ConfigToString(configuration)))
 	}
 	rawConfiguration, err := json.Marshal(configuration)
 	if err != nil {

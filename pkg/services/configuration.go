@@ -9,6 +9,25 @@ import (
 
 const defaultStateName = "default"
 
+func ConfigToString(configuration map[string]*api_models.StateDTO) string {
+	configStr := "[ "
+	for stateName, state := range configuration {
+		configStr += fmt.Sprintf("%s: %s ", stateName, stateToString(state))
+	}
+	configStr += "]"
+	return configStr
+}
+
+func stateToString(state *api_models.StateDTO) string {
+	return fmt.Sprintf("{interval: %d, lowerLimit: %f, upperLimit: %f, picturesNum: %d, prev: %s, next: %s}",
+		state.Interval,
+		state.LowerLimit,
+		state.UpperLimit,
+		state.PicturesNum,
+		state.Prev,
+		state.Next)
+}
+
 type ConfigurationValidator interface {
 	ConfigurationIsValid(configuration map[string]*api_models.StateDTO) bool
 }
