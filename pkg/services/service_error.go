@@ -44,7 +44,7 @@ func NewNotFoundError(message string, cause error) ServiceError {
 	}
 }
 
-func NewBadReadingTimeError(message string, cause error) ServiceError {
+func NewGenericClientError(message string, cause error) ServiceError {
 	return &serviceErrorImpl{
 		httpCode: http.StatusBadRequest,
 		message:  message,

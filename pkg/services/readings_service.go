@@ -45,7 +45,7 @@ func (r *readingsServiceImpl) AddPhotoToReading(photoDTO *api_models.PhotoDTO) (
 func (r *readingsServiceImpl) GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, ServiceError) {
 	readingUUID, err := gocql.ParseUUID(readingId)
 	if err != nil {
-		return nil, NewBadReadingTimeError("Incorrect reading time (bad format)", err)
+		return nil, NewGenericClientError("Incorrect reading time (bad format)", err)
 	}
 	dbReading := db_models.Reading{
 		NodeId:    nodeId,
@@ -64,7 +64,7 @@ func (r *readingsServiceImpl) GetNodeReading(nodeId string, readingId string) (*
 func (r *readingsServiceImpl) GetReadingPhoto(readingId string, number int) (*db_models.Photo, ServiceError) {
 	readingUUID, err := gocql.ParseUUID(readingId)
 	if err != nil {
-		return nil, NewBadReadingTimeError("Incorrect reading time (bad format)", err)
+		return nil, NewGenericClientError("Incorrect reading time (bad format)", err)
 	}
 	dbPhoto := db_models.Photo{ReadingTime: readingUUID}
 	err = r.photosRepository.Get(&dbPhoto)
