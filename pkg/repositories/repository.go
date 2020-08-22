@@ -11,6 +11,7 @@ import (
 type Repository interface {
 	GetColumns() []string
 	GetPartitionKey() []string
+	GetSortingKey() []string
 	Delete(args db_models.DbDTO) error
 	Get(args db_models.DbDTO) error
 	Insert(args db_models.DbDTO) error
@@ -32,6 +33,10 @@ func (r *repositoryImpl) GetColumns() []string {
 
 func (r *repositoryImpl) GetPartitionKey() []string {
 	return r.table.Metadata().PartKey
+}
+
+func (r *repositoryImpl) GetSortingKey() []string {
+	return r.table.Metadata().SortKey
 }
 
 // Delete borra un registro de la base de datos

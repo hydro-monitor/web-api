@@ -1,4 +1,4 @@
-FROM alpine
+FROM ubuntu
 
 ENV PORT 8080
 ENV DB_HOSTS hydromon-cassandra-1,hydromon-cassandra-2,hydromon-cassandra-3

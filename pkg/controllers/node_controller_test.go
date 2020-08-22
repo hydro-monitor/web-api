@@ -5,8 +5,8 @@ import (
 	"github.com/bmizerany/assert"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/suite"
-	"hydro_monitor/web_api/mocks"
 	"hydro_monitor/web_api/pkg/models/api_models"
+	"hydro_monitor/web_api/pkg/services"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,14 +17,14 @@ import (
 */
 type NodeControllerTestSuite struct {
 	suite.Suite
-	nodeServiceMock *mocks.NodeService
+	nodeServiceMock *services.NodeServiceMock
 	nodeController  NodeController
 	e               *echo.Echo
 	rec             *httptest.ResponseRecorder
 }
 
 func (suite *NodeControllerTestSuite) SetupTest() {
-	suite.nodeServiceMock = new(mocks.NodeService)
+	suite.nodeServiceMock = new(services.NodeServiceMock)
 	suite.nodeController = NewNodeController(suite.nodeServiceMock)
 	suite.e = echo.New()
 	suite.rec = httptest.NewRecorder()

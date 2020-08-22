@@ -4,9 +4,9 @@ import (
 	"github.com/gocql/gocql"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
-	"hydro_monitor/web_api/mocks"
 	"hydro_monitor/web_api/pkg/models/api_models"
 	"hydro_monitor/web_api/pkg/models/db_models"
+	"hydro_monitor/web_api/pkg/repositories"
 	"hydro_monitor/web_api/pkg/services"
 	"testing"
 	"time"
@@ -15,15 +15,15 @@ import (
 type ReadingsServiceTestSuite struct {
 	suite.Suite
 	readingsService        services.ReadingsService
-	nodesRepositoryMock    *mocks.Repository
-	photosRepositoryMock   *mocks.Repository
-	readingsRepositoryMock *mocks.Repository
+	nodesRepositoryMock    *repositories.RepositoryMock
+	photosRepositoryMock   *repositories.RepositoryMock
+	readingsRepositoryMock *repositories.RepositoryMock
 }
 
 func (suite *ReadingsServiceTestSuite) SetupTest() {
-	suite.nodesRepositoryMock = new(mocks.Repository)
-	suite.photosRepositoryMock = new(mocks.Repository)
-	suite.readingsRepositoryMock = new(mocks.Repository)
+	suite.nodesRepositoryMock = new(repositories.RepositoryMock)
+	suite.photosRepositoryMock = new(repositories.RepositoryMock)
+	suite.readingsRepositoryMock = new(repositories.RepositoryMock)
 	suite.readingsService = services.NewReadingsService(suite.nodesRepositoryMock, suite.photosRepositoryMock, suite.readingsRepositoryMock)
 }
 
