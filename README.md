@@ -2,12 +2,13 @@
 
 [![Build Status](https://travis-ci.org/hydro-monitor/web-api.svg?branch=master)](https://travis-ci.org/hydro-monitor/web-api)
 [![Go Report Card](https://goreportcard.com/badge/github.com/hydro-monitor/web-api)](https://goreportcard.com/report/github.com/hydro-monitor/web-api)
-[![codebeat badge](https://codebeat.co/badges/bec1313f-1ff4-4ea7-bc75-6839183ce20e)](https://codebeat.co/projects/github-com-hydro-monitor-web-api-master)
 
-Repositorio del servidor del sistema de medicion y estudios de rios realizado como parte del trabajo profesional de los alumnos Agustina Barbetta y Manuel Porto.
+Repositorio del servidor del sistema de medición y estudios de rios realizado como parte del trabajo profesional de los 
+alumnos Agustina Barbetta y Manuel Porto.
 
 Dentro del servidor se encuentra:
-- Una instancia de la base de datos Cassandra para guardar las tablas de usuarios y mediciones. Para ejecutarla es necesario cumplir los requisitos mínimos, detallados en la documentación de Cassandra.
+- Una instancia de la base de datos Cassandra para guardar las tablas de usuarios y mediciones. Para ejecutarla es 
+necesario cumplir los requisitos mínimos, detallados en la documentación de Cassandra.
 - Una API
   - Con endpoints para utilización de los nodos de medición. Como pueden ser:
     - Consulta de configuración actual
@@ -16,9 +17,11 @@ Dentro del servidor se encuentra:
     - Login de usuario
     - Get de mediciones
     - Post de configuración de medición
-- Un módulo que sirva como cliente del cluster de Cassandra, el cual pueda ser invocado desde las APIs para hacer queries a cualquier réplica del cluster de Cassandra.
+- Un módulo que sirva como cliente del cluster de Cassandra, el cual pueda ser invocado desde las APIs para hacer 
+queries a cualquier réplica del cluster de Cassandra.
 
-La replicación del servidor es invisible al usuario, lo que se expone es un load balancer. Tanto los nodos de medición como el panel harán requests contra el load balancer que este último redirigirá hacia algún servidor.
+La replicación del servidor es invisible al usuario, lo que se expone es un load balancer. Tanto los nodos de medición 
+como el panel harán requests contra el load balancer que este último redirigirá hacia algún servidor.
 
 Para ejecutar el servidor se deben realizar los siguientes pasos:
 
@@ -67,7 +70,8 @@ Solo es necesario identificar el nodo que se detuvo y reiniciarlo con `docker st
 #### ¿Cómo revivir un nodo caído sin su volumen?
 
 1. Identificar el nodo caído.
-2. Es probable que sea necesario eliminar el container previamente creado si se necesitan cambiar los parámetros del `docker run`.
+2. Es probable que sea necesario eliminar el container previamente creado si se necesitan cambiar los parámetros del 
+`docker run`.
 2. Ejecutar Ejecutar `docker run -v /my/own/datadir-<number>:/var/lib/cassandra --name hydromon-cassandra-<number> -d -net hydromon-net -e CASSANDRA_SEEDS=hydromon-cassandra-1 cassandra -Dcassandra.replace_address=<dead_node_ip>`.
 
 #### ¿Cómo revivir tres nodos caídos con sus volúmenes?
@@ -76,3 +80,27 @@ Si todos los nodos de un cluster se detuvieron se deben reiniciar los mismos en 
 1. Primero el o los nodos tipo SEED ya que si se reinicia alguno no seed no podrá conectarse al cluster.
 2. Reiniciar el resto de los nodos. El orden en estos no es importante.
 
+### Levantar un cluster de Cassandra en uno o más cloud providers
+
+Este escenario tiene como requisito preliminar que todas las máquinas virtuales o instancias puedan comunicarse entre sí
+en todos los puertos que Cassandra necesita.
+
+El cluster se inicia de forma similar a lo explicado en puntos anteriores con la salvedad de que ahora cada nodo del
+cluster deberá anunciar en que IP está escuchando. Esto es porque al correr en Docker tienen su dirección detrás del
+Docker bridge.
+
+Suponiendo un cluster de tres nodos con las IPs 10.41.41.41, 10.42.42.42, 10.43.43.43, se deben seguir los pasos 
+indicados a continuación:
+
+1. `docker run --name hydromon-cassandra-1 --net hydromon-net -e CASSANDRA_BROADCAST_ADDRESS=10.41.41.41 -p 7000:7000 -p 9042:9042 -d cassandra`.
+2. `docker run --name hydromon-cassandra-2 --net hydromon-net -e CASSANDRA_BROADCAST_ADDRESS=10.42.42.42  -p 7000:7000 -p 9042:9042 -e CASSANDRA_SEEDS=10.41.41.41  -d cassandra`.
+2. `docker run --name hydromon-cassandra-3 --net hydromon-net -e CASSANDRA_BROADCAST_ADDRESS=10.43.43.43  -p 7000:7000 -p 9042:9042 -e CASSANDRA_SEEDS=10.41.41.41  -d cassandra`.
+
+#### Aclaraciones
+
+- Los nombres de containers son de carácter meramente ilustrativo. No son necesarios para el correcto funcionamiento del
+cluster.
+- Las redes entre containers son distintas, por más de que tengan el mismo nombre, ya que se están ejecutando en 
+instancias / máquinas virtuales diferentes. Se utilizan estas redes para facilitar la conexión entre el nodo y la Web
+API. Esto también explica por qué es necesario exponer el puerto 9042 que permite que cada Web API se conecte con el 
+resto de los nodos.

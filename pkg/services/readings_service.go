@@ -14,12 +14,29 @@ type ReadingsService interface {
 	GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, ServiceError)
 	GetNodesLastReading(nodes []*api_models.NodeDTO) (map[string]*api_models.GetReadingDTO, ServiceError)
 	GetReadingPhoto(readingId string, number int) (*db_models.Photo, ServiceError)
+	DeleteReading(nodeId string, readingId string) ServiceError
 }
 
 type readingsServiceImpl struct {
 	nodesRepository    repositories.Repository
 	readingsRepository repositories.Repository
 	photosRepository   repositories.Repository
+}
+
+func (r *readingsServiceImpl) DeleteReading(nodeId string, readingId string) ServiceError {
+	readingUUID, err := gocql.ParseUUID(readingId)
+	if err != nil {
+		return NewGenericServiceError("Error when trying to decode reading UUID", err)
+	}
+	dbPhoto := &db_models.Photo{ReadingTime: readingUUID}
+	if err := r.photosRepository.Delete(dbPhoto); err != nil {
+		return NewGenericServiceError("Error when trying to delete reading's photos", err)
+	}
+	dbReading := &db_models.Reading{NodeId: nodeId, ReadingId: readingUUID}
+	if err := r.readingsRepository.Delete(dbReading); err != nil {
+		return NewGenericServiceError("Error when trying to delete reading", err)
+	}
+	return nil
 }
 
 func (r *readingsServiceImpl) AddPhotoToReading(photoDTO *api_models.PhotoDTO) (*api_models.PhotoMetadataDTO, error) {
@@ -61,7 +78,7 @@ func (r *readingsServiceImpl) GetNodeReading(nodeId string, readingId string) (*
 	return dbReading.ConvertToSingleAPIGetReading(), nil
 }
 
-func (r *readingsServiceImpl) GetReadingPhoto(readingId string, number int) (*db_models.Photo, ServiceError) {
+func (r *readingsServiceImpl) GetReadingPhoto(readingId string, _ int) (*db_models.Photo, ServiceError) {
 	readingUUID, err := gocql.ParseUUID(readingId)
 	if err != nil {
 		return nil, NewGenericClientError("Incorrect reading time (bad format)", err)
@@ -122,6 +139,13 @@ func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.R
 	}
 	if err := r.readingsRepository.Insert(dbReading); err != nil {
 		return nil, err
+	}
+	if reading.ManualReading {
+		dbNode := &db_models.NodeDTO{
+			Id:            &nodeId,
+			ManualReading: &reading.ManualReading,
+		}
+		_ = r.nodesRepository.Update(dbNode)
 	}
 	return dbReading.ConvertToAPIGetReading(), nil
 }

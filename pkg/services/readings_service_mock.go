@@ -60,6 +60,22 @@ func (_m *ReadingsServiceMock) CreateReading(nodeId string, reading *api_models.
 	return r0, r1
 }
 
+// DeleteReading provides a mock function with given fields: nodeId, readingId
+func (_m *ReadingsServiceMock) DeleteReading(nodeId string, readingId string) ServiceError {
+	ret := _m.Called(nodeId, readingId)
+
+	var r0 ServiceError
+	if rf, ok := ret.Get(0).(func(string, string) ServiceError); ok {
+		r0 = rf(nodeId, readingId)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(ServiceError)
+		}
+	}
+
+	return r0
+}
+
 // GetNodeReading provides a mock function with given fields: nodeId, readingId
 func (_m *ReadingsServiceMock) GetNodeReading(nodeId string, readingId string) (*api_models.GetReadingDTO, ServiceError) {
 	ret := _m.Called(nodeId, readingId)

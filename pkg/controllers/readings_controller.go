@@ -16,11 +16,24 @@ type ReadingsController interface {
 	GetNodeReading(c echo.Context) error
 	GetNodesLastReading(c echo.Context) error
 	GetReadingPhoto(c echo.Context) error
+	DeleteReading(c echo.Context) error
 }
 
 type readingsControllerImpl struct {
 	nodesService    services.NodeService
 	readingsService services.ReadingsService
+}
+
+func (r *readingsControllerImpl) DeleteReading(c echo.Context) error {
+	nodeId := c.Param("node_id")
+	readingId := c.Param("reading_id")
+	if nodeId == "" || readingId == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "Node ID and reading ID can't be null")
+	}
+	if err := r.readingsService.DeleteReading(nodeId, readingId); err != nil {
+		return err.ToHTTPError()
+	}
+	return c.NoContent(http.StatusNoContent)
 }
 
 func (r *readingsControllerImpl) GetNodesLastReading(c echo.Context) error {
