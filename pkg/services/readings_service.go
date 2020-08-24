@@ -32,7 +32,7 @@ func (r *readingsServiceImpl) DeleteReading(nodeId string, readingId string) Ser
 	if err := r.photosRepository.Delete(dbPhoto); err != nil {
 		return NewGenericServiceError("Error when trying to delete reading's photos", err)
 	}
-	dbReading := &db_models.Reading{NodeId: nodeId, ReadingId: readingUUID}
+	dbReading := &db_models.Reading{NodeId: &nodeId, ReadingId: &readingUUID}
 	if err := r.readingsRepository.Delete(dbReading); err != nil {
 		return NewGenericServiceError("Error when trying to delete reading", err)
 	}
@@ -65,8 +65,8 @@ func (r *readingsServiceImpl) GetNodeReading(nodeId string, readingId string) (*
 		return nil, NewGenericClientError("Incorrect reading time (bad format)", err)
 	}
 	dbReading := db_models.Reading{
-		NodeId:    nodeId,
-		ReadingId: readingUUID,
+		NodeId:    &nodeId,
+		ReadingId: &readingUUID,
 	}
 	err = r.readingsRepository.Get(&dbReading)
 	if err != nil {
@@ -131,19 +131,20 @@ func (r *readingsServiceImpl) CreateReading(nodeId string, reading *api_models.R
 	}
 	readingTimeUUID := gocql.UUIDFromTime(reading.Time)
 	dbReading := &db_models.Reading{
-		NodeId:        nodeId,
-		ReadingId:     readingTimeUUID,
-		ReadingTime:   reading.Time,
-		WaterLevel:    reading.WaterLevel,
-		ManualReading: reading.ManualReading,
+		NodeId:        &nodeId,
+		ReadingId:     &readingTimeUUID,
+		ReadingTime:   &reading.Time,
+		WaterLevel:    &reading.WaterLevel,
+		ManualReading: &reading.ManualReading,
 	}
 	if err := r.readingsRepository.Insert(dbReading); err != nil {
 		return nil, err
 	}
 	if reading.ManualReading {
+		falseVar := false
 		dbNode := &db_models.NodeDTO{
 			Id:            &nodeId,
-			ManualReading: &reading.ManualReading,
+			ManualReading: &falseVar,
 		}
 		_ = r.nodesRepository.Update(dbNode)
 	}
