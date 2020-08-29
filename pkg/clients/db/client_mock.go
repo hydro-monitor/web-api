@@ -124,17 +124,26 @@ func (_m *ClientMock) SafeUpdate(_a0 *table.Table, args db_models.DbDTO) (bool, 
 }
 
 // Select provides a mock function with given fields: _a0, args, pageState, pageSize
-func (_m *ClientMock) Select(_a0 *table.Table, args db_models.SelectDTO, pageState []byte, pageSize int) error {
+func (_m *ClientMock) Select(_a0 *table.Table, args db_models.SelectDTO, pageState []byte, pageSize int) ([]byte, error) {
 	ret := _m.Called(_a0, args, pageState, pageSize)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(*table.Table, db_models.SelectDTO, []byte, int) error); ok {
+	var r0 []byte
+	if rf, ok := ret.Get(0).(func(*table.Table, db_models.SelectDTO, []byte, int) []byte); ok {
 		r0 = rf(_a0, args, pageState, pageSize)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]byte)
+		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*table.Table, db_models.SelectDTO, []byte, int) error); ok {
+		r1 = rf(_a0, args, pageState, pageSize)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // SelectAll provides a mock function with given fields: _a0, args

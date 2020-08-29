@@ -30,7 +30,7 @@ type nodeControllerImpl struct {
 // @Accept  json
 // @Produce  json
 // @Param node_id path string true "ID del nodo"
-// @Success 200
+// @Success 200 "It's ok"
 // @Failure 400 {object} echo.HTTPError
 // @Failure 500 {object} echo.HTTPError
 // @Router /nodes/{node_id} [put]
@@ -186,7 +186,8 @@ func (n *nodeControllerImpl) GetNodeByID(c echo.Context) error {
 
 // GetNodeConfiguration godoc
 // @Summary Obtiene la configuración de un nodo
-// @Description Devuelve un mapa de estados (no un array como se ve a continuación) en donde la clave de cada uno es el nombre del mismo.
+// @Description Devuelve un mapa de estados (no un array como se ve a continuación) en donde la clave de cada uno es el
+// @Description nombre del mismo.
 // @Tags nodes
 // @Produce  json
 // @Param node_id path string true "ID del nodo"

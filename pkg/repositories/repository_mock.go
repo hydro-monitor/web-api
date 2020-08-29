@@ -146,17 +146,26 @@ func (_m *RepositoryMock) SafeUpdate(args db_models.DbDTO) (bool, error) {
 }
 
 // Select provides a mock function with given fields: args, pageState, pageSize
-func (_m *RepositoryMock) Select(args db_models.SelectDTO, pageState []byte, pageSize int) error {
+func (_m *RepositoryMock) Select(args db_models.SelectDTO, pageState []byte, pageSize int) ([]byte, error) {
 	ret := _m.Called(args, pageState, pageSize)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(db_models.SelectDTO, []byte, int) error); ok {
+	var r0 []byte
+	if rf, ok := ret.Get(0).(func(db_models.SelectDTO, []byte, int) []byte); ok {
 		r0 = rf(args, pageState, pageSize)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]byte)
+		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(db_models.SelectDTO, []byte, int) error); ok {
+		r1 = rf(args, pageState, pageSize)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // SelectAll provides a mock function with given fields: args

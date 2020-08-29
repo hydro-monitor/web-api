@@ -18,7 +18,7 @@ type Repository interface {
 	SafeInsert(args db_models.DbDTO) (bool, error)
 	Update(args db_models.DbDTO) error
 	SafeUpdate(args db_models.DbDTO) (bool, error)
-	Select(args db_models.SelectDTO, pageState []byte, pageSize int) error
+	Select(args db_models.SelectDTO, pageState []byte, pageSize int) ([]byte, error)
 	SelectAll(args db_models.SelectDTO) error
 }
 
@@ -67,7 +67,7 @@ func (r *repositoryImpl) SafeUpdate(args db_models.DbDTO) (bool, error) {
 	return r.client.SafeUpdate(r.table, args)
 }
 
-func (r *repositoryImpl) Select(args db_models.SelectDTO, pageState []byte, pageSize int) error {
+func (r *repositoryImpl) Select(args db_models.SelectDTO, pageState []byte, pageSize int) ([]byte, error) {
 	return r.client.Select(r.table, args, pageState, pageSize)
 }
 

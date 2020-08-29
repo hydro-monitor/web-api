@@ -22,7 +22,7 @@ type Client interface {
 	SafeInsert(table *table.Table, args db_models.DbDTO) (bool, error)
 	Update(table *table.Table, args db_models.DbDTO) error
 	SafeUpdate(table *table.Table, args db_models.DbDTO) (bool, error)
-	Select(table *table.Table, args db_models.SelectDTO, pageState []byte, pageSize int) error
+	Select(table *table.Table, args db_models.SelectDTO, pageState []byte, pageSize int) ([]byte, error)
 	SelectAll(table *table.Table, args db_models.SelectDTO) error
 	Close()
 }
@@ -50,14 +50,15 @@ func (db *clientImpl) Delete(table *table.Table, args db_models.DbDTO) error {
 	return q.ExecRelease()
 }
 
-func (db *clientImpl) Select(table *table.Table, args db_models.SelectDTO, pageState []byte, pageSize int) error {
+func (db *clientImpl) Select(table *table.Table, args db_models.SelectDTO, pageState []byte, pageSize int) ([]byte, error) {
 	stmt, names := table.Select(args.GetColumns()...)
 	q := db.session.Query(stmt, names).BindMap(args.GetBindMap())
 	if pageSize > 0 {
 		q.PageState(pageState)
 		q.PageSize(pageSize)
 	}
-	return q.SelectRelease(args.GetArgs())
+	iter := q.Iter()
+	return iter.PageState(), iter.Select(args.GetArgs())
 }
 
 func (db *clientImpl) Update(table *table.Table, args db_models.DbDTO) error {
@@ -90,6 +91,8 @@ func NewDB(hosts []string, keyspace string) Client {
 	cluster := gocql.NewCluster()
 	cluster.Hosts = hosts
 	cluster.ConnectTimeout = time.Second * 10
+	cluster.Timeout = time.Second * 2
+	cluster.RetryPolicy = &gocql.SimpleRetryPolicy{NumRetries: 3}
 	cluster.Keyspace = keyspace
 	cluster.PoolConfig.HostSelectionPolicy = gocql.RoundRobinHostPolicy()
 	cluster.Consistency = gocql.One
