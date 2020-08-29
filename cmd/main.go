@@ -94,6 +94,7 @@ func main() {
 	usersService := services.NewUsersService(usersRepository)
 
 	// Controllers
+	healthController := controllers.NewHealthController()
 	nodeController := controllers.NewNodeController(nodeService)
 	readingsController := controllers.NewReadingsController(nodeService, readingsService)
 	usersController := controllers.NewUsersController(usersService)
@@ -104,10 +105,14 @@ func main() {
 	e.Use(middleware.CORS())
 
 	// Routes
-	apiGroup := e.Group("/api")
+
+	// Health
+	e.GET("/health", healthController.GetHealthStatus)
 
 	// Documentation
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
+
+	apiGroup := e.Group("/api")
 
 	// Nodes
 	nodeGroup := apiGroup.Group("/nodes")
