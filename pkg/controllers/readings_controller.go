@@ -166,7 +166,7 @@ func (r *readingsControllerImpl) GetReadingPhoto(c echo.Context) error {
 	readingId := c.Param("reading_id")
 	photo, err := r.readingsService.GetReadingPhoto(readingId, 0)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return err.ToHTTPError()
 	}
 	return c.Blob(http.StatusOK, "image/jpeg", photo.Picture)
 }
