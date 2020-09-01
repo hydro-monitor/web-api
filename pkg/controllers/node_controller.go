@@ -107,17 +107,19 @@ func (n *nodeControllerImpl) DeleteNode(c echo.Context) error {
 // @Param node_id path string true "ID del nodo"
 // @Success 201 {object} api_models.NodeDTO
 // @Failure 400 {object} echo.HTTPError
+// @Failure 422 {object} echo.HTTPError
 // @Failure 500 {object} echo.HTTPError
 // @Router /nodes [post]
 func (n *nodeControllerImpl) PostNode(c echo.Context) error {
 	var node api_models.NodeDTO
 	if err := c.Bind(&node); err != nil {
-		return c.String(http.StatusBadRequest, err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, "Non valid node information")
 	}
-	if err := n.nodeService.CreateNode(&node); err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+	createdNode, err := n.nodeService.CreateNode(&node)
+	if err != nil {
+		return err.ToHTTPError()
 	}
-	return c.JSON(http.StatusCreated, node)
+	return c.JSON(http.StatusCreated, createdNode)
 }
 
 // GetNodeManualReadingStatus godoc
