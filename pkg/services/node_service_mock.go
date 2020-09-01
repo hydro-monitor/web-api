@@ -14,17 +14,28 @@ type NodeServiceMock struct {
 }
 
 // CreateNode provides a mock function with given fields: node
-func (_m *NodeServiceMock) CreateNode(node *api_models.NodeDTO) error {
+func (_m *NodeServiceMock) CreateNode(node *api_models.NodeDTO) (*api_models.NodeDTO, ServiceError) {
 	ret := _m.Called(node)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(*api_models.NodeDTO) error); ok {
+	var r0 *api_models.NodeDTO
+	if rf, ok := ret.Get(0).(func(*api_models.NodeDTO) *api_models.NodeDTO); ok {
 		r0 = rf(node)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*api_models.NodeDTO)
+		}
 	}
 
-	return r0
+	var r1 ServiceError
+	if rf, ok := ret.Get(1).(func(*api_models.NodeDTO) ServiceError); ok {
+		r1 = rf(node)
+	} else {
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).(ServiceError)
+		}
+	}
+
+	return r0, r1
 }
 
 // CreateNodeConfiguration provides a mock function with given fields: nodeId, configuration

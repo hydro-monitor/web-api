@@ -4,4 +4,5 @@ type NodeDTO struct {
 	Id            *string `json:"id,omitempty" example:"lujan-1"`
 	Description   *string `json:"description" example:"Nodo instalado debajo de un puente"`
 	ManualReading *bool   `json:"manualReading" example:"false"`
+	Token         *string `json:"token,omitempty" example:"aDF23DDcaF45k7J0"`
 }

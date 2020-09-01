@@ -4,14 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gocql/gocql"
+	"golang.org/x/crypto/bcrypt"
 	"hydro_monitor/web_api/pkg/models/api_models"
 	"hydro_monitor/web_api/pkg/models/db_models"
 	"hydro_monitor/web_api/pkg/repositories"
+	"hydro_monitor/web_api/pkg/utils"
+	"net/http"
 )
 
 type NodeService interface {
 	CreateNodeConfiguration(nodeId string, configuration map[string]*api_models.StateDTO) error
-	CreateNode(node *api_models.NodeDTO) error
+	CreateNode(node *api_models.NodeDTO) (*api_models.NodeDTO, ServiceError)
 	DeleteNode(nodeId string) error
 	GetNode(nodeId string) (*api_models.NodeDTO, ServiceError)
 	GetNodes() ([]*api_models.NodeDTO, error)
@@ -66,14 +69,29 @@ func (n *nodeServiceImpl) DeleteNode(nodeId string) error {
 	return n.nodesRepository.Delete(dbNode)
 }
 
-func (n *nodeServiceImpl) CreateNode(node *api_models.NodeDTO) error {
+func (n *nodeServiceImpl) CreateNode(node *api_models.NodeDTO) (*api_models.NodeDTO, ServiceError) {
+	dbNode := &db_models.NodeDTO{Id: node.Id}
+	if err := n.nodesRepository.Get(dbNode); err == nil {
+		return nil, NewServiceError(http.StatusUnprocessableEntity, "Node already exists", nil)
+	}
+	token := utils.GenerateRandomString(16)
+	encryptedToken, err := bcrypt.GenerateFromPassword([]byte(token), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, NewGenericServiceError("Error when trying to register a new node", err)
+	}
 	manualReadingFalse := false
-	dbNode := &db_models.NodeDTO{
+	dbNode = &db_models.NodeDTO{
 		Id:            node.Id,
 		Description:   node.Description,
 		ManualReading: &manualReadingFalse,
+		Token:         encryptedToken,
 	}
-	return n.nodesRepository.Insert(dbNode)
+	if err = n.nodesRepository.Insert(dbNode); err != nil {
+		return nil, NewGenericServiceError("Error when trying to register a new node", err)
+	}
+	node.ManualReading = &manualReadingFalse
+	node.Token = &token
+	return node, nil
 }
 
 func (n *nodeServiceImpl) GetNodeManualReadingStatus(nodeId string) (*api_models.ManualReadingDTO, error) {
