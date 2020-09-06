@@ -5,12 +5,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-var AllowedRequests = []Request{
-	{Method: echo.GET, Path: "/health"},
-	{Method: echo.POST, Path: "/api/session"},
-	{Method: echo.POST, Path: "/api/users"},
-}
-
 func JWTSkipper(allowedRequests []Request) middleware.Skipper {
 	return func(c echo.Context) bool {
 		request := Request{

@@ -11,11 +11,12 @@ type Request struct {
 	Path   string
 }
 
-type ValidatorFunc func(echo.Context) bool
+type ValidatorFunc func(echo.Context, interface{}) bool
 
 type AuthorizationConfig struct {
 	Skipper   middleware.Skipper
 	Validator ValidatorFunc
+	Service   interface{}
 }
 
 func AuthorizationSkipper(restrictedPaths []Request) middleware.Skipper {
@@ -34,7 +35,7 @@ func AuthorizationMiddleware(config AuthorizationConfig) echo.MiddlewareFunc {
 	}
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			if config.Skipper(c) || config.Validator(c) {
+			if config.Skipper(c) || config.Validator(c, config.Service) {
 				return next(c)
 			}
 			return echo.NewHTTPError(http.StatusForbidden, "Insufficient permissions")

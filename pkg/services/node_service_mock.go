@@ -13,6 +13,29 @@ type NodeServiceMock struct {
 	mock.Mock
 }
 
+// CheckNodeCredentials provides a mock function with given fields: nodeId, password
+func (_m *NodeServiceMock) CheckNodeCredentials(nodeId string, password string) (bool, ServiceError) {
+	ret := _m.Called(nodeId, password)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(string, string) bool); ok {
+		r0 = rf(nodeId, password)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	var r1 ServiceError
+	if rf, ok := ret.Get(1).(func(string, string) ServiceError); ok {
+		r1 = rf(nodeId, password)
+	} else {
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).(ServiceError)
+		}
+	}
+
+	return r0, r1
+}
+
 // CreateNode provides a mock function with given fields: node
 func (_m *NodeServiceMock) CreateNode(node *api_models.NodeDTO) (*api_models.NodeDTO, ServiceError) {
 	ret := _m.Called(node)

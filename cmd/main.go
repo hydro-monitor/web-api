@@ -105,19 +105,21 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{
-		Skipper:    middlewares.JWTSkipper(middlewares.AllowedRequests),
+		Skipper:    middlewares.JWTSkipper(router.AllowedRequests),
 		SigningKey: []byte("secret"),
 	}))
 	e.Use(middlewares.AuthorizationMiddleware(
 		middlewares.AuthorizationConfig{
-			Skipper:   middlewares.AuthorizationSkipper(router.RestrictedUserRoutes),
+			Skipper:   middlewares.AuthorizationSkipper(router.RestrictedUserRequests),
 			Validator: middlewares.IsAdmin,
+			Service:   usersService,
 		}),
 	)
 	e.Use(middlewares.AuthorizationMiddleware(
 		middlewares.AuthorizationConfig{
-			Skipper:   middlewares.AuthorizationSkipper(router.RestrictedNodeRoutes),
+			Skipper:   middlewares.AuthorizationSkipper(router.RestrictedNodeRequests),
 			Validator: middlewares.IsNode,
+			Service:   nodeService,
 		}),
 	)
 

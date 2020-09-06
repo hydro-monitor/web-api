@@ -5,8 +5,15 @@ import (
 	"hydro_monitor/web_api/pkg/middlewares"
 )
 
-// RestrictedUserRoutes defines all routes that require the user to have an admin role
-var RestrictedUserRoutes = []middlewares.Request{
+// AllowedRequests define todos los requests que no requieren ningún tipo de autenticación
+var AllowedRequests = []middlewares.Request{
+	{Method: echo.GET, Path: "/health"},
+	{Method: echo.POST, Path: "/api/session"},
+	{Method: echo.POST, Path: "/api/users"},
+}
+
+// RestrictedUserRequests define todos los requests que requieren que el usuario tenga permisos de administrador
+var RestrictedUserRequests = []middlewares.Request{
 	{Method: echo.POST, Path: "/api/nodes"},
 	{Method: echo.DELETE, Path: "/api/nodes/:node_id"},
 	{Method: echo.PUT, Path: "/api/nodes/:node_id"},
@@ -15,8 +22,8 @@ var RestrictedUserRoutes = []middlewares.Request{
 	{Method: echo.DELETE, Path: "/api/nodes/:node_id/readings/:reading_id"},
 }
 
-// RestrictedNodeRoutes defines all routes that require that the node includes it's token
-var RestrictedNodeRoutes = []middlewares.Request{
+// RestrictedNodeRequests define todos los requests que requieren que el nodo incluya en el JWT su contraseña
+var RestrictedNodeRequests = []middlewares.Request{
 	{Method: echo.POST, Path: "/api/nodes/:node_id/readings"},
 	{Method: echo.POST, Path: "/api/nodes/:node_id/readings/:reading_id/photos"},
 }

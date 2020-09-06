@@ -22,11 +22,26 @@ type NodeService interface {
 	GetNodeConfiguration(nodeId string) (map[string]*api_models.StateDTO, ServiceError)
 	UpdateNode(node *api_models.NodeDTO) ServiceError
 	UpdateNodeManualReading(nodeId string, manualReading bool) (*api_models.ManualReadingDTO, error)
+	CheckNodeCredentials(nodeId string, password string) (bool, ServiceError)
 }
 
 type nodeServiceImpl struct {
 	nodesRepository          repositories.Repository
 	configurationsRepository repositories.Repository
+}
+
+func (n *nodeServiceImpl) CheckNodeCredentials(nodeId string, password string) (bool, ServiceError) {
+	dbNode := &db_models.NodeDTO{Id: &nodeId}
+	if err := n.nodesRepository.Get(dbNode); err != nil {
+		if err == gocql.ErrNotFound {
+			return false, NewNotFoundError("Node not found", err)
+		}
+		return false, NewGenericServiceError("Server error when getting node", err)
+	}
+	if err := bcrypt.CompareHashAndPassword(dbNode.Password, []byte(password)); err != nil {
+		return false, NewInvalidCredentialsError("Wrong node id or password", err)
+	}
+	return true, nil
 }
 
 func (n *nodeServiceImpl) UpdateNode(node *api_models.NodeDTO) ServiceError {
@@ -74,8 +89,8 @@ func (n *nodeServiceImpl) CreateNode(node *api_models.NodeDTO) (*api_models.Node
 	if err := n.nodesRepository.Get(dbNode); err == nil {
 		return nil, NewServiceError(http.StatusUnprocessableEntity, "Node already exists", nil)
 	}
-	token := utils.GenerateRandomString(16)
-	encryptedToken, err := bcrypt.GenerateFromPassword([]byte(token), bcrypt.DefaultCost)
+	password := utils.GenerateRandomString(16)
+	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, NewGenericServiceError("Error when trying to register a new node", err)
 	}
@@ -84,13 +99,13 @@ func (n *nodeServiceImpl) CreateNode(node *api_models.NodeDTO) (*api_models.Node
 		Id:            node.Id,
 		Description:   node.Description,
 		ManualReading: &manualReadingFalse,
-		Token:         encryptedToken,
+		Password:      encryptedPassword,
 	}
 	if err = n.nodesRepository.Insert(dbNode); err != nil {
 		return nil, NewGenericServiceError("Error when trying to register a new node", err)
 	}
 	node.ManualReading = &manualReadingFalse
-	node.Token = &token
+	node.Password = &password
 	return node, nil
 }
 

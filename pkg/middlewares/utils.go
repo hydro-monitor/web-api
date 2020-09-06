@@ -3,29 +3,47 @@ package middlewares
 import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
+	"hydro_monitor/web_api/pkg/services"
 )
 
-func IsAdmin(c echo.Context) bool {
+func IsAdmin(c echo.Context, service interface{}) bool {
+	userService, ok := service.(services.UsersService)
+	if !ok {
+		c.Logger().Error("Wrong user service provided, can not check info provided in JWT")
+		return false
+	}
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
-	admin, ok := claims["admin"].(bool)
+	mail, ok := claims["username"].(string)
 	if !ok {
 		return false
 	}
-	return admin
+	apiUser, err := userService.GetUserInfo(mail)
+	if err != nil {
+		c.Logger().Error("Error when trying to retrieve user's info", err)
+		return false
+	}
+	return *apiUser.Admin
 }
 
-func IsNode(c echo.Context) bool {
+func IsNode(c echo.Context, service interface{}) bool {
+	nodeService, ok := service.(services.NodeService)
+	if !ok {
+		c.Logger().Error("Wrong node service provided, can not check info provided in JWT")
+		return false
+	}
+	nodeId := c.Param("node_id")
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
-	token, ok := claims["token"].(string)
+	password, ok := claims["password"].(string)
 	if !ok {
 		return false
 	}
-	if len(token) == 16 {
-		return true
+	valid, err := nodeService.CheckNodeCredentials(nodeId, password)
+	if err != nil {
+		c.Logger().Error("Error when trying to check node credentials", err)
 	}
-	return false
+	return valid
 }
 
 func requestInArray(request Request, requests []Request) bool {
