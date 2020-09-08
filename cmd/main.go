@@ -106,7 +106,7 @@ func main() {
 	e.Use(middleware.CORS())
 	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		Skipper:    middlewares.JWTSkipper(router.AllowedRequests),
-		SigningKey: []byte("secret"),
+		SigningKey: []byte("hydromon2020"),
 	}))
 	e.Use(middlewares.AuthorizationMiddleware(
 		middlewares.AuthorizationConfig{

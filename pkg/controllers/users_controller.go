@@ -77,7 +77,7 @@ func (u *usersControllerImpl) Login(c echo.Context) error {
 	claims["admin"] = userInfo.Admin
 	claims["exp"] = time.Now().Add(time.Hour * 8).Unix()
 
-	t, err2 := token.SignedString([]byte("secret"))
+	t, err2 := token.SignedString([]byte("hydromon2020"))
 	if err2 != nil {
 		return echo.ErrInternalServerError
 	}
