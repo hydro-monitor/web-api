@@ -79,7 +79,7 @@ func main() {
 	}
 	s := &http.Server{
 		Addr:        fmt.Sprintf(":%s", port),
-		ReadTimeout: 5 * time.Minute,
+		ReadTimeout: 25 * time.Minute,
 	}
 
 	// Repositories
