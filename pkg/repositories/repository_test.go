@@ -34,7 +34,7 @@ func (suite *RepositoryTestSuite) TestNewRepository() {
 		{
 			name:       "Nodes repository it's not nil",
 			repository: NewNodeRepository(suite.dbClient),
-			columns:    []string{"id", "description", "manual_reading"},
+			columns:    []string{"id", "description", "manual_reading", "password"},
 			partKey:    []string{"id"},
 			sortKey:    nil,
 		},

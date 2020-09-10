@@ -6,7 +6,7 @@ type NodeDTO struct {
 	Id            *string `db:"id"`
 	Description   *string `db:"description"`
 	ManualReading *bool   `db:"manual_reading"`
-	Token         []byte  `db:"token"`
+	Password      []byte  `db:"password"`
 }
 
 func (n *NodeDTO) GetColumns() []string {
@@ -17,8 +17,8 @@ func (n *NodeDTO) GetColumns() []string {
 	if n.ManualReading != nil {
 		nodeColumns = append(nodeColumns, "manual_reading")
 	}
-	if n.Token != nil {
-		nodeColumns = append(nodeColumns, "token")
+	if n.Password != nil {
+		nodeColumns = append(nodeColumns, "password")
 	}
 	return nodeColumns
 }
