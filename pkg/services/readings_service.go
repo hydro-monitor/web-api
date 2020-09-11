@@ -44,9 +44,6 @@ func (r *readingsServiceImpl) AddPhotoToReading(nodeId string, photoDTO *api_mod
 	if err != nil {
 		return NewGenericClientError("Non valid reading UUID", err)
 	}
-	if err := r.readingsRepository.Get(&db_models.Reading{NodeId: &nodeId, ReadingId: &readingUUID}); err != nil {
-		return NewNotFoundError("Reading not found", err)
-	}
 	dbPhoto := &db_models.Photo{
 		ReadingTime: readingUUID,
 		Number:      photoDTO.PhotoNumber,
