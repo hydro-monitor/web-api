@@ -1,8 +1,8 @@
 {
-  "db_hosts": ["hydromon-1"],
+  "db_hosts": ["18.229.102.224", "211.23.145", "13.90.231.210"],
   "db_keyspace": "hydromon",
   "db_create_keyspace": false,
   "db_run_migrations": false,
-  "port": "8080",
+  "port": "443",
   "https_enabled": false
 }
