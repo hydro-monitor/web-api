@@ -47,7 +47,7 @@ func NewServer(e *echo.Echo, config *configs.Configuration) Server {
 		s.TLSConfig = new(tls.Config)
 		s.TLSConfig.Certificates = make([]tls.Certificate, 1)
 		if err := loadCertFiles(s, config); err != nil {
-			e.Logger.Fatal("Failed to load TLS cert files")
+			e.Logger.Fatal("Failed to load TLS cert files", err)
 		}
 	}
 	return &server{e: e, httpServer: s}
