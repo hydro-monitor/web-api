@@ -8,5 +8,7 @@ ENV DB_REPLICATION_FACTOR 3
 WORKDIR /hydromon-server
 COPY _output/web-api /hydromon-server
 COPY scripts/ /hydromon-server/scripts
+COPY server.key /hydromon-server
+COPY server.pem /hydromon-server
 
 ENTRYPOINT ./web-api
