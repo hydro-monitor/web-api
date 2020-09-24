@@ -5,6 +5,6 @@
   "db_run_migrations": false,
   "port": "443",
   "https_enabled": true,
-  "tls_cert": "server.csr",
-  "tls_key": "server.key"
+  "tls_cert": "fullchain.pem",
+  "tls_key": "privkey.pem"
 }

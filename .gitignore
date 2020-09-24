@@ -24,3 +24,5 @@ _output
 server.key
 server.pem
 server.csr
+fullchain.pem
+privkey.pem
