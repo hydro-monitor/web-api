@@ -15,6 +15,7 @@ require (
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/scylladb/gocqlx/v2 v2.1.0
+	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.5.1
 	github.com/swaggo/echo-swagger v0.0.0-20191205130555-62f81ea88919
 	github.com/swaggo/swag v1.6.5

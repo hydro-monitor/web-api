@@ -92,10 +92,8 @@ func NewDB(hosts []string, keyspace string) Client {
 	cluster.Hosts = hosts
 	cluster.ConnectTimeout = time.Second * 10
 	cluster.Timeout = time.Second * 2
-	cluster.RetryPolicy = &gocql.SimpleRetryPolicy{NumRetries: 3}
+	cluster.RetryPolicy = &gocql.DowngradingConsistencyRetryPolicy{ConsistencyLevelsToTry: []gocql.Consistency{gocql.Quorum, gocql.Two, gocql.One}}
 	cluster.Keyspace = keyspace
-	cluster.PoolConfig.HostSelectionPolicy = gocql.RoundRobinHostPolicy()
-	cluster.Consistency = gocql.One
 	for i := 0; i < retries; i++ {
 		session, err := gocqlx.WrapSession(cluster.CreateSession())
 		if err != nil {

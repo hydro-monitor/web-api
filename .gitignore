@@ -19,3 +19,10 @@ _output
 
 # Enviroment variables files
 .env
+
+# TLS cert and key files
+server.key
+server.pem
+server.csr
+fullchain.pem
+privkey.pem
