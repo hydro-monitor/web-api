@@ -94,6 +94,10 @@ func NewDB(hosts []string, keyspace string) Client {
 	cluster.Timeout = time.Second * 2
 	cluster.RetryPolicy = &gocql.DowngradingConsistencyRetryPolicy{ConsistencyLevelsToTry: []gocql.Consistency{gocql.Quorum, gocql.Two, gocql.One}}
 	cluster.Keyspace = keyspace
+	cluster.Authenticator = gocql.PasswordAuthenticator{
+		Username: "hydromon_api",
+		Password: "hydromon_password",
+	}
 	for i := 0; i < retries; i++ {
 		session, err := gocqlx.WrapSession(cluster.CreateSession())
 		if err != nil {
