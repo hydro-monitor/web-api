@@ -91,7 +91,7 @@ func NewDB(hosts []string, keyspace string) Client {
 	cluster := gocql.NewCluster()
 	cluster.Hosts = hosts
 	cluster.ConnectTimeout = time.Second * 10
-	cluster.Timeout = time.Second * 2
+	cluster.Timeout = time.Second * 15
 	cluster.RetryPolicy = &gocql.DowngradingConsistencyRetryPolicy{ConsistencyLevelsToTry: []gocql.Consistency{gocql.Quorum, gocql.Two, gocql.One}}
 	cluster.Keyspace = keyspace
 	cluster.Authenticator = gocql.PasswordAuthenticator{
