@@ -35,7 +35,7 @@ También puede exponerse el puerto 9042 para poder conectarse con el servidor si
 4. Compilar el servidor: `make web-api-linux`.
 5. Ejecutar `docker build -t hydromon-server .`.
 6. Iniciar el container: `docker run --net hydromon-net -p 8080:8080 -d hydromon-server`.
-
+`sudo docker run --name hydromon-server-2 --net hydromon-net -p 443:443 -e SCOPE=prod -d hydromon-server`
 
 ## ¿Cómo crear un cluster de Cassandra?
 

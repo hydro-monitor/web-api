@@ -1,10 +1,10 @@
 {
+  "db_user": "hydromon_api",
+  "db_password": "hydromon_password",
   "db_hosts": ["18.229.102.224", "104.211.23.145", "13.90.231.210"],
   "db_keyspace": "hydromon",
   "db_create_keyspace": false,
   "db_run_migrations": false,
-  "db_user": "hydromon_api",
-  "db_password": "hydromon_password",
   "port": "443",
   "https_enabled": true,
   "tls_cert": "fullchain.pem",
