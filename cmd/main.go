@@ -14,13 +14,12 @@ import (
 	"hydro_monitor/web_api/pkg/services"
 	"log"
 	"os"
-	"strings"
 )
 
-func bootstrapDatabase(keyspaceName string, replicationFactor int) {
-	client := db.NewDB(strings.Split(os.Getenv("DB_HOSTS"), ","), "system")
+func bootstrapDatabase(config *configs.Configuration) {
+	client := db.NewDB(config)
 	defer client.Close()
-	if err := client.CreateKeyspace(keyspaceName, replicationFactor); err != nil {
+	if err := client.CreateKeyspace(config.DBKeyspace, config.DBReplicationFactor); err != nil {
 		log.Fatal("Couldn't create keyspace")
 	}
 }
@@ -49,11 +48,11 @@ func main() {
 		config = configs.LoadConfig(scope)
 	}
 	if config.DBCreateKeyspace {
-		bootstrapDatabase(config.DBKeyspace, config.DBReplicationFactor)
+		bootstrapDatabase(config)
 	}
 
 	// Database
-	client := db.NewDB(config.DBHosts, config.DBKeyspace)
+	client := db.NewDB(config)
 	defer client.Close()
 
 	if config.DBRunMigrations {

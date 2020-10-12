@@ -9,6 +9,7 @@ import (
 	"github.com/scylladb/gocqlx/v2/migrate"
 	"github.com/scylladb/gocqlx/v2/qb"
 	"github.com/scylladb/gocqlx/v2/table"
+	"hydro_monitor/web_api/pkg/configs"
 	"hydro_monitor/web_api/pkg/models/db_models"
 	"time"
 )
@@ -85,19 +86,25 @@ func (db *clientImpl) SafeInsert(table *table.Table, args db_models.DbDTO) (bool
 	return q.ScanCAS()
 }
 
-func NewDB(hosts []string, keyspace string) Client {
+func NewDB(config *configs.Configuration) Client {
 	retries := 5
 	baseTimeout := time.Second * 10
 	cluster := gocql.NewCluster()
-	cluster.Hosts = hosts
+	cluster.Hosts = config.DBHosts
 	cluster.ConnectTimeout = time.Second * 10
-	cluster.Timeout = time.Second * 2
+	cluster.Timeout = time.Second * 15
 	cluster.RetryPolicy = &gocql.DowngradingConsistencyRetryPolicy{ConsistencyLevelsToTry: []gocql.Consistency{gocql.Quorum, gocql.Two, gocql.One}}
-	cluster.Keyspace = keyspace
+	cluster.Keyspace = config.DBKeyspace
+	if config.DBUser != "" && config.DBPassword != "" {
+		cluster.Authenticator = gocql.PasswordAuthenticator{
+			Username: config.DBUser,
+			Password: config.DBPassword,
+		}
+	}
 	for i := 0; i < retries; i++ {
 		session, err := gocqlx.WrapSession(cluster.CreateSession())
 		if err != nil {
-			log.Error("Hosts: ", hosts)
+			log.Error("Hosts: ", config.DBHosts)
 			log.Error("Failed to connect to database: ", err)
 			time.Sleep(baseTimeout)
 			baseTimeout *= 2

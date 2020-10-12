@@ -6,6 +6,8 @@ import (
 )
 
 type Configuration struct {
+	DBUser              string
+	DBPassword          string
 	DBHosts             []string
 	DBKeyspace          string
 	DBCreateKeyspace    bool
@@ -35,6 +37,8 @@ func LoadConfig(scope string) *Configuration {
 }
 
 func setDefaults() {
+	viper.SetDefault("db_user", "")
+	viper.SetDefault("db_password", "")
 	viper.SetDefault("db_create_keyspace", false)
 	viper.SetDefault("db_run_migrations", false)
 	viper.SetDefault("https_enabled", false)
@@ -53,6 +57,8 @@ func loadConfigFile(configFilename string) {
 func setConfig(config *Configuration) {
 	checkMandatoryFields()
 
+	config.DBUser = viper.GetString("db_user")
+	config.DBPassword = viper.GetString("db_password")
 	config.DBHosts = viper.GetStringSlice("db_hosts")
 	config.DBKeyspace = viper.GetString("db_keyspace")
 	config.DBCreateKeyspace = viper.GetBool("db_create_keyspace")
