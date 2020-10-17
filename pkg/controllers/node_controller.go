@@ -30,7 +30,8 @@ type nodeControllerImpl struct {
 // @Accept  json
 // @Produce  json
 // @Param node_id path string true "ID del nodo"
-// @Success 200 "It's ok"
+// @Param node body api_models.NodeDTO true "Información del nodo"
+// @Success 200 "Ok"
 // @Failure 400 {object} echo.HTTPError
 // @Failure 500 {object} echo.HTTPError
 // @Router /nodes/{node_id} [put]
@@ -53,7 +54,8 @@ func (n *nodeControllerImpl) UpdateNode(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param node_id path string true "ID del nodo"
-// @Success 200 {array} api_models.StateDTO
+// @Param node body map[string]api_models.StateDTO true "Configuración"
+// @Success 201 {object} map[string]api_models.StateDTO
 // @Failure 400 {object} echo.HTTPError
 // @Failure 500 {object} echo.HTTPError
 // @Router /nodes/{node_id}/configuration [post]
@@ -88,7 +90,7 @@ func (n *nodeControllerImpl) GetNodes(c echo.Context) error {
 // @Summary Borra un nodo
 // @Tags nodes
 // @Param node_id path string true "ID del nodo"
-// @Success 204
+// @Success 204 "No Content"
 // @Failure 500 {object} echo.HTTPError
 // @Router /nodes/{node_id} [delete]
 func (n *nodeControllerImpl) DeleteNode(c echo.Context) error {
@@ -105,6 +107,7 @@ func (n *nodeControllerImpl) DeleteNode(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param node_id path string true "ID del nodo"
+// @Param node body api_models.NodeDTO true "Información del nodo"
 // @Success 201 {object} api_models.NodeDTO
 // @Failure 400 {object} echo.HTTPError
 // @Failure 422 {object} echo.HTTPError
@@ -146,6 +149,7 @@ func (n *nodeControllerImpl) GetNodeManualReadingStatus(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param node_id path string true "ID del nodo"
+// @Param manual_reading body api_models.ManualReadingDTO true "Medición manual"
 // @Success 200 {object} api_models.ManualReadingDTO
 // @Failure 400 {object} echo.HTTPError
 // @Failure 404 {object} echo.HTTPError
@@ -188,12 +192,11 @@ func (n *nodeControllerImpl) GetNodeByID(c echo.Context) error {
 
 // GetNodeConfiguration godoc
 // @Summary Obtiene la configuración de un nodo
-// @Description Devuelve un mapa de estados (no un array como se ve a continuación) en donde la clave de cada uno es el
-// @Description nombre del mismo.
+// @Description Devuelve un mapa de estados en donde la clave de cada uno es el nombre del mismo.
 // @Tags nodes
 // @Produce  json
 // @Param node_id path string true "ID del nodo"
-// @Success 200 {array} api_models.StateDTO
+// @Success 200 {object} map[string]api_models.StateDTO
 // @Failure 404 {object} echo.HTTPError
 // @Failure 500 {object} echo.HTTPError
 // @Router /nodes/{node_id}/configuration [get]

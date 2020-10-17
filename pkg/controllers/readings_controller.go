@@ -28,6 +28,16 @@ type readingsControllerImpl struct {
 	readingsService services.ReadingsService
 }
 
+// DeleteReading godoc
+// @Summary Borra una medición
+// @Tags readings
+// @Param node_id path string true "ID del nodo"
+// @Param reading_id path string true "ID de la medición"
+// @Success 204 "No Content"
+// @Failure 400 {object} echo.HTTPError
+// @Failure 404 {object} echo.HTTPError
+// @Failure 500 {object} echo.HTTPError
+// @Router /nodes/{node_id}/readings/{reading_id} [delete]
 func (r *readingsControllerImpl) DeleteReading(c echo.Context) error {
 	nodeId := c.Param("node_id")
 	readingId := c.Param("reading_id")
@@ -40,6 +50,13 @@ func (r *readingsControllerImpl) DeleteReading(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
+// GetNodesLastReading godoc
+// @Summary Obtiene la última medición de todos los nodos
+// @Tags readings
+// @Param node_id path string true "ID del nodo"
+// @Success 200 {object} map[string]api_models.GetReadingDTO
+// @Failure 500 {object} echo.HTTPError
+// @Router /nodes/last-reading [get]
 func (r *readingsControllerImpl) GetNodesLastReading(c echo.Context) error {
 	nodes, err := r.nodesService.GetNodes()
 	if err != nil {
@@ -55,13 +72,12 @@ func (r *readingsControllerImpl) GetNodesLastReading(c echo.Context) error {
 // AddPhotoToReading godoc
 // @Summary Agrega una foto a la medición
 // @Tags readings
-// @Accept png
+// @Accept jpeg
 // @Param node_id path string true "ID del nodo"
 // @Param reading_id path string true "ID de la medición"
 // @Param picture formData string true "Foto de la medición"
 // @Success 201 "Created"
 // @Failure 400 {object} echo.HTTPError
-// @Failure 404 {object} echo.HTTPError
 // @Failure 422 {object} echo.HTTPError
 // @Failure 500 {object} echo.HTTPError
 // @Router /nodes/{node_id}/readings/{reading_id}/photos [post]
@@ -113,8 +129,7 @@ func (r *readingsControllerImpl) GetNodeReading(c echo.Context) error {
 // @Produce  json
 // @Param node_id path string true "ID del nodo"
 // @Param page_size query int false "Cantidad máxima de mediciones por página"
-// @Param page_state query string false "String en base 64 que contiene el estado de pagina. Utilizado para traer la
-// próxima página"
+// @Param page_state query string false "String en base 64 que contiene el estado de pagina. Utilizado para traer la próxima página"
 // @Success 200 {array} api_models.GetReadingDTO
 // @Header 200 {string} Page-State "Page state"
 // @Failure 400 {object} echo.HTTPError
@@ -158,7 +173,7 @@ func (r *readingsControllerImpl) GetNodeReadings(c echo.Context) error {
 // @Produce  jpeg
 // @Param node_id path string true "ID del nodo"
 // @Param reading_id path string true "ID de la medición"
-// @Success 200 "It's ok"
+// @Success 200 "Ok"
 // @Failure 404 {object} echo.HTTPError
 // @Failure 500 {object} echo.HTTPError
 // @Router /nodes/{node_id}/readings/{reading_id}/photos [get]
@@ -174,14 +189,12 @@ func (r *readingsControllerImpl) GetReadingPhoto(c echo.Context) error {
 // CreateReading godoc
 // @Summary Crea una medición
 // @Tags readings
-// @Accept mpfd
 // @Accept json
 // @Produce  json
 // @Param node_id path string true "ID del nodo"
 // @Param reading body api_models.ReadingDTO true "Datos de la medición"
 // @Success 200 {object} api_models.GetReadingDTO
 // @Failure 400 {object} echo.HTTPError
-// @Failure 404 {object} echo.HTTPError
 // @Failure 500 {object} echo.HTTPError
 // @Router /nodes/{node_id}/readings [post]
 func (r *readingsControllerImpl) CreateReading(c echo.Context) error {

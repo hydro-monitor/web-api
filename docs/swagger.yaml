@@ -29,13 +29,19 @@ definitions:
       id:
         example: lujan-1
         type: string
-      manual_reading:
+      manualReading:
         example: false
         type: boolean
+      password:
+        example: aDF23DDcaF45k7J0
+        type: string
     type: object
   api_models.ReadingDTO:
     properties:
-      time:
+      manualReading:
+        example: false
+        type: boolean
+      timestamp:
         example: "2020-04-26T19:47:53.391Z"
         type: string
       waterLevel:
@@ -63,6 +69,19 @@ definitions:
         example: 1
         type: number
     type: object
+  api_models.UserDTO:
+    properties:
+      admin:
+        type: boolean
+      email:
+        type: string
+      lastName:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
   echo.HTTPError:
     properties:
       code:
@@ -78,12 +97,12 @@ info:
   contact:
     email: manu.porto94@gmail.com
     name: Manuel Porto
-  description: This is the Hydro Monitor Web API
+  description: Esta es la definición de la API del servidor del Hydro Monitor
   license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    name: MIT
+    url: https://opensource.org/licenses/MIT
   title: Hydro Monitor Web API
-  version: "1.0"
+  version: 0.1.0
 paths:
   /nodes:
     get:
@@ -112,6 +131,12 @@ paths:
         name: node_id
         required: true
         type: string
+      - description: Información del nodo
+        in: body
+        name: node
+        required: true
+        schema:
+          $ref: '#/definitions/api_models.NodeDTO'
       produces:
       - application/json
       responses:
@@ -121,6 +146,10 @@ paths:
             $ref: '#/definitions/api_models.NodeDTO'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "422":
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/echo.HTTPError'
         "500":
@@ -139,7 +168,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: No Content
         "500":
           description: Internal Server Error
           schema:
@@ -172,10 +202,41 @@ paths:
       summary: Obtiene la información completa de un nodo
       tags:
       - nodes
+    put:
+      consumes:
+      - application/json
+      description: Actualiza la información de un nodo
+      parameters:
+      - description: ID del nodo
+        in: path
+        name: node_id
+        required: true
+        type: string
+      - description: Información del nodo
+        in: body
+        name: node
+        required: true
+        schema:
+          $ref: '#/definitions/api_models.NodeDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Actualiza la información de un nodo
+      tags:
+      - nodes
   /nodes/{node_id}/configuration:
     get:
-      description: Devuelve un mapa de estados (no un array como se ve a continuación)
-        en donde la clave de cada uno es el nombre del mismo.
+      description: Devuelve un mapa de estados en donde la clave de cada uno es el nombre del mismo.
       parameters:
       - description: ID del nodo
         in: path
@@ -188,9 +249,9 @@ paths:
         "200":
           description: OK
           schema:
-            items:
+            additionalProperties:
               $ref: '#/definitions/api_models.StateDTO'
-            type: array
+            type: object
         "404":
           description: Not Found
           schema:
@@ -205,23 +266,30 @@ paths:
     post:
       consumes:
       - application/json
-      description: Devuelve un mapa de estados (no un array como se ve a continuación)
-        en donde la clave de cada uno es el nombre del mismo.
+      description: Devuelve un mapa de estados (no un array como se ve a continuación) en donde la clave de cada uno es el nombre del mismo.
       parameters:
       - description: ID del nodo
         in: path
         name: node_id
         required: true
         type: string
+      - description: Configuración
+        in: body
+        name: node
+        required: true
+        schema:
+          additionalProperties:
+            $ref: '#/definitions/api_models.StateDTO'
+          type: object
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            items:
+            additionalProperties:
               $ref: '#/definitions/api_models.StateDTO'
-            type: array
+            type: object
         "400":
           description: Bad Request
           schema:
@@ -230,7 +298,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/echo.HTTPError'
-      summary: Crea o actualiza la configuración para el nodo dado.
+      summary: Crea o actualiza la configuración para el nodo dado
       tags:
       - nodes
   /nodes/{node_id}/manual-reading:
@@ -268,6 +336,12 @@ paths:
         name: node_id
         required: true
         type: string
+      - description: Medición manual
+        in: body
+        name: manual_reading
+        required: true
+        schema:
+          $ref: '#/definitions/api_models.ManualReadingDTO'
       produces:
       - application/json
       responses:
@@ -298,15 +372,31 @@ paths:
         name: node_id
         required: true
         type: string
+      - description: Cantidad máxima de mediciones por página
+        in: query
+        name: page_size
+        type: integer
+      - description: String en base 64 que contiene el estado de pagina. Utilizado para traer la próxima página
+        in: query
+        name: page_state
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          headers:
+            Page-State:
+              description: Page state
+              type: string
           schema:
             items:
               $ref: '#/definitions/api_models.GetReadingDTO'
             type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
         "404":
           description: Not Found
           schema:
@@ -320,7 +410,7 @@ paths:
       - readings
     post:
       consumes:
-      - multipart/form-data
+      - application/json
       parameters:
       - description: ID del nodo
         in: path
@@ -333,7 +423,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api_models.ReadingDTO'
-          type: object
       produces:
       - application/json
       responses:
@@ -345,10 +434,6 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/echo.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/echo.HTTPError'
         "500":
           description: Internal Server Error
           schema:
@@ -356,8 +441,8 @@ paths:
       summary: Crea una medición
       tags:
       - readings
-  /nodes/{node_id}/readings/{reading_id}/photos:
-    get:
+  /nodes/{node_id}/readings/{reading_id}:
+    delete:
       parameters:
       - description: ID del nodo
         in: path
@@ -369,44 +454,9 @@ paths:
         name: reading_id
         required: true
         type: string
-      produces:
-      - image/jpeg
       responses:
-        "200": {}
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/echo.HTTPError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/echo.HTTPError'
-      summary: Obtiene la foto de una medición
-      tags:
-      - readings
-    post:
-      consumes:
-      - image/jpeg
-      parameters:
-      - description: ID del nodo
-        in: path
-        name: node_id
-        required: true
-        type: string
-      - description: ID de la medición
-        in: path
-        name: reading_id
-        required: true
-        type: string
-      - description: Foto de la medición
-        in: body
-        name: picture
-        required: true
-        schema:
-          $ref: '#/definitions/png'
-          type: object
-      responses:
-        "201": {}
+        "204":
+          description: No Content
         "400":
           description: Bad Request
           schema:
@@ -415,18 +465,13 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/echo.HTTPError'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/echo.HTTPError'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/echo.HTTPError'
-      summary: Agrega una foto a la medición
+      summary: Borra una medición
       tags:
       - readings
-  /nodes/{node_id}/readings/{reading_id}s:
     get:
       parameters:
       - description: ID del nodo
@@ -457,4 +502,226 @@ paths:
       summary: Obtiene los datos de una medición
       tags:
       - readings
+  /nodes/{node_id}/readings/{reading_id}/photos:
+    get:
+      parameters:
+      - description: ID del nodo
+        in: path
+        name: node_id
+        required: true
+        type: string
+      - description: ID de la medición
+        in: path
+        name: reading_id
+        required: true
+        type: string
+      produces:
+      - image/jpeg
+      responses:
+        "200":
+          description: Ok
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Obtiene la foto de una medición
+      tags:
+      - readings
+    post:
+      consumes:
+      - image/jpeg
+      parameters:
+      - description: ID del nodo
+        in: path
+        name: node_id
+        required: true
+        type: string
+      - description: ID de la medición
+        in: path
+        name: reading_id
+        required: true
+        type: string
+      - description: Foto de la medición
+        in: formData
+        name: picture
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Agrega una foto a la medición
+      tags:
+      - readings
+  /nodes/last-reading:
+    get:
+      parameters:
+      - description: ID del nodo
+        in: path
+        name: node_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              $ref: '#/definitions/api_models.GetReadingDTO'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Obtiene la última medición de todos los nodos
+      tags:
+      - readings
+  /session:
+    post:
+      parameters:
+      - description: Dirección de correo del usuario
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Contraseña del usuario
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Crea una nueva sesión
+      tags:
+      - users
+  /users:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Datos del usario
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/api_models.UserDTO'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Crea un usuario
+      tags:
+      - users
+  /users/{email}:
+    delete:
+      parameters:
+      - description: Dirección de correo del usuario
+        in: path
+        name: email
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Borra un usuario
+      tags:
+      - users
+    get:
+      parameters:
+      - description: Dirección de correo del usuario
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api_models.UserDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Obtiene la información de un usuario
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Dirección de correo del usuario
+        in: path
+        name: email
+        required: true
+        type: string
+      - description: Información del usuario
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/api_models.UserDTO'
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Actualiza la información de un usuario
+      tags:
+      - users
 swagger: "2.0"

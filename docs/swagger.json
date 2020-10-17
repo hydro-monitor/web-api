@@ -1,17 +1,17 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is the Hydro Monitor Web API",
+        "description": "Esta es la definición de la API del servidor del Hydro Monitor",
         "title": "Hydro Monitor Web API",
         "contact": {
             "name": "Manuel Porto",
             "email": "manu.porto94@gmail.com"
         },
         "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
         },
-        "version": "1.0"
+        "version": "0.1.0"
     },
     "host": "localhost",
     "basePath": "/api",
@@ -61,6 +61,15 @@
                         "name": "node_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Información del nodo",
+                        "name": "node",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_models.NodeDTO"
+                        }
                     }
                 ],
                 "responses": {
@@ -74,6 +83,46 @@
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/nodes/last-reading": {
+            "get": {
+                "tags": [
+                    "readings"
+                ],
+                "summary": "Obtiene la última medición de todos los nodos",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del nodo",
+                        "name": "node_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "$ref": "#/definitions/api_models.GetReadingDTO"
+                            }
                         }
                     },
                     "500": {
@@ -124,6 +173,54 @@
                     }
                 }
             },
+            "put": {
+                "description": "Actualiza la información de un nodo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "nodes"
+                ],
+                "summary": "Actualiza la información de un nodo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del nodo",
+                        "name": "node_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Información del nodo",
+                        "name": "node",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_models.NodeDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "tags": [
                     "nodes"
@@ -139,7 +236,9 @@
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": "No Content"
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -151,7 +250,7 @@
         },
         "/nodes/{node_id}/configuration": {
             "get": {
-                "description": "Devuelve un mapa de estados (no un array como se ve a continuación) en donde la clave de cada uno es el nombre del mismo.",
+                "description": "Devuelve un mapa de estados en donde la clave de cada uno es el nombre del mismo.",
                 "produces": [
                     "application/json"
                 ],
@@ -172,8 +271,8 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
+                            "type": "object",
+                            "additionalProperties": {
                                 "$ref": "#/definitions/api_models.StateDTO"
                             }
                         }
@@ -203,7 +302,7 @@
                 "tags": [
                     "nodes"
                 ],
-                "summary": "Crea o actualiza la configuración para el nodo dado.",
+                "summary": "Crea o actualiza la configuración para el nodo dado",
                 "parameters": [
                     {
                         "type": "string",
@@ -211,14 +310,26 @@
                         "name": "node_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Configuración",
+                        "name": "node",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "$ref": "#/definitions/api_models.StateDTO"
+                            }
+                        }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "type": "array",
-                            "items": {
+                            "type": "object",
+                            "additionalProperties": {
                                 "$ref": "#/definitions/api_models.StateDTO"
                             }
                         }
@@ -295,6 +406,15 @@
                         "name": "node_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Medición manual",
+                        "name": "manual_reading",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_models.ManualReadingDTO"
+                        }
                     }
                 ],
                 "responses": {
@@ -341,6 +461,18 @@
                         "name": "node_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Cantidad máxima de mediciones por página",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "String en base 64 que contiene el estado de pagina. Utilizado para traer la próxima página",
+                        "name": "page_state",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -351,6 +483,18 @@
                             "items": {
                                 "$ref": "#/definitions/api_models.GetReadingDTO"
                             }
+                        },
+                        "headers": {
+                            "Page-State": {
+                                "type": "string",
+                                "description": "Page state"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
                         }
                     },
                     "404": {
@@ -369,7 +513,7 @@
             },
             "post": {
                 "consumes": [
-                    "multipart/form-data"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -392,7 +536,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api_models.ReadingDTO"
                         }
                     }
@@ -403,6 +546,92 @@
                         "schema": {
                             "$ref": "#/definitions/api_models.GetReadingDTO"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/nodes/{node_id}/readings/{reading_id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "readings"
+                ],
+                "summary": "Obtiene los datos de una medición",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del nodo",
+                        "name": "node_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID de la medición",
+                        "name": "reading_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api_models.GetReadingDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "readings"
+                ],
+                "summary": "Borra una medición",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del nodo",
+                        "name": "node_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID de la medición",
+                        "name": "reading_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -451,7 +680,9 @@
                     }
                 ],
                 "responses": {
-                    "200": {},
+                    "200": {
+                        "description": "Ok"
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -490,26 +721,19 @@
                         "required": true
                     },
                     {
+                        "type": "string",
                         "description": "Foto de la medición",
                         "name": "picture",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/png"
-                        }
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
-                    "201": {},
+                    "201": {
+                        "description": "Created"
+                    },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/echo.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/echo.HTTPError"
                         }
@@ -529,27 +753,109 @@
                 }
             }
         },
-        "/nodes/{node_id}/readings/{reading_id}s": {
+        "/session": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Crea una nueva sesión",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Dirección de correo del usuario",
+                        "name": "username",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Contraseña del usuario",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Crea un usuario",
+                "parameters": [
+                    {
+                        "description": "Datos del usario",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_models.UserDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{email}": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "readings"
+                    "users"
                 ],
-                "summary": "Obtiene los datos de una medición",
+                "summary": "Obtiene la información de un usuario",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID del nodo",
-                        "name": "node_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "ID de la medición",
-                        "name": "reading_id",
+                        "description": "Dirección de correo del usuario",
+                        "name": "email",
                         "in": "path",
                         "required": true
                     }
@@ -558,8 +864,84 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api_models.GetReadingDTO"
+                            "$ref": "#/definitions/api_models.UserDTO"
                         }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Actualiza la información de un usuario",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Dirección de correo del usuario",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Información del usuario",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_models.UserDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/echo.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Borra un usuario",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Dirección de correo del usuario",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
                     },
                     "404": {
                         "description": "Not Found",
@@ -619,16 +1001,24 @@
                     "type": "string",
                     "example": "lujan-1"
                 },
-                "manual_reading": {
+                "manualReading": {
                     "type": "boolean",
                     "example": false
+                },
+                "password": {
+                    "type": "string",
+                    "example": "aDF23DDcaF45k7J0"
                 }
             }
         },
         "api_models.ReadingDTO": {
             "type": "object",
             "properties": {
-                "time": {
+                "manualReading": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "timestamp": {
                     "type": "string",
                     "example": "2020-04-26T19:47:53.391Z"
                 },
@@ -664,6 +1054,26 @@
                 "upperLimit": {
                     "type": "number",
                     "example": 1
+                }
+            }
+        },
+        "api_models.UserDTO": {
+            "type": "object",
+            "properties": {
+                "admin": {
+                    "type": "boolean"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
                 }
             }
         },
