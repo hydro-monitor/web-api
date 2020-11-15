@@ -79,7 +79,7 @@ func main() {
 	healthController := controllers.NewHealthController()
 	nodeController := controllers.NewNodeController(nodeService)
 	readingsController := controllers.NewReadingsController(nodeService, readingsService)
-	usersController := controllers.NewUsersController(nil, usersService)
+	usersController := controllers.NewUsersController(config, usersService)
 
 	// Middleware
 	e.Use(middleware.Logger())
