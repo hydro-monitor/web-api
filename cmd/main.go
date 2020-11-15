@@ -79,7 +79,7 @@ func main() {
 	healthController := controllers.NewHealthController()
 	nodeController := controllers.NewNodeController(nodeService)
 	readingsController := controllers.NewReadingsController(nodeService, readingsService)
-	usersController := controllers.NewUsersController(usersService)
+	usersController := controllers.NewUsersController(nil, usersService)
 
 	// Middleware
 	e.Use(middleware.Logger())
@@ -87,7 +87,7 @@ func main() {
 	e.Use(middleware.CORS())
 	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		Skipper:    middlewares.JWTSkipper(router.AllowedRequests),
-		SigningKey: []byte("hydromon2020"),
+		SigningKey: []byte(config.JWTSecret),
 	}))
 	e.Use(middlewares.AuthorizationMiddleware(
 		middlewares.AuthorizationConfig{

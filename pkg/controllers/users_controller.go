@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
+	"hydro_monitor/web_api/pkg/configs"
 	"hydro_monitor/web_api/pkg/models/api_models"
 	"hydro_monitor/web_api/pkg/services"
 	"net/http"
@@ -18,6 +19,7 @@ type UsersController interface {
 }
 
 type usersControllerImpl struct {
+	config       *configs.Configuration
 	usersService services.UsersService
 }
 
@@ -123,7 +125,7 @@ func (u *usersControllerImpl) Login(c echo.Context) error {
 	claims["admin"] = userInfo.Admin
 	claims["exp"] = time.Now().Add(time.Hour * 8).Unix()
 
-	t, err2 := token.SignedString([]byte("hydromon2020"))
+	t, err2 := token.SignedString([]byte(u.config.JWTSecret))
 	if err2 != nil {
 		return echo.ErrInternalServerError
 	}
@@ -133,6 +135,6 @@ func (u *usersControllerImpl) Login(c echo.Context) error {
 	})
 }
 
-func NewUsersController(userService services.UsersService) UsersController {
-	return &usersControllerImpl{usersService: userService}
+func NewUsersController(config *configs.Configuration, userService services.UsersService) UsersController {
+	return &usersControllerImpl{config: config, usersService: userService}
 }

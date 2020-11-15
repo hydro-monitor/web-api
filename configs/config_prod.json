@@ -8,5 +8,6 @@
   "port": "443",
   "https_enabled": true,
   "tls_cert": "fullchain.pem",
-  "tls_key": "privkey.pem"
+  "tls_key": "privkey.pem",
+  "jwt_secret": "hydromon2020"
 }

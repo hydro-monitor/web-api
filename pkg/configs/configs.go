@@ -17,6 +17,7 @@ type Configuration struct {
 	HTTPSEnabled        bool
 	TLSCert             string
 	TLSKey              string
+	JWTSecret           string
 }
 
 func LoadConfig(scope string) *Configuration {
@@ -65,6 +66,7 @@ func setConfig(config *Configuration) {
 	config.DBRunMigrations = viper.GetBool("db_run_migrations")
 	config.Port = viper.GetString("port")
 	config.HTTPSEnabled = viper.GetBool("https_enabled")
+	config.JWTSecret = viper.GetString("jwt_secret")
 
 	if config.DBCreateKeyspace {
 		config.DBReplicationFactor = viper.GetInt("db_replication_factor")
